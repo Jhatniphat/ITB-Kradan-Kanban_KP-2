@@ -5,7 +5,7 @@ USE `intergrate-kp-2` ;
 DROP TABLE IF EXISTS `intergrate-kp-2`.`task` ;
 CREATE TABLE IF NOT EXISTS `intergrate-kp-2`.`task` (
   `taskId` INT NOT NULL,
-  `taskTitle` VARCHAR(30) NOT NULL,
+  `taskTitle` VARCHAR(100) NOT NULL,
   `taskDescription` VARCHAR(500) NULL DEFAULT NULL,
   `taskAssignees` VARCHAR(30) NULL DEFAULT NULL,
   `taskStatus` ENUM('No Status', 'To Do', 'Doing', 'Done') NULL DEFAULT 'No Status',
@@ -15,3 +15,6 @@ CREATE TABLE IF NOT EXISTS `intergrate-kp-2`.`task` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE USER 'dev'@'%';
+GRANT ALL ON intergrate-kp-2.* FOR 'dev'@'%';
