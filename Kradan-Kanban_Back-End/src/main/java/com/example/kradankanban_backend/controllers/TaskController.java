@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,5 +31,10 @@ public class TaskController {
         List<TaskEntity> tasks = service.findAll();
         List<TaskDTO> taskDTOS = tasks.stream().map(p -> modelMapper.map(p, TaskDTO.class)).collect(Collectors.toList());
         return ResponseEntity.ok(taskDTOS);
+    }
+
+    @GetMapping("/{id}") //Get Task By ID
+    public TaskEntity getTaskById(@PathVariable int id) {
+        return service.findById(id);
     }
 }
