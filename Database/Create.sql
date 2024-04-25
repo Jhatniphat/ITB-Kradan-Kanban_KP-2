@@ -16,5 +16,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
+
+DROP USER IF EXISTS 'dev'@'%';
 CREATE USER 'dev'@'%';
-GRANT ALL ON intergrate-kp-2.* FOR 'dev'@'%';
+GRANT ALL ON `intergrate-kp-2`.* FOR 'dev'@'%';
