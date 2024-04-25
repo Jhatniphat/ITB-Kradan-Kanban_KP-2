@@ -18,5 +18,5 @@ COLLATE = utf8mb4_0900_ai_ci;
 
 
 DROP USER IF EXISTS 'dev'@'%';
-CREATE USER 'dev'@'%';
+CREATE USER 'dev'@'%' IDENTIFIED BY 'ip23kp2mysql';
 GRANT ALL ON `intergrate-kp-2`.* FOR 'dev'@'%';
