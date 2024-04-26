@@ -55,7 +55,7 @@ const showModal = ref(false);
       <div class="flex flex-col p-5 text-black">
         <h1 class="m-2 text-3xl font-bold">Example Title</h1>
         <hr />
-        <div class="flex m-2">
+        <div class="flex my-5 mx-auto">
           <div class="flex flex-col">
             <h1 class="font-bold">Description</h1>
             <textarea class="bg-slate-200 p-2 w-96 h-96 rounded-lg"></textarea>
@@ -97,7 +97,7 @@ const showModal = ref(false);
           </div>
         </div>
         <hr />
-        <div class="flex justify-end m-2">
+        <div class="flex justify-end m-2 mt-4">
           <button
             class="m-1 p-2 w-14 rounded-md bg-green-500 hover:bg-green-400 text-slate-200 font-bold"
           >
