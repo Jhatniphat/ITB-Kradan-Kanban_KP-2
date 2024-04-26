@@ -19,7 +19,7 @@ const showModal = ref(false);
       <!-- head -->
       <thead>
         <tr>
-          <th></th>
+          <th>Id</th>
           <th>Title</th>
           <th>Assignees</th>
           <th>Status</th>
