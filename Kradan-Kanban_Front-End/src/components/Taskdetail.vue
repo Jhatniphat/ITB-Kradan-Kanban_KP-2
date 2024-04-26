@@ -1,5 +1,22 @@
 <script setup>
 defineEmits(["closeModal"]);
+const props = defineProps({
+  task: {
+    type: Object,
+    default: {
+      taskId: undefined,
+      taskTitle: "",
+      taskDescription: "",
+      taskAssignees: "",
+      taskStatus: "No status",
+      timeZone: "",
+      createdOn: "",
+      updatedOn: "",
+    },
+  },
+});
+
+// const taskDetail = computed(() => props.task);
 </script>
 
 <template>
@@ -36,7 +53,7 @@ defineEmits(["closeModal"]);
             class="flex flex-row justify-around border-solid border-slate-400"
           >
             <h1 class="font-bold">TimeZone</h1>
-            <h1 class="font-semibold">Timezone here</h1>
+            <h1 class="font-semibold"></h1>
           </div>
           <div class="flex flex-row justify-around">
             <h1 class="font-bold">Created On</h1>

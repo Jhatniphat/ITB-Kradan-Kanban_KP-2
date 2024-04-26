@@ -1,4 +1,4 @@
-async function getAllTasks() {
+export async function getAllTasks() {
   try {
     const data = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`); //GET Method
     const items = await data.json();
@@ -7,7 +7,7 @@ async function getAllTasks() {
     console.log(`error: ${error}`);
   }
 }
-async function getTaskById(id) {
+export async function getTaskById(id) {
   let data, item;
   try {
     data = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`);

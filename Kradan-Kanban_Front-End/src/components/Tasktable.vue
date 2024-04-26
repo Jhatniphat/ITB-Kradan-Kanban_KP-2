@@ -1,5 +1,24 @@
 <script setup>
+import { computed } from "vue";
+
 defineEmits(["openModal"]);
+
+const props = defineProps({
+  task: {
+    type: Object,
+    default: {
+      taskId: undefined,
+      taskTitle: "",
+      taskDescription: "",
+      taskAssignees: "",
+      taskStatus: "No status",
+      createdOn: "",
+      updatedOn: "",
+    },
+  },
+});
+
+const taskData = computed(() => props.task);
 </script>
 
 <template>
@@ -18,15 +37,21 @@ defineEmits(["openModal"]);
       </thead>
       <tbody>
         <!-- Listing -->
-        <!-- <tr v-for="list in Task" :key="list.id" class="hover:bg-slate-700">
-          <th>{{ list.id }}</th>
+        <tr
+          v-for="list in taskData"
+          :key="list.taskId"
+          class="hover:bg-slate-700"
+        >
+          <th>{{ list.taskId }}</th>
           <td>
-            <button @click="showModal = true">{{ list.title }}</button>
+            <button @click="$emit('openModal', true, list.taskId)">
+              {{ list.taskTitle }}
+            </button>
           </td>
-          <td>{{ list.assignees }}</td>
-          <td>{{ list.status }}</td>
-        </tr> -->
-        <!-- Test -->
+          <td>{{ list.taskAssignees }}</td>
+          <td>{{ list.taskStatus }}</td>
+        </tr>
+        <!-- Test
         <tr class="hover:bg-slate-700">
           <th>999</th>
           <td>
@@ -50,7 +75,7 @@ defineEmits(["openModal"]);
           </td>
           <td></td>
           <td>Test</td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
   </div>
