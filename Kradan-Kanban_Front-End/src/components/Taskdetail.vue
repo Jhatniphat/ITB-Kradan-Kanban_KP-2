@@ -53,7 +53,7 @@ const props = defineProps({
             class="flex flex-row justify-around border-solid border-slate-400"
           >
             <h1 class="font-bold">TimeZone</h1>
-            <h1 class="font-semibold"></h1>
+            <h1 class="font-semibold">TimeZone here</h1>
           </div>
           <div class="flex flex-row justify-around">
             <h1 class="font-bold">Created On</h1>
