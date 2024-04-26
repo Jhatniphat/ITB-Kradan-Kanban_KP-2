@@ -1,10 +1,12 @@
 package com.example.kradankanban_backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
@@ -29,10 +31,12 @@ public class TaskEntity {
     @Column(name = "taskStatus")
     private Object taskStatus;
     @Basic
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC+0")
     @Column(name = "createdOn")
-    private Timestamp createdOn;
+    private LocalDateTime createdOn;
     @Basic
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'")
     @Column(name = "updatedOn")
-    private Timestamp updatedOn;
+    private LocalDateTime updatedOn;
 
 }
