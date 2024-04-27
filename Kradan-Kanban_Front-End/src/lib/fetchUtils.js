@@ -1,30 +1,31 @@
 export async function getAllTasks() {
   try {
-    const data = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`); //GET Method
-    const items = await data.json();
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks` , { method : "GET" }); //GET Method
+    const items = await res.json();
     return items;
   } catch (error) {
-    console.log(`error: ${error}`);
   }
 }
+
 export async function getTaskById(id) {
-  let data, item;
+  let res, item;
   try {
-    data = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`);
-    item = await data.json();
+    res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}` , { method : "GET" });
+    if (res.status === 200) {
+    item = await res.json();
     item.createdOn = timeFormater(item.createdOn);
     item.updatedOn = timeFormater(item.updatedOn);
     return item;
+  }
+  else { return res.status }
   } catch (error) {
-    console.log("Member Not Found!");
-    console.log(`error: ${error}`);
-    console.log(data.status);
-    if (data.status === 404) return undefined;
+    return error;
   }
 }
 
 function timeFormater(time) {
-  return new Date(time).toLocaleString("th-TH", { timeZone: "UTC" });
+  return new Date(time).toLocaleString("th-TH", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
 }
 
-console.log(await getTaskById(1));
+
+

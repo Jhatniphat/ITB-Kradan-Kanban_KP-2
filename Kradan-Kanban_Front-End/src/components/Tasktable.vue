@@ -1,31 +1,31 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onBeforeMount, onMounted, ref } from "vue";
+import { getAllTasks } from "@/lib/fetchUtils";
 
+// const allTask = ref(undefined)
+// const getData = await getAllTasks()
+// allTask.value = await getData
+// onBeforeMount( async ()=> {
+//   const allTasks = await getAllTasks()
+// })
+
+console.table(await getAllTasks())
 defineEmits(["openModal"]);
+const props = defineProps( {
+  Tasks : { 
+    type : Array
+  }
+}
+)
 
-const props = defineProps({
-  task: {
-    type: Object,
-    default: {
-      taskId: undefined,
-      taskTitle: "",
-      taskDescription: "",
-      taskAssignees: "",
-      taskStatus: "No status",
-      createdOn: "",
-      updatedOn: "",
-    },
-  },
-});
 
-const taskData = computed(() => props.task);
+
 </script>
 
 <template>
   <div>
     <table
-      class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
-    >
+      class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1">
       <!-- head -->
       <thead>
         <tr>
@@ -37,20 +37,20 @@ const taskData = computed(() => props.task);
       </thead>
       <tbody>
         <!-- Listing -->
-        <tr
-          v-for="list in taskData"
-          :key="list.taskId"
-          class="hover:bg-slate-700"
-        >
-          <th>{{ list.taskId }}</th>
+        <tr>test</tr>
+        <!-- <tr v-if="allTasks === undefined">
+          <td colspan="4">Waiting For Data</td>
+        </tr>
+        <tr v-if="allTasks !== undefined" v-for="task in allTasks" :key="task.taskId" class="hover:bg-slate-700">
+          <th>{{ task.taskId }}</th>
           <td>
-            <button @click="$emit('openModal', true, list.taskId)">
-              {{ list.taskTitle }}
+            <button @click="$emit('openModal', task.taskId)">
+              {{ task.taskTitle }}
             </button>
           </td>
-          <td>{{ list.taskAssignees }}</td>
-          <td>{{ list.taskStatus }}</td>
-        </tr>
+          <td>{{ task.taskAssignees }}</td>
+          <td>{{ task.taskStatus }}</td>
+        </tr> -->
         <!-- Test
         <tr class="hover:bg-slate-700">
           <th>999</th>
