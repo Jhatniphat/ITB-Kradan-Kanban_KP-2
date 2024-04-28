@@ -31,11 +31,11 @@ public class TaskEntity {
     @Column(name = "taskStatus")
     private Object taskStatus;
     @Basic
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC+0")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
     @Column(name = "createdOn")
     private LocalDateTime createdOn;
     @Basic
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
     @Column(name = "updatedOn")
     private LocalDateTime updatedOn;
 

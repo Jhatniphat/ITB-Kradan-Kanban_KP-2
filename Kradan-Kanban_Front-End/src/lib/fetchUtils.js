@@ -1,30 +1,64 @@
-async function getAllTasks() {
+export async function getAllTasks() {
   try {
-    const data = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`); //GET Method
-    const items = await data.json();
-    return items;
-  } catch (error) {
-    console.log(`error: ${error}`);
-  }
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`, {
+      method: "GET",
+    }) //GET Method
+    const items = await res.json()
+    return items
+  } catch (error) {}
 }
-async function getTaskById(id) {
-  let data, item;
+
+export async function getTaskById(id) {
+  let res, item
   try {
-    data = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`);
-    item = await data.json();
-    item.createdOn = timeFormater(item.createdOn);
-    item.updatedOn = timeFormater(item.updatedOn);
-    return item;
+    res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+      method: "GET",
+    })
+    if (res.status === 200) {
+      item = await res.json()
+      item.createdOn = timeFormater(item.createdOn)
+      item.updatedOn = timeFormater(item.updatedOn)
+      return item
+    } else {
+      return res.status
+    }
   } catch (error) {
-    console.log("Member Not Found!");
-    console.log(`error: ${error}`);
-    console.log(data.status);
-    if (data.status === 404) return undefined;
+    return error
   }
 }
 
 function timeFormater(time) {
-  return new Date(time).toLocaleString("th-TH", { timeZone: "UTC" });
+  return new Date(time).toLocaleString("en-GB", {
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  })
 }
 
-console.log(await getTaskById(1));
+// function timeFormater(time) {
+//   const options = {
+//     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+//     hour12: false, // Use 24-hour format
+//     hour: "numeric",
+//     minute: "numeric",
+//     second: "numeric",
+//     year: "numeric",
+//     month: "2-digit",
+//     day: "2-digit",
+//   }
+
+//   const dateOptions = {
+//     timeZone: "UTC",
+//     year: "numeric",
+//     month: "2-digit",
+//     day: "2-digit",
+//   }
+
+//   const thaiLocale = "th-TH"
+
+//   const thaiTimeString = new Date(time).toLocaleString(thaiLocale, options)
+//   const enDateString = new Date(time).toLocaleString("en-GB", dateOptions)
+
+//   const thaiTime = thaiTimeString.split(", ")
+//   const [enDay, enMonth, enYear] = enDateString.split("/")
+
+//   return `${enDay}/${enMonth}/${enYear} ${thaiTime}`
+// }

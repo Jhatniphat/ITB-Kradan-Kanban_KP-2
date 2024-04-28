@@ -1,12 +1,31 @@
 <script setup>
+import { computed, onBeforeMount, onMounted, ref } from "vue";
+import { getAllTasks } from "@/lib/fetchUtils";
+
+// const allTask = ref(undefined)
+// const getData = await getAllTasks()
+// allTask.value = await getData
+// onBeforeMount( async ()=> {
+//   const allTasks = await getAllTasks()
+// })
+
+console.table(await getAllTasks())
 defineEmits(["openModal"]);
+const props = defineProps( {
+  Tasks : { 
+    type : Array
+  }
+}
+)
+
+
+
 </script>
 
 <template>
   <div>
     <table
-      class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
-    >
+      class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1">
       <!-- head -->
       <thead>
         <tr>
@@ -18,15 +37,21 @@ defineEmits(["openModal"]);
       </thead>
       <tbody>
         <!-- Listing -->
-        <!-- <tr v-for="list in Task" :key="list.id" class="hover:bg-slate-700">
-          <th>{{ list.id }}</th>
+        <tr>test</tr>
+        <!-- <tr v-if="allTasks === undefined">
+          <td colspan="4">Waiting For Data</td>
+        </tr>
+        <tr v-if="allTasks !== undefined" v-for="task in allTasks" :key="task.taskId" class="hover:bg-slate-700">
+          <th>{{ task.taskId }}</th>
           <td>
-            <button @click="showModal = true">{{ list.title }}</button>
+            <button @click="$emit('openModal', task.taskId)">
+              {{ task.taskTitle }}
+            </button>
           </td>
-          <td>{{ list.assignees }}</td>
-          <td>{{ list.status }}</td>
+          <td>{{ task.taskAssignees }}</td>
+          <td>{{ task.taskStatus }}</td>
         </tr> -->
-        <!-- Test -->
+        <!-- Test
         <tr class="hover:bg-slate-700">
           <th>999</th>
           <td>
@@ -50,7 +75,7 @@ defineEmits(["openModal"]);
           </td>
           <td></td>
           <td>Test</td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
   </div>
