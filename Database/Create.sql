@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `intergrate-kp-2`.`task` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
-
+ALTER DATABASE `intergrate-kp-2` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 DROP USER IF EXISTS 'dev'@'%';
 CREATE USER 'dev'@'%' IDENTIFIED BY 'ip23kp2mysql';
