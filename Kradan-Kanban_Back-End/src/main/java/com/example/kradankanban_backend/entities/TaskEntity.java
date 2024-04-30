@@ -16,20 +16,20 @@ public class TaskEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "taskId")
-    private int taskId;
+    @Column(name = "id")
+    private int id;
     @Basic
-    @Column(name = "taskTitle")
-    private String taskTitle;
+    @Column(name = "title")
+    private String title;
     @Basic
-    @Column(name = "taskDescription")
-    private String taskDescription;
+    @Column(name = "description")
+    private String description;
     @Basic
-    @Column(name = "taskAssignees")
-    private String taskAssignees;
+    @Column(name = "assignees")
+    private String assignees;
     @Basic
-    @Column(name = "taskStatus")
-    private Object taskStatus;
+    @Column(name = "status")
+    private Object status;
     @Basic
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
     @Column(name = "createdOn")
