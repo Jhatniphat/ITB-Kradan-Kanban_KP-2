@@ -37,13 +37,13 @@ async function fetchData(id) {
 <template>
   <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg">
     <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
-      Loading Data For TaskId = {{ props.taskId }}
+      Loading Data For TaskId = {{ props.id }}
     </h1>
     <h1
       class="itbkk-title m-2 text-2xl font-bold text-wrap break-all"
       v-if="loading === false && error === null"
     >
-      {{ taskDetail.taskTitle }}
+      {{ taskDetail.title }}
     </h1>
     <hr />
     <div class="flex my-5 mx-auto" v-if="loading === false && error === null">
@@ -53,14 +53,14 @@ async function fetchData(id) {
           class="bg-slate-200 p-2 w-96 h-96 resize-none rounded-lg focus:bg-slate-300 shadow-lg"
         ></textarea> -->
         <p class="itbkk-description m-2 text-wrap break-all">
-          {{ taskDetail.taskDescription }}
+          {{ taskDetail.description }}
         </p>
       </div>
       <div class="flex flex-col m-2">
         <div class="flex flex-col m-1">
           <h1 class="font-bold">Assignees</h1>
           <p class="itbkk-assignees m-2 text-wrap break-all">
-            {{ taskDetail.taskAssignees }}
+            {{ taskDetail.assignees }}
           </p>
         </div>
         <div class="flex flex-col m-2">

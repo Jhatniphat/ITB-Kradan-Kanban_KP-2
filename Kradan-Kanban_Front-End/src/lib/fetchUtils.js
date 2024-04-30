@@ -15,6 +15,7 @@ export async function getTaskById(id) {
     item = await res.json();
     item.createdOn = timeFormater(item.createdOn);
     item.updatedOn = timeFormater(item.updatedOn);
+    console.log(item)
     return item;
   }
   else { return res.status }
