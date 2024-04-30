@@ -50,12 +50,12 @@ async function fetchData(id) {
       <div class="flex flex-col">
         <h1 class="font-bold">Description</h1>
         <textarea
-          class="itbkk-description bg-slate-200 p-2 w-96 h-96 resize-none rounded-lg focus:bg-slate-300 shadow-lg"
+          class="itbkk-description p-2 w-96 h-96 textarea textarea-bordered"
           :style="{
             fontStyle: taskDetail.description ? 'normal' : 'italic',
           }"
           >{{
-            taskDetail.description === null
+            taskDetail.description == ''
               ? "No Description Provided"
               : taskDetail.description
           }}</textarea
@@ -77,12 +77,13 @@ async function fetchData(id) {
         <div class="flex flex-col m-1">
           <h1 class="font-bold">Assignees</h1>
           <textarea
-            class="itbkk-assignees bg-slate-200 p-2 h-32 resize-none rounded-lg focus:bg-slate-300 shadow-lg w-full"
+            class="itbkk-assignees textarea textarea-bordered"
             :style="{
               fontStyle: taskDetail.description ? 'normal' : 'italic',
             }"
+            :class="taskDetail.description === '' ? 'italic text-gray-600' : ''"
             >{{
-              taskDetail.assignees === null
+              taskDetail.assignees == ''
                 ? "Unassigned"
                 : taskDetail.assignees
             }}</textarea
