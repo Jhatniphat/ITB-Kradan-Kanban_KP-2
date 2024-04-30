@@ -8,7 +8,10 @@ import lombok.Setter;
 @Setter
 public class TaskDTO {
     private int taskId;
+
     private String taskTitle;
+
     private String taskAssignees;
+
     private Object taskStatus;
 }

@@ -18,25 +18,26 @@ public class TaskEntity {
     @Id
     @Column(name = "taskId")
     private int taskId;
-    @Basic
+    
     @Column(name = "taskTitle")
     private String taskTitle;
-    @Basic
+    
     @Column(name = "taskDescription")
     private String taskDescription;
-    @Basic
+    
     @Column(name = "taskAssignees")
     private String taskAssignees;
-    @Basic
+    
+    
     @Column(name = "taskStatus")
     private Object taskStatus;
-    @Basic
+    
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
-    @Column(name = "createdOn")
+    @Column(name = "createdOn", insertable = false, updatable = false)
     private LocalDateTime createdOn;
-    @Basic
+    
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
-    @Column(name = "updatedOn")
+    @Column(name = "updatedOn", insertable = false, updatable = false)
     private LocalDateTime updatedOn;
 
 }
