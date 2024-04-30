@@ -52,12 +52,12 @@ async function fetchData(id) {
         <textarea
           class="itbkk-description bg-slate-200 p-2 w-96 h-96 resize-none rounded-lg focus:bg-slate-300 shadow-lg"
           :style="{
-            fontStyle: taskDetail.taskDescription ? 'normal' : 'italic',
+            fontStyle: taskDetail.description ? 'normal' : 'italic',
           }"
           >{{
-            taskDetail.taskDescription === null
+            taskDetail.description === null
               ? "No Description Provided"
-              : taskDetail.taskDescription
+              : taskDetail.description
           }}</textarea
         >
         <!-- <p
@@ -79,12 +79,12 @@ async function fetchData(id) {
           <textarea
             class="itbkk-assignees bg-slate-200 p-2 h-32 resize-none rounded-lg focus:bg-slate-300 shadow-lg w-full"
             :style="{
-              fontStyle: taskDetail.taskDescription ? 'normal' : 'italic',
+              fontStyle: taskDetail.description ? 'normal' : 'italic',
             }"
             >{{
-              taskDetail.taskAssignees === null
+              taskDetail.assignees === null
                 ? "Unassigned"
-                : taskDetail.taskAssignees
+                : taskDetail.assignees
             }}</textarea
           >
           <!-- <p class="itbkk-assignees m-2 text-wrap break-all">
