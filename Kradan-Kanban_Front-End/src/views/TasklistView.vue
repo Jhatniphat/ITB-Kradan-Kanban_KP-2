@@ -1,13 +1,13 @@
 <script setup>
-import { onBeforeMount, ref, watch } from "vue";
-import { useRoute } from "vue-router";
-import Taskdetail from "../components/Taskdetail.vue";
-import Tasktable from "../components/Tasktable.vue";
-import { getAllTasks, getTaskById } from "../lib/fetchUtils.js";
-import router from "@/router";
+import { onBeforeMount, ref, watch } from "vue"
+import { useRoute } from "vue-router"
+import Taskdetail from "../components/Taskdetail.vue"
+import Tasktable from "../components/Tasktable.vue"
+import { getAllTasks, getTaskById } from "../lib/fetchUtils.js"
+import router from "@/router"
 
-const showModal = ref(false);
-const route = useRoute();
+const showModal = ref(false)
+const route = useRoute()
 
 const loading = ref(false);
 const allTasks = ref(null);
@@ -21,29 +21,28 @@ const openModal = (id) => {
 
 async function fetchData(id) {
   if (id !== undefined) {
-    console.log(id)
     openModal(id);
   }
-  error.value = allTasks.value = null;
-  loading.value = true;
+  error.value = allTasks.value = null
+  loading.value = true
   try {
     // replace `getPost` with your data fetching util / API wrapper
-    allTasks.value = await getAllTasks();
+    allTasks.value = await getAllTasks()
   } catch (err) {
-    error.value = err.toString();
+    error.value = err.toString()
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
-watch(() => route.params.id, fetchData, { immediate: true });
+watch(() => route.params.id, fetchData, { immediate: true })
 
 onBeforeMount(() => {
   if (route.params.id !== undefined) {
     selectedid.value = parseInt(route.params.id);
     showModal.value = true;
   }
-});
+})
 </script>
 
 <template>
@@ -54,7 +53,9 @@ onBeforeMount(() => {
   <!-- Table -->
   <div class="flex flex-col">
     <h1 class="mb-4 text-center text-2xl font-semibold italic">Task Listing</h1>
-    <table class="table table-lg">
+    <table
+      class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
+    >
       <!-- head -->
       <thead>
         <tr>
@@ -83,7 +84,14 @@ onBeforeMount(() => {
             </button>
             <!-- </RouterLink> -->
           </td>
-          <td class="itbkk-assignees">{{ task.assignees }}</td>
+          <td
+            class="itbkk-assignees"
+            :style="{ fontStyle: task.assignees ? 'normal' : 'italic' }"
+          >
+            {{
+              task.assignees === null ? "Unassigned" : task.assignees
+            }}
+          </td>
           <td class="itbkk-status">{{ task.status }}</td>
         </tr>
       </tbody>
@@ -94,7 +102,7 @@ onBeforeMount(() => {
   <Teleport to="#modal">
     <div
       v-if="showModal"
-      class="absolute left-0 right-0 z-50 top-20 m-auto w-2/5 h-2/3 bg-slate-50 rounded-lg"
+      class="absolute left-0 right-0 z-50 top-20 m-auto w-1/2 h-2/3 bg-slate-50 rounded-lg"
     >
       <Taskdetail
         :taskId="parseInt(selectedid)"
