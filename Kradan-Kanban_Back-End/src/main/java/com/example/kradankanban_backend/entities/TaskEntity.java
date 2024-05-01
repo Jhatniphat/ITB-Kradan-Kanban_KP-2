@@ -28,10 +28,9 @@ public class TaskEntity {
     @Column(name = "assignees")
     private String assignees;
     
-    
     @Column(name = "status")
     private Object status;
-    
+
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
     @Column(name = "createdOn", insertable = false, updatable = false)
     private LocalDateTime createdOn;

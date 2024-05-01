@@ -37,27 +37,28 @@ async function fetchData(id) {
 <template>
   <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg">
     <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
-      Loading Data For TaskId = {{ props.taskId }}
+      Loading Data For TaskId = {{ props.id }}
     </h1>
     <h1
       class="itbkk-title m-2 text-2xl font-bold text-wrap break-all"
       v-if="loading === false && error === null"
     >
-      {{ taskDetail.taskTitle }}
+      {{ taskDetail.title }}
     </h1>
     <hr />
     <div class="flex my-5 mx-auto" v-if="loading === false && error === null">
       <div class="flex flex-col">
         <h1 class="font-bold">Description</h1>
         <textarea
-          class="itbkk-description bg-slate-200 p-2 w-96 h-96 resize-none rounded-lg focus:bg-slate-300 shadow-lg"
+          class="itbkk-description p-2 w-96 h-96 textarea textarea-bordered"
           :style="{
-            fontStyle: taskDetail.taskDescription ? 'normal' : 'italic',
+            fontStyle: taskDetail.description ? 'normal' : 'italic',
           }"
+          :class="taskDetail.description === '' ? 'italic text-gray-600' : ''"
           >{{
-            taskDetail.taskDescription === null
+            taskDetail.description == '' || taskDetail.description === null
               ? "No Description Provided"
-              : taskDetail.taskDescription
+              : taskDetail.description
           }}</textarea
         >
         <!-- <p
@@ -77,14 +78,15 @@ async function fetchData(id) {
         <div class="flex flex-col m-1">
           <h1 class="font-bold">Assignees</h1>
           <textarea
-            class="itbkk-assignees bg-slate-200 p-2 h-32 resize-none rounded-lg focus:bg-slate-300 shadow-lg w-full"
+            class="itbkk-assignees textarea textarea-bordered"
             :style="{
-              fontStyle: taskDetail.taskDescription ? 'normal' : 'italic',
+              fontStyle: taskDetail.assignees ? 'normal' : 'italic',
             }"
+            :class="taskDetail.assignees === '' || taskDetail.assignees === null ? 'italic text-gray-600' : ''"
             >{{
-              taskDetail.taskAssignees === null
+              taskDetail.assignees == '' || taskDetail.assignees === null
                 ? "Unassigned"
-                : taskDetail.taskAssignees
+                : taskDetail.assignees
             }}</textarea
           >
           <!-- <p class="itbkk-assignees m-2 text-wrap break-all">

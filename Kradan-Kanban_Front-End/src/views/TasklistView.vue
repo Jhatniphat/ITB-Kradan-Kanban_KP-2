@@ -9,19 +9,19 @@ import router from "@/router"
 const showModal = ref(false)
 const route = useRoute()
 
-const loading = ref(false)
-const allTasks = ref(null)
-const error = ref(null)
-const selectedTaskId = ref(0)
+const loading = ref(false);
+const allTasks = ref(null);
+const error = ref(null);
+const selectedid = ref(0);
 
-const openModal = (taskId) => {
-  showModal.value = true
-  selectedTaskId.value = taskId
-}
+const openModal = (id) => {
+  selectedid.value = id;
+  showModal.value = true;
+};
 
 async function fetchData(id) {
   if (id !== undefined) {
-    openModal(id)
+    openModal(id);
   }
   error.value = allTasks.value = null
   loading.value = true
@@ -39,8 +39,8 @@ watch(() => route.params.id, fetchData, { immediate: true })
 
 onBeforeMount(() => {
   if (route.params.id !== undefined) {
-    selectedTaskId.value = parseInt(route.params.id)
-    showModal.value = true
+    selectedid.value = parseInt(route.params.id);
+    showModal.value = true;
   }
 })
 </script>
@@ -73,26 +73,28 @@ onBeforeMount(() => {
         <tr
           v-if="allTasks !== null"
           v-for="task in allTasks"
-          :key="task.taskId"
+          :key="task.id"
           class="itbkk-item hover"
         >
-          <th>{{ task.taskId }}</th>
+          <th>{{ task.id }}</th>
           <td class="itbkk-title">
-            <!-- <RouterLink :to="`/task/${task.taskId}`"> -->
-            <button @click="router.push(`/task/${task.taskId}`)">
-              {{ task.taskTitle }}
+            <!-- <RouterLink :to="`/task/${task.id}`"> -->
+            <button @click="router.push(`/task/${task.id}`)">
+              {{ task.title }}
             </button>
             <!-- </RouterLink> -->
           </td>
           <td
             class="itbkk-assignees"
-            :style="{ fontStyle: task.taskAssignees ? 'normal' : 'italic' }"
+            :style="{ fontStyle: task.assignees ? 'normal' : 'italic' ,
+               color: task.assignees ? '' : 'gray' 
+            }"
           >
             {{
-              task.taskAssignees === null ? "Unassigned" : task.taskAssignees
+              task.assignees === null || task.assignees == '' ? "Unassigned" : task.assignees
             }}
           </td>
-          <td class="itbkk-status">{{ task.taskStatus }}</td>
+          <td class="itbkk-status">{{ task.status }}</td>
         </tr>
       </tbody>
     </table>
@@ -105,7 +107,7 @@ onBeforeMount(() => {
       class="absolute left-0 right-0 z-50 top-20 m-auto w-1/2 h-2/3 bg-slate-50 rounded-lg"
     >
       <Taskdetail
-        :taskId="parseInt(selectedTaskId)"
+        :taskId="parseInt(selectedid)"
         @closeModal="showModal = false"
       />
     </div>
