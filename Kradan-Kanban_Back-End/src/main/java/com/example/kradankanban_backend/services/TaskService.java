@@ -17,8 +17,6 @@ import java.util.List;
 public class TaskService {
     @Autowired
     private TaskRepository repository;
-    @Autowired
-    private TaskRepository taskRepository;
 
     public List<TaskEntity> findAll() {
         return repository.findAll();
@@ -29,31 +27,38 @@ public class TaskService {
         });
     }
 
-    @Transactional //Delete by id service
-    public void deleteTask(int id) {
-        TaskEntity task = repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Task ID "+ id +" does not exist !!!"){
-        });
-        repository.delete(task);
-    }
+    @Transactional
+    public TaskEntity addTask(TaskEntity task) {
+        if (task.getTitle() == null || task.getTitle().isEmpty()) {
+            throw new ItemNotFoundException("Task title is null !!!");
+        }
+        try {
+            return repository.save(task);
+        } catch (Exception e) {
+            throw new ItemNotFoundException("Task title is incorrect !!!");
+        }
 
-    @Transactional //Add new Task
-    public TaskEntity addTask(TaskEntity task) { return repository.save(task); }
+    }
 
     @Transactional
-    public TaskEntity updateTask(int id, TaskEntity task) {
-        Integer taskId = task.getTaskId();
-        if (taskId != null) {
-            if (!taskId.equals(id)) {
-                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
-                        "Conflict Office code  !!! (" + id + " vs "
-                                + task.getTaskId() + ")");
-            }
+    public void deleteTask(int id) {
+        TaskEntity task = repository.findById(id).orElseThrow(() -> new ItemNotFoundException("NOT FOUND"));
+        repository.delete(task);
+        try {
+            repository.delete(task);
+        } catch (Exception e) {
+            throw new ItemNotFoundException("Task id is incorrect !!!");
         }
-        TaskEntity existingTask = repository.findById(id).orElseThrow(
-                () -> new HttpClientErrorException(HttpStatus.NOT_FOUND , "Task ID "+ taskId + " does not exist !!!")
-        );
-        return repository.save(task);
     }
 
-
+    @Transactional
+    public TaskEntity editTask(int id, TaskEntity newTask) {
+        TaskEntity task = repository.findById(id).orElseThrow(() -> new ItemNotFoundException("NOT FOUND"));
+        if (newTask.getTitle() == null || newTask.getTitle().isEmpty()) {
+            throw new ItemNotFoundException("NOT FOUND");
+        } else {
+            newTask.setId(id);
+            return repository.save(newTask);
+        }
+    }
 }
