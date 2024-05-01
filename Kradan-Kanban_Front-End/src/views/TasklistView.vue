@@ -86,10 +86,12 @@ onBeforeMount(() => {
           </td>
           <td
             class="itbkk-assignees"
-            :style="{ fontStyle: task.assignees ? 'normal' : 'italic' }"
+            :style="{ fontStyle: task.assignees ? 'normal' : 'italic' ,
+               color: task.assignees ? '' : 'gray' 
+            }"
           >
             {{
-              task.assignees === null ? "Unassigned" : task.assignees
+              task.assignees === null || task.assignees == '' ? "Unassigned" : task.assignees
             }}
           </td>
           <td class="itbkk-status">{{ task.status }}</td>
