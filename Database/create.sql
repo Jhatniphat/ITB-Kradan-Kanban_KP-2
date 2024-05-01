@@ -10,7 +10,7 @@ USE `intergrate-kp-2` ;
 -- Table `intergrate-kp-2`.`task`
 DROP TABLE IF EXISTS `intergrate-kp-2`.`task` ;
 CREATE TABLE IF NOT EXISTS `intergrate-kp-2`.`task` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(500) NULL DEFAULT NULL,
   `assignees` VARCHAR(30) NULL DEFAULT NULL,
