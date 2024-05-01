@@ -35,7 +35,7 @@ public class TaskService {
         try {
             return repository.save(task);
         } catch (Exception e) {
-            throw new ItemNotFoundException("Task title is incorrect !!!");
+            throw new ItemNotFoundException("Database Exception");
         }
 
     }
