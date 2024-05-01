@@ -56,7 +56,7 @@ async function fetchData(id) {
           }"
           :class="taskDetail.description === '' ? 'italic text-gray-600' : ''"
           >{{
-            taskDetail.description == ''
+            taskDetail.description == '' || taskDetail.description === null
               ? "No Description Provided"
               : taskDetail.description
           }}</textarea
@@ -82,9 +82,9 @@ async function fetchData(id) {
             :style="{
               fontStyle: taskDetail.assignees ? 'normal' : 'italic',
             }"
-            :class="taskDetail.assignees === '' ? 'italic text-gray-600' : ''"
+            :class="taskDetail.assignees === '' || taskDetail.assignees === null ? 'italic text-gray-600' : ''"
             >{{
-              taskDetail.assignees == ''
+              taskDetail.assignees == '' || taskDetail.assignees === null
                 ? "Unassigned"
                 : taskDetail.assignees
             }}</textarea
