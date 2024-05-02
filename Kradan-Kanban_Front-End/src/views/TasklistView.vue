@@ -1,53 +1,70 @@
 <script setup>
-import { onBeforeMount, ref, watch } from "vue"
-import { useRoute } from "vue-router"
-import Taskdetail from "../components/Taskdetail.vue"
+import { onBeforeMount, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import Taskdetail from "../components/Taskdetail.vue";
 import {
   getAllTasks,
   getTaskById,
   addTask,
   editTask,
   deleteTask,
-} from "../lib/fetchUtils.js"
-import router from "@/router"
+} from "../lib/fetchUtils.js";
+import router from "@/router";
+import AddEditModal from "../components/AddEditModal.vue";
 
-const showModal = ref(false)
-const route = useRoute()
+const showDetailModal = ref(false);
+const showAddEditModal = ref(false);
+const showDeleteModal = ref(false);
+const route = useRoute();
 
-const loading = ref(false)
-const allTasks = ref(null)
-const error = ref(null)
-const selectedid = ref(0)
+const loading = ref(false);
+const allTasks = ref(null);
+const error = ref(null);
+const selectedid = ref(0);
+const deleteTaskTitle = ref("");
+
+const deleteThisTask = async () => {
+  await deleteTask(selectedid.value);
+  showDeleteModal.value = false;
+  // Reload the page
+  window.location.reload();
+};
+
+const openDeleteModal = (taskTitle, id) => {
+  deleteTaskTitle.value = taskTitle;
+  selectedid.value = id;
+  showDeleteModal.value = true;
+};
 
 const openModal = (id) => {
-  selectedid.value = id
-  showModal.value = true
-}
+  selectedid.value = id;
+  showDetailModal.value = true;
+};
 
 async function fetchData(id) {
   if (id !== undefined) {
-    openModal(id)
+    openModal(id);
   }
-  error.value = allTasks.value = null
-  loading.value = true
+  error.value = allTasks.value = null;
+  loading.value = true;
   try {
     // replace `getPost` with your data fetching util / API wrapper
-    allTasks.value = await getAllTasks()
+    allTasks.value = await getAllTasks();
   } catch (err) {
-    error.value = err.toString()
+    error.value = err.toString();
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
-watch(() => route.params.id, fetchData, { immediate: true })
+watch(() => route.params.id, fetchData, { immediate: true });
 
 onBeforeMount(() => {
   if (route.params.id !== undefined) {
-    selectedid.value = parseInt(route.params.id)
-    showModal.value = true
+    selectedid.value = parseInt(route.params.id);
+    showDetailModal.value = true;
   }
-})
+});
 </script>
 
 <template>
@@ -63,12 +80,12 @@ onBeforeMount(() => {
 
   <!-- Content -->
 
-  <!-- Table -->
   <div class="flex flex-col">
     <!-- Add button -->
-    <div class="flex justify-end mt-5 mx-auto">
+    <div class="flex justify-end mt-5 mx-auto right-1">
       <button class="btn btn-square btn-outline w-16">+ ADD</button>
     </div>
+    <!-- Table -->
     <table
       class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
     >
@@ -122,8 +139,12 @@ onBeforeMount(() => {
                 tabindex="0"
                 class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
               >
-                <li><a>Edit</a></li>
-                <li><a>Delete</a></li>
+                <li>
+                  <a @click="showAddEditModal = true">Edit</a>
+                </li>
+                <li>
+                  <a @click="openDeleteModal(task.title, task.id)">Delete</a>
+                </li>
               </ul>
             </div>
           </td>
@@ -133,18 +154,59 @@ onBeforeMount(() => {
     <!-- <Tasktable/> -->
   </div>
   <!-- Modal -->
-  <Teleport to="#modal">
+  <!-- DetailsModal -->
+  <Teleport id="details" to="#modal">
     <div
-      v-if="showModal"
+      v-if="showDetailModal"
       class="absolute left-0 right-0 z-50 top-20 m-auto w-1/2 h-2/3 bg-slate-50 rounded-lg"
     >
       <Taskdetail
         :taskId="parseInt(selectedid)"
-        @closeModal="showModal = false"
+        @closeModal="showDetailModal = false"
       />
     </div>
   </Teleport>
-  <Teleport to="#modal"> </Teleport>
+  <!-- EditModal -->
+  <Teleport id="addEdit" to="#modal">
+    <div
+      v-if="showAddEditModal"
+      class="absolute left-0 right-0 z-50 top-20 m-auto w-1/2 h-2/3 bg-slate-50 rounded-lg"
+    >
+      <AddEditModal
+        :taskId="parseInt(selectedid)"
+        @closeModal="showAddEditModal = false"
+      />
+    </div>
+  </Teleport>
+
+  <!-- DeleteModal -->
+  <Teleport id="delete" to="#modal">
+    <div
+      v-if="showDeleteModal"
+      class="absolute left-0 right-0 z-50 top-44 m-auto w-1/3 h-auto bg-slate-50 rounded-lg p-2 shadow-xl text-ellipsis"
+    >
+      <h1 class="m-2 text-2xl font-bold">Delete</h1>
+      <hr />
+      <h1 class="font-semibold text-xl m-2">
+        Do you want to delete the task "{{ deleteTaskTitle }}"
+      </h1>
+      <hr />
+      <div class="flex justify-end m-2 mt-4">
+        <button
+          @click="deleteThisTask()"
+          class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-green-500 hover:bg-slate-200 text-slate-200 hover:text-green-500 hover:outline hover:outline-green-500"
+        >
+          Ok
+        </button>
+        <button
+          @click="showDeleteModal = false"
+          class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-rose-500 hover:bg-slate-200 text-slate-200 hover:text-rose-500 hover:outline hover:outline-rose-500"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <style scoped></style>

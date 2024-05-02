@@ -1,7 +1,6 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { getTaskById } from "../lib/fetchUtils.js";
-import { useRoute } from "vue-router";
 import router from "@/router";
 defineEmits(["closeModal"]);
 const props = defineProps({
@@ -43,11 +42,16 @@ async function fetchData(id) {
       class="itbkk-title m-2 text-2xl font-bold text-wrap break-all"
       v-if="loading === false && error === null"
     >
-      {{ taskDetail.title }}
+      {{ taskDetail.id === undefined ? "New Task" : "Edit Task" }}
     </h1>
     <hr />
     <div class="flex my-5 mx-auto" v-if="loading === false && error === null">
       <div class="flex flex-col">
+        <!-- <div class="flex flex-col"> -->
+        <h1 class="font-bold">Title</h1>
+        <textarea
+          class="p-2 w-96 h-9 textarea textarea-bordered bg-slate-200 focus:bg-slate-300"
+        ></textarea>
         <h1 class="font-bold">Description</h1>
         <textarea
           class="itbkk-description p-2 w-96 h-96 textarea textarea-bordered bg-slate-200 focus:bg-slate-300"
@@ -81,38 +85,39 @@ async function fetchData(id) {
                 : taskDetail.assignees
             }}</textarea
           >
-        </div>
-        <div class="flex flex-col m-2">
-          <h1 class="font-bold">Status</h1>
-          <select
-            class="itbkk-status select select-bordered w-full max-w-xs bg-slate-200 focus:bg-slate-300 shadow-lg"
-          >
-            <option disabled selected>status</option>
-            <option>To Do</option>
-            <option>In Progress</option>
-            <option>Success</option>
-          </select>
-        </div>
-        <div class="mt-2 text-sm text-black">
-          <div
-            class="flex flex-row justify-around border-solid border-slate-400"
-          >
-            <h1 class="font-bold">TimeZone</h1>
-            <h1 class="itbkk-timezone font-semibold">
-              {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
-            </h1>
+          <!-- </div> -->
+          <div class="flex flex-col m-2">
+            <h1 class="font-bold">Status</h1>
+            <select
+              class="itbkk-status select select-bordered w-full max-w-xs bg-slate-200 focus:bg-slate-300 shadow-lg"
+            >
+              <option disabled selected>status</option>
+              <option>To Do</option>
+              <option>In Progress</option>
+              <option>Success</option>
+            </select>
           </div>
-          <div class="flex flex-row justify-around">
-            <h1 class="font-bold">Created On</h1>
-            <h1 class="itbkk-created-on font-semibold">
-              {{ taskDetail.createdOn }}
-            </h1>
-          </div>
-          <div class="flex flex-row justify-around">
-            <h1 class="font-bold">Updated On</h1>
-            <h1 class="itbkk-updated-on font-semibold">
-              {{ taskDetail.updatedOn }}
-            </h1>
+          <div class="mt-2 text-sm text-black">
+            <div
+              class="flex flex-row justify-around border-solid border-slate-400"
+            >
+              <h1 class="font-bold">TimeZone</h1>
+              <h1 class="itbkk-timezone font-semibold">
+                {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
+              </h1>
+            </div>
+            <div class="flex flex-row justify-around">
+              <h1 class="font-bold">Created On</h1>
+              <h1 class="itbkk-created-on font-semibold">
+                {{ taskDetail.createdOn }}
+              </h1>
+            </div>
+            <div class="flex flex-row justify-around">
+              <h1 class="font-bold">Updated On</h1>
+              <h1 class="itbkk-updated-on font-semibold">
+                {{ taskDetail.updatedOn }}
+              </h1>
+            </div>
           </div>
         </div>
       </div>
@@ -127,7 +132,6 @@ async function fetchData(id) {
     <hr />
     <div class="flex justify-end m-2 mt-4">
       <button
-        @click="router.push(`/task`), $emit('closeModal', false)"
         class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-green-500 hover:bg-slate-200 text-slate-200 hover:text-green-500 hover:outline hover:outline-green-500"
       >
         Ok
