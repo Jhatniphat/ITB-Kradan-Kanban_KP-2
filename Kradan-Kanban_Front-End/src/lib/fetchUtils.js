@@ -12,7 +12,7 @@ export async function getAllTasks() {
     }) //GET Method
     const items = await res.json()
     return items
-  } catch (error) { }
+  } catch (error) {}
 }
 
 export async function getTaskById(id) {
@@ -36,14 +36,14 @@ export async function getTaskById(id) {
 
 export async function addTask(newTask) {
   let res, item
-  console.log(JSON.stringify({...newTask}))
+  console.log(JSON.stringify({ ...newTask }))
   try {
     res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({...newTask})
+      body: JSON.stringify({ ...newTask }),
     })
     if (res.status === 201) {
       item = await res.json()
@@ -56,17 +56,17 @@ export async function addTask(newTask) {
   }
 }
 
-export async function editTask(id , Task) {
-  let res , item
+export async function editTask(id, Task) {
+  let res, item
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}` , {
-      method : "PUT",
-            headers: {
+    res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+      method: "PUT",
+      headers: {
         "Content-Type": "application/json",
       },
-      body : JSON.stringify({...Task})
+      body: JSON.stringify({ ...Task }),
     })
-    if (res.status === 200){
+    if (res.status === 200) {
       item = await res.json()
       return item
     } else {
@@ -78,9 +78,10 @@ export async function editTask(id , Task) {
 }
 
 export async function deleteTask(id) {
-  let res , item
+  let res, item
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`) , { method : "DELETE" }
+    ;(res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`)),
+      { method: "DELETE" }
     if (res.status === 200) {
       item = await res.json()
       return item
@@ -97,7 +98,6 @@ function timeFormater(time) {
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   })
 }
-
 
 // function timeFormater(time) {
 //   const options = {
