@@ -53,7 +53,8 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTaskById(@PathVariable int id) {
-        service.deleteTask(id);
+    public ResponseEntity<SimpleTaskDTO> deleteTaskById(@PathVariable int id) {
+        SimpleTaskDTO simpleTaskDTO = modelMapper.map(service.deleteTask(id), SimpleTaskDTO.class);
+        return ResponseEntity.ok().body(simpleTaskDTO);
     }
 }
