@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Default;
 
 import java.time.LocalDateTime;
 
@@ -18,25 +19,25 @@ public class TaskEntity {
     @Id
     @Column(name = "id")
     private int id;
-    @Basic
+    
     @Column(name = "title")
     private String title;
-    @Basic
+    
     @Column(name = "description")
     private String description;
-    @Basic
+    
     @Column(name = "assignees")
     private String assignees;
-    @Basic
+
     @Column(name = "status")
-    private Object status;
-    @Basic
+    private Object status = "No Status";
+
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
-    @Column(name = "createdOn")
+    @Column(name = "createdOn", insertable = false, updatable = false)
     private LocalDateTime createdOn;
-    @Basic
+    
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
-    @Column(name = "updatedOn")
+    @Column(name = "updatedOn", insertable = false, updatable = false)
     private LocalDateTime updatedOn;
 
 }

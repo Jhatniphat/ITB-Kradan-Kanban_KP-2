@@ -1,16 +1,18 @@
 package com.example.kradankanban_backend.controllers;
 
-import com.example.kradankanban_backend.dtos.TaskDTO;
+import com.example.kradankanban_backend.dtos.DetailTaskDTO;
+import com.example.kradankanban_backend.dtos.SimpleTaskDTO;
 import com.example.kradankanban_backend.entities.TaskEntity;
 import com.example.kradankanban_backend.services.TaskService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -21,20 +23,37 @@ public class TaskController {
     private TaskService service;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ServerProperties serverProperties;
 
-    //    @GetMapping("")
-//    public List<TaskEntity> findAll(){
-//        return service.findAll();
-//    }
     @GetMapping("") //DTO
     public ResponseEntity<Object> getAllTasks() {
         List<TaskEntity> tasks = service.findAll();
-        List<TaskDTO> taskDTOS = tasks.stream().map(p -> modelMapper.map(p, TaskDTO.class)).collect(Collectors.toList());
-        return ResponseEntity.ok(taskDTOS);
+        List<SimpleTaskDTO> simpleTaskDTOS = tasks.stream().map(p -> modelMapper.map(p, SimpleTaskDTO.class)).collect(Collectors.toList());
+        return ResponseEntity.ok(simpleTaskDTOS);
     }
 
     @GetMapping("/{id}") //Get Task By ID
     public TaskEntity getTaskById(@PathVariable int id) {
         return service.findById(id);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<Object> addTask(@RequestBody TaskEntity task) {
+        TaskEntity createdTask = service.addTask(task);
+        DetailTaskDTO createdTaskDTO = modelMapper.map(createdTask, DetailTaskDTO.class);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTaskDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> editTask(@PathVariable int id, @RequestBody TaskEntity task) {
+        TaskEntity updatedTask = service.editTask(id, task);
+        DetailTaskDTO updatedTaskDTO = modelMapper.map(updatedTask, DetailTaskDTO.class);
+        return ResponseEntity.ok(updatedTaskDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTaskById(@PathVariable int id) {
+        service.deleteTask(id);
     }
 }
