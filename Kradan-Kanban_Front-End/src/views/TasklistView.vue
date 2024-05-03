@@ -10,7 +10,8 @@ import {
   deleteTask,
 } from "../lib/fetchUtils.js";
 import router from "@/router";
-import AddEditModal from "../components/AddEditModal.vue";
+import AddEdit from "../components/AddEdit.vue";
+import Modal from "../components/Modal.vue";
 
 const showDetailModal = ref(false);
 const showAddEditModal = ref(false);
@@ -26,7 +27,6 @@ const deleteTaskTitle = ref("");
 const deleteThisTask = async () => {
   await deleteTask(selectedid.value);
   showDeleteModal.value = false;
-  // Reload the page
   window.location.reload();
 };
 
@@ -36,15 +36,26 @@ const openDeleteModal = (taskTitle, id) => {
   showDeleteModal.value = true;
 };
 
+const openAddEdit = (id) => {
+  selectedid.value = id;
+  showAddEditModal = true;
+  showDetailModal.value = false;
+};
+
 const openModal = (id) => {
   selectedid.value = id;
   showDetailModal.value = true;
 };
 
-async function fetchData(id) {
+async function fetchData(id, path) {
+  const editPath = `/task/${id}/edit`;
+  if (path === editPath) {
+    openAddEdit(id);
+  }
   if (id !== undefined) {
     openModal(id);
   }
+
   error.value = allTasks.value = null;
   loading.value = true;
   try {
@@ -55,6 +66,8 @@ async function fetchData(id) {
   } finally {
     loading.value = false;
   }
+  console.log("Path:", path);
+  console.log("Edit Path:", editPath);
 }
 
 watch(() => route.params.id, fetchData, { immediate: true });
@@ -83,7 +96,12 @@ onBeforeMount(() => {
   <div class="flex flex-col">
     <!-- Add button -->
     <div class="flex justify-end mt-5 mx-auto right-1">
-      <button class="btn btn-square btn-outline w-16">+ ADD</button>
+      <button
+        class="btn btn-square btn-outline w-16"
+        @click="showAddEditModal = true"
+      >
+        + ADD
+      </button>
     </div>
     <!-- Table -->
     <table
@@ -140,7 +158,7 @@ onBeforeMount(() => {
                 class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
               >
                 <li>
-                  <a @click="showAddEditModal = true">Edit</a>
+                  <a @click="router.push(`/task/${task.id}`)">Edit</a>
                 </li>
                 <li>
                   <a @click="openDeleteModal(task.title, task.id)">Delete</a>
@@ -153,60 +171,45 @@ onBeforeMount(() => {
     </table>
     <!-- <Tasktable/> -->
   </div>
+
   <!-- Modal -->
   <!-- DetailsModal -->
-  <Teleport id="details" to="#modal">
-    <div
-      v-if="showDetailModal"
-      class="absolute left-0 right-0 z-50 top-20 m-auto w-1/2 h-2/3 bg-slate-50 rounded-lg"
-    >
-      <Taskdetail
-        :taskId="parseInt(selectedid)"
-        @closeModal="showDetailModal = false"
-      />
-    </div>
-  </Teleport>
-  <!-- EditModal -->
-  <Teleport id="addEdit" to="#modal">
-    <div
-      v-if="showAddEditModal"
-      class="absolute left-0 right-0 z-50 top-20 m-auto w-1/2 h-2/3 bg-slate-50 rounded-lg"
-    >
-      <AddEditModal
-        :taskId="parseInt(selectedid)"
-        @closeModal="showAddEditModal = false"
-      />
-    </div>
-  </Teleport>
+  <Modal :show-modal="showDetailModal">
+    <Taskdetail
+      :taskId="parseInt(selectedid)"
+      @closeModal="showDetailModal = false"
+  /></Modal>
 
+  <!-- EditModal -->
+  <Modal :show-modal="showAddEditModal">
+    <AddEdit
+      :taskId="parseInt(selectedid)"
+      @closeModal="showAddEditModal = false"
+    />
+  </Modal>
   <!-- DeleteModal -->
-  <Teleport id="delete" to="#modal">
-    <div
-      v-if="showDeleteModal"
-      class="absolute left-0 right-0 z-50 top-44 m-auto w-1/3 h-auto bg-slate-50 rounded-lg p-2 shadow-xl text-ellipsis"
-    >
-      <h1 class="m-2 text-2xl font-bold">Delete</h1>
-      <hr />
-      <h1 class="font-semibold text-xl m-2">
-        Do you want to delete the task "{{ deleteTaskTitle }}"
-      </h1>
-      <hr />
-      <div class="flex justify-end m-2 mt-4">
-        <button
-          @click="deleteThisTask()"
-          class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-green-500 hover:bg-slate-200 text-slate-200 hover:text-green-500 hover:outline hover:outline-green-500"
-        >
-          Ok
-        </button>
-        <button
-          @click="showDeleteModal = false"
-          class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-rose-500 hover:bg-slate-200 text-slate-200 hover:text-rose-500 hover:outline hover:outline-rose-500"
-        >
-          Close
-        </button>
-      </div>
+  <Modal :showModal="showDeleteModal">
+    <h1 class="m-2 text-2xl font-bold">Delete</h1>
+    <hr />
+    <h1 class="font-semibold text-xl m-2">
+      Do you want to delete the task "{{ deleteTaskTitle }}"
+    </h1>
+    <hr />
+    <div class="flex justify-end m-2 mt-4">
+      <button
+        @click="deleteThisTask()"
+        class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-green-500 hover:bg-slate-200 text-slate-200 hover:text-green-500 hover:outline hover:outline-green-500"
+      >
+        Ok
+      </button>
+      <button
+        @click="showDeleteModal = false"
+        class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-rose-500 hover:bg-slate-200 text-slate-200 hover:text-rose-500 hover:outline hover:outline-rose-500"
+      >
+        Close
+      </button>
     </div>
-  </Teleport>
+  </Modal>
 </template>
 
 <style scoped></style>

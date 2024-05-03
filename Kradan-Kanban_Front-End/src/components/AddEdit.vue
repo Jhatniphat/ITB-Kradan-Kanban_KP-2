@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getTaskById } from "../lib/fetchUtils.js";
+import { getTaskById, editTask } from "../lib/fetchUtils.js";
 import router from "@/router";
 defineEmits(["closeModal"]);
 const props = defineProps({
@@ -31,10 +31,20 @@ async function fetchData(id) {
     loading.value = false;
   }
 }
+async function saveChanges(id, editedTask) {
+  try {
+    const updatedTask = await editTask(id, editedTask);
+    if (updatedTask !== 404) {
+      window.location.reload();
+    } else {
+    }
+  } catch (error) {}
+  console.log(editTask);
+}
 </script>
 
 <template>
-  <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg">
+  <div class="flex flex-col p-2 text-base bg-base-50 rounded-lg">
     <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
       Loading Data For TaskId = {{ props.id }}
     </h1>
@@ -50,27 +60,25 @@ async function fetchData(id) {
         <!-- <div class="flex flex-col"> -->
         <h1 class="font-bold">Title</h1>
         <textarea
-          class="p-2 w-96 h-9 textarea textarea-bordered bg-slate-200 focus:bg-slate-300"
+          class="p-2 w-96 h-9 textarea textarea-bordered bg-base-200 focus:bg-base-300"
+          v-model.trim="taskDetail.title"
         ></textarea>
         <h1 class="font-bold">Description</h1>
         <textarea
-          class="itbkk-description p-2 w-96 h-96 textarea textarea-bordered bg-slate-200 focus:bg-slate-300"
+          v-model.trim="taskDetail.description"
+          class="itbkk-description p-2 w-96 h-96 textarea textarea-bordered bg-base-200 focus:bg-base-300"
           :style="{
             fontStyle: taskDetail.description ? 'normal' : 'italic',
           }"
           :class="taskDetail.description === '' ? 'italic text-gray-600' : ''"
-          >{{
-            taskDetail.description == "" || taskDetail.description === null
-              ? "No Description Provided"
-              : taskDetail.description
-          }}</textarea
-        >
+        ></textarea>
       </div>
       <div class="flex flex-col m-2 mt-0">
         <div class="flex flex-col m-1">
           <h1 class="font-bold">Assignees</h1>
           <textarea
-            class="itbkk-assignees textarea textarea-bordered bg-slate-200 focus:bg-slate-300"
+            class="itbkk-assignees textarea textarea-bordered bg-base-200 focus:bg-base-300"
+            v-model.trim="taskDetail.assignees"
             :style="{
               fontStyle: taskDetail.assignees ? 'normal' : 'italic',
             }"
@@ -79,30 +87,27 @@ async function fetchData(id) {
                 ? 'italic text-gray-600'
                 : ''
             "
-            >{{
-              taskDetail.assignees == "" || taskDetail.assignees === null
-                ? "Unassigned"
-                : taskDetail.assignees
-            }}</textarea
-          >
+          ></textarea>
           <!-- </div> -->
           <div class="flex flex-col m-2">
             <h1 class="font-bold">Status</h1>
             <select
-              class="itbkk-status select select-bordered w-full max-w-xs bg-slate-200 focus:bg-slate-300 shadow-lg"
+              class="itbkk-status select select-bordered w-full max-w-xs bg-base-200 focus:bg-base-300 shadow-lg"
+              v-model="taskDetail.status"
             >
-              <option disabled selected>status</option>
-              <option>To Do</option>
-              <option>In Progress</option>
-              <option>Success</option>
+              <option disabled selected>Status</option>
+              <option value="No Status">No Status</option>
+              <option value="To Do">To Do</option>
+              <option value="Doing">Doing</option>
+              <option value="Done">Done</option>
             </select>
           </div>
-          <div class="mt-2 text-sm text-black">
+          <div class="mt-2 text-xs">
             <div
               class="flex flex-row justify-around border-solid border-slate-400"
             >
               <h1 class="font-bold">TimeZone</h1>
-              <h1 class="itbkk-timezone font-semibold">
+              <h1 class="itbkk-timezone font-semibold justify-end">
                 {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
               </h1>
             </div>
@@ -132,6 +137,7 @@ async function fetchData(id) {
     <hr />
     <div class="flex justify-end m-2 mt-4">
       <button
+        @click="saveChanges(taskDetail.id, taskDetail.value)"
         class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-green-500 hover:bg-slate-200 text-slate-200 hover:text-green-500 hover:outline hover:outline-green-500"
       >
         Ok

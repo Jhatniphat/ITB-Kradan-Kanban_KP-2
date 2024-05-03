@@ -78,12 +78,12 @@ export async function editTask(id, Task) {
 }
 
 export async function deleteTask(id) {
-  let res, item;
   try {
-    (res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`)),
-      { method: "DELETE" };
-    if (res.status === 200) {
-      item = await res.json();
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+      method: "DELETE",
+    });
+    if (res.ok) {
+      const item = await res.json();
       return item;
     } else {
       return res.status;
@@ -92,6 +92,22 @@ export async function deleteTask(id) {
     return error;
   }
 }
+
+// export async function deleteTask(id) {
+//   let res, item;
+//   try {
+//     (res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`)),
+//       { method: "DELETE" };
+//     if (res.status === 200) {
+//       item = await res.json();
+//       return item;
+//     } else {
+//       return res.status;
+//     }
+//   } catch (error) {
+//     return error;
+//   }
+// }
 
 function timeFormater(time) {
   return new Date(time).toLocaleString("en-GB", {

@@ -85,12 +85,14 @@ async function fetchData(id) {
         <div class="flex flex-col m-2">
           <h1 class="font-bold">Status</h1>
           <select
-            class="itbkk-status select select-bordered w-full max-w-xs bg-slate-200 focus:bg-slate-300 shadow-lg"
+            class="itbkk-status select select-bordered w-full max-w-xs bg-base-200 focus:bg-base-300 shadow-lg"
+            v-model="taskDetail.status"
           >
-            <option disabled selected>status</option>
-            <option>To Do</option>
-            <option>In Progress</option>
-            <option>Success</option>
+            <option disabled selected>Status</option>
+            <option value="No Status">No Status</option>
+            <option value="To Do">To Do</option>
+            <option value="Doing">Doing</option>
+            <option value="Done">Done</option>
           </select>
         </div>
         <div class="mt-2 text-sm text-black">
