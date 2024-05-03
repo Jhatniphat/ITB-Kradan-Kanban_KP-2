@@ -158,7 +158,7 @@ onBeforeMount(() => {
                 class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
               >
                 <li>
-                  <a @click="router.push(`/task/${task.id}`)">Edit</a>
+                  <a @click="showAddEditModal = true">Edit</a>
                 </li>
                 <li>
                   <a @click="openDeleteModal(task.title, task.id)">Delete</a>
