@@ -100,7 +100,7 @@ onBeforeMount(() => {
 
 <template>
   <!-- NavBar -->
-  <div class="navbar bg-base-300 sticky top-0">
+  <div class="navbar bg-base-300 sticky top-0 z-40">
     <div class="navbar-start p-4">
       <div class="flex flex-col text-center ml-4 italic">
         <h1 class="text-xl font-bold">ITB-Kradan-Kanban</h1>
