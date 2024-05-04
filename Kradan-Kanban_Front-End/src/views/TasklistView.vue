@@ -214,20 +214,20 @@ onBeforeMount(() => {
       <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
         <h1 class="m-2 text-2xl font-bold">Delete</h1>
         <hr />
-        <h1 class="font-semibold text-xl m-2">
+        <h1 class="itbkk-message font-semibold text-xl m-2">
           Do you want to delete the task "{{ deleteTaskTitle }}"
         </h1>
         <hr />
         <div class="flex flex-row-reverse gap-4 mt-5">
           <button
             @click="showDeleteModal = false"
-            class="itbkk-button btn btn-outline btn-error basis-1/6"
+            class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
           >
             Close
           </button>
           <button
             @click="deleteThisTask()"
-            class="itbkk-button btn btn-outline btn-success basis-1/6"
+            class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
           >
             {{ loading ? "" : "Okay" }}
             <span
@@ -239,6 +239,7 @@ onBeforeMount(() => {
       </div>
     </Modal>
 
+    <!-- Toast -->
     <div class="toast">
       <div
         role="alert"

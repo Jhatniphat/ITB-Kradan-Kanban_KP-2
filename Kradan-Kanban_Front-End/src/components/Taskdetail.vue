@@ -87,9 +87,15 @@ async function fetchData(id) {
 async function saveTask() {
   loading.value = true;
   try {
+    delete taskDetail.value.id;
+    delete taskDetail.value.createdOn;
+    delete taskDetail.value.updatedOn;
     const updatedTask = await editTask(props.taskId, taskDetail.value);
     taskDetail.value = updatedTask;
     editMode.value = false;
+    router.push("/task");
+    window.location.reload();
+    $emit("closeModal", false);
   } catch (error) {
   } finally {
     loading.value = false;
@@ -226,7 +232,7 @@ async function saveTask() {
     <div class="flex flex-row-reverse gap-4 mt-5">
       <!-- Cancel button -->
       <button
-        class="btn btn-outline btn-error basis-1/6"
+        class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
         @click="router.push(`/task`), $emit('closeModal', false)"
       >
         Cancel
@@ -242,7 +248,7 @@ async function saveTask() {
       <!-- Save changes button -->
       <button
         v-if="editMode"
-        class="btn btn-outline btn-success basis-1/6"
+        class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
         :disabled="!canSave"
         @click="saveTask"
       >
