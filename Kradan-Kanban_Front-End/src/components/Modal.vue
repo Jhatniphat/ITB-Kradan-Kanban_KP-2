@@ -7,7 +7,7 @@ defineProps(["showModal"]);
     <Teleport id="delete" to="#modal">
       <div
         v-if="showModal"
-        class="absolute left-0 right-0 z-50 top-44 m-auto w-1/3 h-auto bg-base-200 rounded-lg p-2 shadow-xl text-ellipsis text-base border-2 border-slate-500"
+        class="absolute left-0 right-0 z-50 top-20 m-auto w-1/2 h-2/3 rounded-lg text-ellipsis text-base"
       >
         <slot></slot>
       </div>

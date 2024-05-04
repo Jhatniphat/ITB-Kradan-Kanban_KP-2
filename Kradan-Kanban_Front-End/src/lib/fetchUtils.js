@@ -47,6 +47,7 @@ export async function addTask(newTask) {
     });
     if (res.status === 201) {
       item = await res.json();
+      console.log(res.status);
       return item;
     } else {
       return res.status;
@@ -56,24 +57,45 @@ export async function addTask(newTask) {
   }
 }
 
+// export async function editTask(id, Task) {
+//   let res, item;
+//   try {
+//     res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+//       method: "PUT",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ ...Task }),
+//     });
+//     if (res.status === 200) {
+//       item = await res.json();
+//       return item;
+//     } else {
+//       return res.status;
+//     }
+//   } catch (error) {
+//     return error;
+//   }
+// }
+
 export async function editTask(id, Task) {
-  let res, item;
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...Task }),
+      body: JSON.stringify(Task),
     });
-    if (res.status === 200) {
-      item = await res.json();
-      return item;
+
+    if (res.ok) {
+      const updatedTask = await res.json();
+      return updatedTask;
     } else {
-      return res.status;
+      throw new Error(`Failed to update task: ${res.status}`);
     }
   } catch (error) {
-    return error;
+    throw new Error(`Error updating task: ${error.message}`);
   }
 }
 
@@ -84,6 +106,7 @@ export async function deleteTask(id) {
     });
     if (res.ok) {
       const item = await res.json();
+      console.log(res.status);
       return item;
     } else {
       return res.status;
