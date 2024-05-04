@@ -73,7 +73,7 @@ function sendCloseModal() {
         v-model="taskData.title"
         type="text"
         placeholder="Type here"
-        class="itbkk-title input input-bordered w-full"
+        class="itbkk-title input input-bordered w-full bg-white"
       />
       <div class="label">
         <!-- ? Error Text -->
@@ -92,7 +92,7 @@ function sendCloseModal() {
         </div>
         <textarea
           v-model="taskData.description"
-          class="itbkk-description textarea textarea-bordered h-72"
+          class="itbkk-description textarea textarea-bordered h-72 bg-white"
           placeholder="Bio"
         ></textarea>
         <div class="label">
@@ -115,7 +115,7 @@ function sendCloseModal() {
           </div>
           <textarea
             v-model="taskData.assignees"
-            class="itbkk-assignees textarea textarea-bordered h-24"
+            class="itbkk-assignees textarea textarea-bordered h-24 bg-white"
             placeholder="Bio"
           ></textarea>
           <div class="label">
@@ -134,7 +134,7 @@ function sendCloseModal() {
             <span class="label-text">Status</span>
           </div>
           <select
-            class="itbkk-status select select-bordered"
+            class="itbkk-status select select-bordered bg-white"
             v-model="taskData.status"
           >
             <option value="No Status" selected>No Status</option>
