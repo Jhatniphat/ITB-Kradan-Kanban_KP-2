@@ -1,18 +1,15 @@
 package com.example.kradankanban_backend.services;
 
-import com.example.kradankanban_backend.dtos.DetailTaskDTO;
 import com.example.kradankanban_backend.dtos.SimpleTaskDTO;
 import com.example.kradankanban_backend.entities.TaskEntity;
 import com.example.kradankanban_backend.exceptions.ItemNotFoundException;
+import com.example.kradankanban_backend.exceptions.TaskIdNotFound;
 import com.example.kradankanban_backend.repositories.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
@@ -28,7 +25,7 @@ public class TaskService {
     }
 
     public TaskEntity findById(int id) {
-        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Task ID "+ id +" does not exist !!!"){
+        return repository.findById(id).orElseThrow(() -> new TaskIdNotFound("Task ID "+ id +" does not exist !!!"){
         });
     }
 
@@ -57,9 +54,9 @@ public class TaskService {
     @Transactional
     public SimpleTaskDTO deleteTask(int id) {
         TaskEntity task = repository.findById(id).orElseThrow(() -> new ItemNotFoundException("NOT FOUND"));
-        SimpleTaskDTO detailTaskDTO = modelMapper.map(task, SimpleTaskDTO.class);
+        SimpleTaskDTO simpleTaskDTO = modelMapper.map(task, SimpleTaskDTO.class);
         repository.delete(task);
-        return detailTaskDTO;
+        return simpleTaskDTO;
     }
 
     @Transactional
