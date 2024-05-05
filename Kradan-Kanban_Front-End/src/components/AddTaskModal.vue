@@ -73,7 +73,7 @@ function sendCloseModal() {
         v-model="taskData.title"
         type="text"
         placeholder="Type here"
-        class="input input-bordered w-full"
+        class="itbkk-title input input-bordered w-full bg-white"
       />
       <div class="label">
         <!-- ? Error Text -->
@@ -92,7 +92,7 @@ function sendCloseModal() {
         </div>
         <textarea
           v-model="taskData.description"
-          class="textarea textarea-bordered h-72"
+          class="itbkk-description textarea textarea-bordered h-72 bg-white"
           placeholder="Bio"
         ></textarea>
         <div class="label">
@@ -115,7 +115,7 @@ function sendCloseModal() {
           </div>
           <textarea
             v-model="taskData.assignees"
-            class="textarea textarea-bordered h-24"
+            class="itbkk-assignees textarea textarea-bordered h-24 bg-white"
             placeholder="Bio"
           ></textarea>
           <div class="label">
@@ -133,7 +133,10 @@ function sendCloseModal() {
           <div class="label">
             <span class="label-text">Status</span>
           </div>
-          <select class="select select-bordered" v-model="taskData.status">
+          <select
+            class="itbkk-status select select-bordered bg-white"
+            v-model="taskData.status"
+          >
             <option value="No Status" selected>No Status</option>
             <option v-for="status in statusList" :value="status">
               {{ status }}
@@ -145,13 +148,13 @@ function sendCloseModal() {
     <hr />
     <div class="flex flex-row-reverse gap-4 mt-5">
       <button
-        class="btn btn-outline btn-error basis-1/6"
+        class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
         @click="sendCloseModal()"
       >
         Cancel
       </button>
       <button
-        class="btn btn-outline btn-success basis-1/6"
+        class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
         :disabled="!canSave"
         @click="fetchData()"
       >

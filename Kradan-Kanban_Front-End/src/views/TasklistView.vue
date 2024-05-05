@@ -101,20 +101,20 @@ onBeforeMount(() => {
         <h1 class="text-sm">By KP-2</h1>
       </div>
     </div>
+    <!-- Add button -->
+    <div class="navbar-end">
+      <button
+        class="btn btn-square btn-outline w-16"
+        @click="showAddModal = true"
+      >
+        + ADD
+      </button>
+    </div>
   </div>
 
   <!-- Content -->
   <div class="opacity">
     <div class="flex flex-col">
-      <!-- Add button -->
-      <div class="flex justify-end mt-5 mx-auto right-1">
-        <button
-          class="btn btn-square btn-outline w-16"
-          @click="showAddModal = true"
-        >
-          + ADD
-        </button>
-      </div>
       <!-- Table -->
       <table
         class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
@@ -193,7 +193,6 @@ onBeforeMount(() => {
           </tr>
         </tbody>
       </table>
-      <!-- <Tasktable/> -->
     </div>
 
     <!-- Modal -->
@@ -212,24 +211,27 @@ onBeforeMount(() => {
     <!-- DeleteModal -->
     <Modal :showModal="showDeleteModal">
       <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
-        <h1 class="m-2 text-2xl font-bold">Delete</h1>
+        <h1 class="m-2 pb-4 text-2xl font-bold">
+          DELETE: {{ deleteTaskTitle }}
+        </h1>
         <hr />
-        <h1 class="font-semibold text-xl m-2">
-          Do you want to delete the task "{{ deleteTaskTitle }}"
+        <h1 class="itbkk-message font-semibold text-xl p-8">
+          <!-- Do you want to delete the task "{{ deleteTaskTitle }}" -->
+          ARE YOU SURE TO DELETE THIS TASK ?
         </h1>
         <hr />
         <div class="flex flex-row-reverse gap-4 mt-5">
           <button
             @click="showDeleteModal = false"
-            class="itbkk-button btn btn-outline btn-error basis-1/6"
+            class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
           >
             Close
           </button>
           <button
             @click="deleteThisTask()"
-            class="itbkk-button btn btn-outline btn-success basis-1/6"
+            class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
           >
-            {{ loading ? "" : "Okay" }}
+            {{ loading ? "" : "Confirm" }}
             <span
               class="loading loading-spinner text-success"
               v-if="loading"
@@ -239,6 +241,7 @@ onBeforeMount(() => {
       </div>
     </Modal>
 
+    <!-- Toast -->
     <div class="toast">
       <div
         role="alert"
