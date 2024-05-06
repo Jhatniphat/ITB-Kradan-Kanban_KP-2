@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Default;
 
 import java.time.LocalDateTime;
+import java.util.TimeZone;
 
 
 @Getter
@@ -30,7 +31,7 @@ public class TaskEntity {
     private String assignees;
 
     @Column(name = "status")
-    private Object status = "No Status";
+    private Object status = "NO_STATUS";
 
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
     @Column(name = "createdOn", insertable = false, updatable = false)

@@ -1,153 +1,287 @@
 <script setup>
-import { onMounted, ref, watch } from "vue"
-import { getTaskById } from "../lib/fetchUtils.js"
-import { useRoute } from "vue-router"
-import router from "@/router"
-defineEmits(["closeModal"])
+import { ref, watch } from "vue";
+import { getTaskById, editTask } from "../lib/fetchUtils.js";
+
+import router from "@/router";
+
+defineEmits(["closeModal"]);
 const props = defineProps({
   taskId: {
     type: Number,
     require: true,
   },
-})
+});
 
-const loading = ref(false)
-const taskDetail = ref(null)
-const error = ref(null)
+const editMode = ref(false); // Track if component is in edit mode
+const statusList = ["To Do", "Doing", "Done"];
+const canSave = ref(false);
+const loading = ref(false);
+const taskDetail = ref(null);
+const originalTask = ref(null); // Hold a copy of the original task details
+const error = ref(null);
+const Errortext = ref({
+  title: "",
+  description: "",
+  assignees: "",
+});
 
-watch(() => props.taskId, fetchData, { immediate: true })
+watch(() => props.taskId, fetchData, { immediate: true });
+
+watch(
+  taskDetail,
+  (newVal, oldVal) => {
+    if (
+      !loading.value &&
+      JSON.stringify(newVal) !== JSON.stringify(originalTask.value)
+    ) {
+      canSave.value = true; // Enable save button if task details are different
+    } else {
+      canSave.value = false; // Disable save button if task details are unchanged or still loading
+    }
+  },
+  { deep: true }
+);
 
 async function fetchData(id) {
-  error.value = taskDetail.value = null
-  loading.value = true
+  error.value = taskDetail.value = null;
+  loading.value = true;
   try {
+    const originalTaskDetails = await getTaskById(id);
+    originalTask.value = { ...originalTaskDetails }; // Create a copy of the original task details
+    taskDetail.value = { ...originalTaskDetails };
     // replace `getPost` with your data fetching util / API wrapper
-    taskDetail.value = await getTaskById(id)
     if (taskDetail.value == 404) {
-      router.push("/task")
+      router.push("/task");
     }
   } catch (err) {
-    error.value = err.toString()
+    error.value = err.toString();
   } finally {
-    loading.value = false
+    loading.value = false;
+  }
+}
+async function saveTask() {
+  loading.value = true;
+  try {
+    delete taskDetail.value.id;
+    delete taskDetail.value.createdOn;
+    delete taskDetail.value.updatedOn;
+    const updatedTask = await editTask(props.taskId, taskDetail.value);
+    taskDetail.value = updatedTask;
+    editMode.value = false;
+    router.push("/task");
+    window.location.reload();
+    $emit("closeModal", false);
+  } catch (error) {
+  } finally {
+    loading.value = false;
   }
 }
 </script>
 
 <template>
-  <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg">
-    <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
-      Loading Data For TaskId = {{ props.id }}
-    </h1>
-    <h1
-      class="itbkk-title m-2 text-2xl font-bold text-wrap break-all"
+  <!-- Title -->
+  <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
+    <div v-if="editMode">
+      <label class="form-control w-full">
+        <div class="label">
+          <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
+            Loading Data For TaskId = {{ props.taskId }}
+          </h1>
+          <div v-if="loading === false && error === null">
+            <h1 class="m-2 mt-0 text-2xl font-bold text-wrap break-all">
+              Edit task
+            </h1>
+            <hr />
+            <span class="label-text">Title</span>
+          </div>
+          <hr />
+        </div>
+        <input
+          v-model="taskDetail.title"
+          type="text"
+          placeholder="Type here"
+          class="itbkk-title input input-bordered w-full bg-white"
+        />
+        <div class="label">
+          <!-- ? Error Text -->
+          <span
+            v-if="Errortext.title !== ''"
+            class="label-text-alt text-error"
+            >{{ Errortext.title }}</span
+          >
+        </div>
+      </label>
+    </div>
+
+    <div v-if="!editMode">
+      <label class="form-control w-full">
+        <div class="label">
+          <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
+            Loading Data For TaskId = {{ props.taskId }}
+          </h1>
+          <h1
+            class="itbkk-title m-2 text-2xl font-bold text-wrap break-all"
+            v-if="loading === false && error === null"
+          >
+            {{ taskDetail.title }}
+          </h1>
+        </div>
+        <hr />
+        <div class="label">
+          <!-- ? Error Text -->
+          <span
+            v-if="Errortext.title !== ''"
+            class="label-text-alt text-error"
+            >{{ Errortext.title }}</span
+          >
+        </div>
+      </label>
+    </div>
+
+    <!-- * description -->
+    <div
+      class="flex mb-5 mx-auto flex-col w-full"
       v-if="loading === false && error === null"
     >
-      {{ taskDetail.title }}
-    </h1>
-    <hr />
-    <div class="flex my-5 mx-auto" v-if="loading === false && error === null">
-      <div class="flex flex-col">
-        <h1 class="font-bold">Description</h1>
-        <textarea
-          class="itbkk-description p-2 w-96 h-96 textarea textarea-bordered"
-          :style="{
-            fontStyle: taskDetail.description ? 'normal' : 'italic',
-          }"
-          :class="taskDetail.description === '' ? 'italic text-gray-600' : ''"
-          >{{
-            taskDetail.description == '' || taskDetail.description === null
-              ? "No Description Provided"
-              : taskDetail.description
-          }}</textarea
-        >
-        <!-- <p
-          class="itbkk-description m-2 text-wrap break-all"
-          :style="{
-            fontStyle: taskDetail.taskDescription ? 'normal' : 'italic',
-          }"
-        >
-          {{
-            taskDetail.taskDescription === null
-              ? "No Description Provided"
-              : taskDetail.taskDescription
-          }}
-        </p> -->
-      </div>
-      <div class="flex flex-col m-2">
-        <div class="flex flex-col m-1">
-          <h1 class="font-bold">Assignees</h1>
+      <div class="flex flex-row gap-3">
+        <label class="form-control basis-3/4">
+          <div class="label">
+            <!-- ? Head -->
+            <span class="label-text">Description</span>
+          </div>
           <textarea
-            class="itbkk-assignees textarea textarea-bordered"
-            :style="{
-              fontStyle: taskDetail.assignees ? 'normal' : 'italic',
-            }"
-            :class="taskDetail.assignees === '' || taskDetail.assignees === null ? 'italic text-gray-600' : ''"
+            v-model="taskDetail.description"
+            class="itbkk-description textarea textarea-bordered h-72 bg-white"
+            placeholder="No Description Provided"
+            :class="taskDetail.description === '' ? 'italic text-gray-600' : ''"
             >{{
-              taskDetail.assignees == '' || taskDetail.assignees === null
-                ? "Unassigned"
-                : taskDetail.assignees
+              taskDetail.description == "" || taskDetail.description === null
+                ? "No Description Provided"
+                : taskDetail.description
             }}</textarea
           >
-          <!-- <p class="itbkk-assignees m-2 text-wrap break-all">
-            {{ taskDetail.taskAssignees }}
-          </p> -->
-        </div>
-        <div class="flex flex-col m-2">
-          <h1 class="font-bold">Status</h1>
-          <select
-            class="itbkk-status select select-bordered w-full max-w-xs bg-slate-200 focus:bg-slate-300 shadow-lg"
-          >
-            <option disabled selected>status</option>
-            <option>To Do</option>
-            <option>In Progress</option>
-            <option>Success</option>
-          </select>
-        </div>
-        <div class="mt-2 text-sm text-black">
-          <div
-            class="flex flex-row justify-around border-solid border-slate-400"
-          >
-            <h1 class="font-bold">TimeZone</h1>
-            <h1 class="itbkk-timezone font-semibold">
-              {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
-            </h1>
+          <div class="label">
+            <!-- ? Error Text -->
+            <span
+              v-if="Errortext.description !== ''"
+              class="label-text-alt text-error"
+            >
+              {{ Errortext.description }}</span
+            >
           </div>
-          <div class="flex flex-row justify-around">
-            <h1 class="font-bold">Created On</h1>
-            <h1 class="itbkk-created-on font-semibold">
-              {{ taskDetail.createdOn }}
-            </h1>
-          </div>
-          <div class="flex flex-row justify-around">
-            <h1 class="font-bold">Updated On</h1>
-            <h1 class="itbkk-updated-on font-semibold">
-              {{ taskDetail.updatedOn }}
-            </h1>
+        </label>
+
+        <!-- * assignee -->
+        <div class="basis-1/4">
+          <label class="form-control">
+            <div class="label">
+              <!-- ? Head -->
+              <span class="label-text">Assignees</span>
+            </div>
+            <textarea
+              v-model="taskDetail.assignees"
+              class="itbkk-assignees textarea textarea-bordered h-24 bg-white"
+              placeholder="Unassigned"
+              :class="
+                taskDetail.assignees === '' || taskDetail.assignees === null
+                  ? 'italic text-gray-600'
+                  : ''
+              "
+              >{{
+                taskDetail.assignees == "" || taskDetail.assignees === null
+                  ? "Unassigned"
+                  : taskDetail.assignees
+              }}</textarea
+            >
+            <div class="label">
+              <!-- ? Error Text -->
+              <span
+                v-if="Errortext.assignees !== ''"
+                class="label-text-alt text-error"
+              >
+                {{ Errortext.assignees }}</span
+              >
+            </div>
+          </label>
+
+          <!-- * status -->
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Status</span>
+            </div>
+            <select
+              class="itbkk-status select select-bordered bg-white"
+              v-model="taskDetail.status"
+            >
+              <option value="No Status" selected>No Status</option>
+              <option v-for="status in statusList" :value="status">
+                {{ status }}
+              </option>
+            </select>
+          </label>
+
+          <div class="mt-2 text-sm text-black">
+            <div
+              class="flex flex-row justify-around border-solid border-slate-400"
+            >
+              <h1 class="font-bold">TimeZone</h1>
+              <h1 class="itbkk-timezone font-semibold">
+                {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
+              </h1>
+            </div>
+            <div class="flex flex-row justify-around">
+              <h1 class="font-bold">Created On</h1>
+              <h1 class="itbkk-created-on font-semibold">
+                {{ taskDetail.createdOn }}
+              </h1>
+            </div>
+            <div class="flex flex-row justify-around">
+              <h1 class="font-bold">Updated On</h1>
+              <h1 class="itbkk-updated-on font-semibold">
+                {{ taskDetail.updatedOn }}
+              </h1>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="flex my-5 mx-auto" v-if="error !== null">
-      <div>
-        <h1>{{ error }}</h1>
+      <div class="flex my-5 mx-auto" v-if="error !== null">
+        <div>
+          <h1>{{ error }}</h1>
+        </div>
       </div>
-    </div>
 
-    <hr />
-    <div class="flex justify-end m-2 mt-4">
-      <button
-        class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-green-500 hover:bg-slate-200 text-slate-200 hover:text-green-500 hover:outline hover:outline-green-500"
-      >
-        Ok
-      </button>
-      <button
-        @click="router.push(`/task`), $emit('closeModal', false)"
-        class="itbkk-button m-1 p-2 w-14 font-bold rounded-md transition delay-80 bg-rose-500 hover:bg-slate-200 text-slate-200 hover:text-rose-500 hover:outline hover:outline-rose-500"
-      >
-        Close
-      </button>
+      <hr />
+      <div class="flex flex-row-reverse gap-4 mt-5">
+        <!-- Cancel button -->
+        <button
+          class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
+          @click="router.push(`/task`), $emit('closeModal', false)"
+        >
+          Cancel
+        </button>
+
+        <button
+          v-if="!editMode"
+          class="btn btn-outline btn-primary basis-1/6"
+          @click="editMode = true"
+        >
+          Edit
+        </button>
+
+        <button
+          v-if="editMode"
+          class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
+          :disabled="!canSave"
+          @click="saveTask"
+        >
+          {{ loading ? "" : "Save" }}
+          <span
+            class="loading loading-spinner text-success"
+            v-if="loading"
+          ></span>
+        </button>
+      </div>
     </div>
   </div>
 </template>

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -49,11 +50,13 @@ public class TaskController {
     public ResponseEntity<Object> editTask(@PathVariable int id, @RequestBody TaskEntity task) {
         TaskEntity updatedTask = service.editTask(id, task);
         DetailTaskDTO updatedTaskDTO = modelMapper.map(updatedTask, DetailTaskDTO.class);
-        return ResponseEntity.ok(updatedTaskDTO);
+        Map<String, Object> result = updatedTaskDTO.toMap();
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTaskById(@PathVariable int id) {
-        service.deleteTask(id);
+    public ResponseEntity<SimpleTaskDTO> deleteTaskById(@PathVariable int id) {
+        SimpleTaskDTO simpleTaskDTO = modelMapper.map(service.deleteTask(id), SimpleTaskDTO.class);
+        return ResponseEntity.ok().body(simpleTaskDTO);
     }
 }
