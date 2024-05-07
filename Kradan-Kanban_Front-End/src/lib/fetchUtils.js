@@ -11,8 +11,8 @@ export async function getAllTasks() {
       method: "GET",
     }); //GET Method
     const items = await res.json();
-    items.forEach(item => {
-      item.status = ENUMToTitleCase(item.status)
+    items.forEach((item) => {
+      item.status = ENUMToTitleCase(item.status);
     });
     return items;
   } catch (error) {}
@@ -28,7 +28,7 @@ export async function getTaskById(id) {
       item = await res.json();
       item.createdOn = timeFormater(item.createdOn);
       item.updatedOn = timeFormater(item.updatedOn);
-      item.status = ENUMToTitleCase(item.status)
+      item.status = ENUMToTitleCase(item.status);
       return item;
     } else {
       return res.status;
@@ -39,7 +39,7 @@ export async function getTaskById(id) {
 }
 
 export async function addTask(newTask) {
-  newTask.status = titleCaseToENUM(newTask.status)
+  newTask.status = titleCaseToENUM(newTask.status);
   let res, item;
   // console.log(JSON.stringify({ ...newTask }));
   try {
@@ -52,7 +52,7 @@ export async function addTask(newTask) {
     });
     if (res.status === 201) {
       item = await res.json();
-      item.status = ENUMToTitleCase(item.status)
+      item.status = ENUMToTitleCase(item.status);
       return item;
     } else {
       return res.status;
@@ -62,29 +62,8 @@ export async function addTask(newTask) {
   }
 }
 
-// export async function editTask(id, Task) {
-//   let res, item;
-//   try {
-//     res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
-//       method: "PUT",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ ...Task }),
-//     });
-//     if (res.status === 200) {
-//       item = await res.json();
-//       return item;
-//     } else {
-//       return res.status;
-//     }
-//   } catch (error) {
-//     return error;
-//   }
-// }
-
 export async function editTask(id, Task) {
-  Task.status = titleCaseToENUM(Task.status)
+  Task.status = titleCaseToENUM(Task.status);
   try {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
       method: "PUT",
@@ -96,7 +75,7 @@ export async function editTask(id, Task) {
 
     if (res.ok) {
       const updatedTask = await res.json();
-      updatedTask.status = ENUMToTitleCase(updatedTask.status)
+      updatedTask.status = ENUMToTitleCase(updatedTask.status);
       return updatedTask;
     } else {
       throw new Error(`Failed to update task: ${res.status}`);
@@ -113,7 +92,7 @@ export async function deleteTask(id) {
     });
     if (res.ok) {
       const item = await res.json();
-      item.status = ENUMToTitleCase(item.status)
+      item.status = ENUMToTitleCase(item.status);
       return item;
     } else {
       return res.status;
@@ -145,6 +124,7 @@ function timeFormater(time) {
   });
 }
 
+function ENUMToTitleCase(str) {
 function ENUMToTitleCase(str){
   if(str === null || str === '') return 'No Status' 
   // str ?? return 'No Status'
@@ -153,13 +133,11 @@ function ENUMToTitleCase(str){
     return word[0].toUpperCase() + word.slice(1).toLowerCase();
   });
   return titleCaseWords.join(" ");
-};
+}
 
-function titleCaseToENUM(str){
-  return str.split(" ").join("_").toUpperCase()
-};
+function titleCaseToENUM(str) {
+  return str.split(" ").join("_").toUpperCase();
+}
 
 // console.log(titleCaseToENUM('No Status'))
 // console.log(ENUMToTitleCase('NO_STATUS'))
-
-
