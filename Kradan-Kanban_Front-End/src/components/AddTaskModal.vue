@@ -156,6 +156,7 @@ function sendCloseModal() {
       <button
         class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
         :disabled="!canSave"
+        :class="!canSave ? 'disabled' : ''"
         @click="fetchData()"
       >
         {{ loading ? "" : "Save" }}
