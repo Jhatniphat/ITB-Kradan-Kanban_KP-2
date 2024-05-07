@@ -146,6 +146,8 @@ function timeFormater(time) {
 }
 
 function ENUMToTitleCase(str){
+  if(str === null || str === '') return 'No Status' 
+  // str ?? return 'No Status'
   const words = str.split("_");
   const titleCaseWords = words.map((word) => {
     return word[0].toUpperCase() + word.slice(1).toLowerCase();
