@@ -27,7 +27,7 @@ const toast = ref({ status: "", msg: "" });
 
 const openEditMode = (id) => {
   showDetailModal.value = true;
-  router.push(`/task/${id}/edit`);
+  router.push(`/task/${id}`);
 };
 
 const closeAddModal = (res) => {
@@ -36,6 +36,15 @@ const closeAddModal = (res) => {
   if ("id" in res)
     showToast({ status: "success", msg: "Add task successfuly" });
   else showToast({ status: "error", msg: "Add task Failed" });
+};
+
+const closeEditModal = (res) => {
+  console.log(res);
+  showDetailModal.value = false;
+  if (res === null) return 0;
+  if ("id" in res)
+    showToast({ status: "success", msg: "Edit task successfuly" });
+  else showToast({ status: "error", msg: "Edit task Failed" });
 };
 
 const showToast = (toastData) => {
@@ -49,9 +58,17 @@ const showToast = (toastData) => {
 const deleteTaskTitle = ref("");
 
 const deleteThisTask = async () => {
-  await deleteTask(selectedid.value);
-  showDeleteModal.value = false;
-  window.location.reload();
+  let res;
+  try {
+    res = await deleteTask(selectedid.value);
+    if ("id" in res)
+      showToast({ status: "success", msg: "Delete task successfuly" });
+    else showToast({ status: "error", msg: "Delete task Failed" });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    showDeleteModal.value = false;
+  }
 };
 
 const openDeleteModal = (taskTitle, id) => {
@@ -199,9 +216,7 @@ onBeforeMount(() => {
     <!-- DetailsModal -->
     <!-- EditModal -->
     <Modal :show-modal="showDetailModal">
-      <Taskdetail
-        :taskId="parseInt(selectedid)"
-        @closeModal="showDetailModal = false"
+      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal()"
     /></Modal>
     <!-- Add Modal -->
     <Modal :show-modal="showAddModal">
