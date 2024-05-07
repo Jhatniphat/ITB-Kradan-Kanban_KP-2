@@ -9,7 +9,9 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
@@ -32,23 +34,22 @@ public class TaskService {
     @Transactional
     public TaskEntity addTask(TaskEntity task) {
         if (task.getTitle() == null || task.getTitle().isEmpty()) {
-            throw new ItemNotFoundException("Task title is null !!!");
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Task title is null !!!");
         }
         if (task.getTitle().length() > 100) {
-            throw new ItemNotFoundException("Task title length should be less than 100 !!!");
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task title length should be less than 100 !!!");
         }
         if (task.getDescription() != null && task.getDescription().length() > 500) {
-            throw new ItemNotFoundException("Task description length should be less than 500 !!!");
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task description length should be less than 500 !!!");
         }
         if (task.getAssignees() != null && task.getAssignees().length() > 30) {
-            throw new ItemNotFoundException("Task assignees length should be less than 30 !!!");
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task assignees length should be less than 30 !!!");
         }
         try {
             return repository.save(task);
         } catch (Exception e) {
             throw new ItemNotFoundException("Database Exception");
         }
-
     }
 
     @Transactional
@@ -66,6 +67,10 @@ public class TaskService {
             throw new ItemNotFoundException("NOT FOUND");
         } else {
             newTask.setId(id);
+            task.setTitle(newTask.getTitle());
+            task.setDescription(newTask.getDescription());
+            task.setAssignees(newTask.getAssignees());
+            task.setStatus(newTask.getStatus());
             return repository.save(newTask);
         }
     }
