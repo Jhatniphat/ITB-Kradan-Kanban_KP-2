@@ -41,4 +41,32 @@ public class TaskEntity {
     @Column(name = "updatedOn", insertable = false, updatable = false)
     private LocalDateTime updatedOn;
 
+    public void setTitle(String title) {
+        if (title != null) {
+            title = title.trim();
+        }
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        if (description != null) {
+            description = description.trim();
+        }
+        this.description = description;
+    }
+
+    public void setAssignees(String assignees) {
+        if (assignees != null) {
+            assignees = assignees.trim();
+        }
+        this.assignees = assignees;
+    }
+
+    public void setStatus(Object status) {
+        if (status == null) {
+            status = "NO_STATUS";
+        }
+        this.status = status;
+    }
+
 }

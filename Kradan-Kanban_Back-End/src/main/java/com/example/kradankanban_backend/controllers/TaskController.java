@@ -43,7 +43,7 @@ public class TaskController {
     public ResponseEntity<Object> addTask(@RequestBody TaskEntity task) {
         TaskEntity createdTask = service.addTask(task);
         DetailTaskDTO createdTaskDTO = modelMapper.map(createdTask, DetailTaskDTO.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTaskDTO);
+        return new ResponseEntity<>(createdTaskDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -51,7 +51,7 @@ public class TaskController {
         TaskEntity updatedTask = service.editTask(id, task);
         DetailTaskDTO updatedTaskDTO = modelMapper.map(updatedTask, DetailTaskDTO.class);
         Map<String, Object> result = updatedTaskDTO.toMap();
-        return ResponseEntity.ok(result);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
