@@ -2,6 +2,7 @@ package com.example.kradankanban_backend.services;
 
 import com.example.kradankanban_backend.entities.StatusEntity;
 import com.example.kradankanban_backend.entities.TaskEntity;
+import com.example.kradankanban_backend.exceptions.BadRequestException;
 import com.example.kradankanban_backend.exceptions.ItemNotFoundException;
 import com.example.kradankanban_backend.repositories.StatusRepository;
 import com.example.kradankanban_backend.repositories.TaskRepository;
@@ -37,17 +38,17 @@ public class StatusService {
     @Transactional
     public StatusEntity addStatus(StatusEntity status) {
         if (status.getStatusName().trim().isEmpty() || status.getStatusName() == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Status Name is null !!!");
+            throw new BadRequestException( "Status Name is null !!!");
         }
         if (status.getStatusName().trim().length() > 50) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST , "Status Name length should be less than 20 !!!");
+            throw new BadRequestException("Status Name length should be less than 20 !!!");
         }
         if (status.getStatusDescription().trim().length() > 200) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST , "Status Description length should be less than 200 !!!");
+            throw new BadRequestException("Status Description length should be less than 200 !!!");
         }
         // ? เช็คว่ามี statusName นั้นหรือยัง
         if (repository.existsByStatusName(status.getStatusName())) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST , "Status Name already exists !!!");
+            throw new BadRequestException("Status Name already exists !!!");
         }
         try {
             return repository.save(status);
@@ -60,13 +61,13 @@ public class StatusService {
     @Transactional
     public StatusEntity editStatus(int id, StatusEntity status) {
         if (status.getStatusName().trim().isEmpty() || status.getStatusName() == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Status Name is null !!!");
+            throw new BadRequestException("Status Name is null !!!");
         }
         if (status.getStatusName().trim().length() > 50) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST , "Status Name length should be less than 20 !!!");
+            throw new BadRequestException("Status Name length should be less than 20 !!!");
         }
         if (status.getStatusDescription().trim().length() > 200) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST , "Status Description length should be less than 200 !!!");
+            throw new BadRequestException("Status Description length should be less than 200 !!!");
         }
         try {
             String oldStatusName = repository.findById(id).orElseThrow().getStatusName();
@@ -84,7 +85,7 @@ public class StatusService {
     public StatusEntity deleteStatus(int id) {
         StatusEntity status = repository.findById(id).orElseThrow( () -> new ItemNotFoundException("No status found with id: " + id) );
         if (status.getStatusName() == "No Status") {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Cannot delete 'No Status'!!!");
+            throw new BadRequestException("Cannot delete 'No Status'!!!");
         }
         try {
             repository.delete(status);
@@ -93,10 +94,11 @@ public class StatusService {
             throw new ItemNotFoundException("Database Exception");
         }
     }
+
     // * transferStatus
     public StatusEntity transferStatus (int oldId, int newId){
         if (oldId == newId) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST , "Old Status Id is equal to new Status Id !!!");
+            throw new BadRequestException("Old Status Id is equal to new Status Id !!!");
         }
         if (!repository.existsById(oldId)) {
             throw new ItemNotFoundException("No status found with id: " + oldId);
@@ -110,8 +112,8 @@ public class StatusService {
             taskRepository.updateTaskStatus(oldStatus.getStatusName() , newStatusName);
             repository.delete(oldStatus);
             return oldStatus;
-        }catch (Exception e){
-            throw new ItemNotFoundException("Database Exception");
+        }catch (Exception message){
+            throw new ItemNotFoundException(message.toString());
         }
     }
 }

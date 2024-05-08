@@ -57,4 +57,5 @@ public class TaskController {
         SimpleTaskDTO simpleTaskDTO = modelMapper.map(service.deleteTask(id), SimpleTaskDTO.class);
         return ResponseEntity.ok().body(simpleTaskDTO);
     }
+
 }

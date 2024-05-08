@@ -44,10 +44,10 @@ public class TaskEntity {
 //    @JoinColumn(name = "stutus")
 //    private StatusEntity status;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+//    @ManyToOne(cascade = CascadeType.ALL)
     // table = status , column = statusName
-    @JoinColumn(name = "status_statusName" )
-    private StatusEntity statusEntity;
+//    @JoinColumn(name = "status_statusName" )
+//    private StatusEntity statusEntity;
 
     public void setTitle(String title) {
         if (title != null) {
