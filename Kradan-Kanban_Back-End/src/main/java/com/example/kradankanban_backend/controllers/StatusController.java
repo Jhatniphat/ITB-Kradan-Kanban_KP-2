@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://ip23kp2.sit.kmutt.ac.th:80")
 @RestController
 @RequestMapping("/statuses")
 public class StatusController {
