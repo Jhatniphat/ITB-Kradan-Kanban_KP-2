@@ -24,8 +24,6 @@ public class TaskController {
     private TaskService service;
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private ServerProperties serverProperties;
 
     @GetMapping("") //DTO
     public ResponseEntity<Object> getAllTasks() {

@@ -4,6 +4,7 @@ import com.example.kradankanban_backend.dtos.SimpleTaskDTO;
 import com.example.kradankanban_backend.entities.TaskEntity;
 import com.example.kradankanban_backend.exceptions.ItemNotFoundException;
 import com.example.kradankanban_backend.exceptions.TaskIdNotFound;
+import com.example.kradankanban_backend.repositories.StatusRepository;
 import com.example.kradankanban_backend.repositories.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -19,6 +20,8 @@ import java.util.List;
 public class TaskService {
     @Autowired
     private TaskRepository repository;
+    @Autowired
+    private StatusRepository statusRepository;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -44,6 +47,9 @@ public class TaskService {
         }
         if (task.getAssignees() != null && task.getAssignees().length() > 30) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task assignees length should be less than 30 !!!");
+        }
+        if (!repository.existsByStatus(task.getStatus())){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task status not exist !!!");
         }
         try {
             return repository.save(task);
@@ -71,6 +77,9 @@ public class TaskService {
             task.setDescription(newTask.getDescription());
             task.setAssignees(newTask.getAssignees());
             task.setStatus(newTask.getStatus());
+            if (!repository.existsByStatus(task.getStatus())){
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task status not exist !!!");
+            }
             return repository.save(newTask);
         }
     }

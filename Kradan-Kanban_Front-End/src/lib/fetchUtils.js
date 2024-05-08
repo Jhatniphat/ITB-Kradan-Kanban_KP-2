@@ -1,10 +1,3 @@
-// * Example
-// ? console.log(await getAllTasks())
-// ? console.log(await addTask( { title : "blaabla" } ))
-// ? console.log(await getTaskById())
-// ? console.log(await editTask(1 , {title : "Get World!!"}))
-// ? console.log(await deleteTask(1))
-
 export async function getAllTasks() {
   try {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`, {
@@ -102,29 +95,12 @@ export async function deleteTask(id) {
   }
 }
 
-// export async function deleteTask(id) {
-//   let res, item;
-//   try {
-//     (res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`)),
-//       { method: "DELETE" };
-//     if (res.status === 200) {
-//       item = await res.json();
-//       return item;
-//     } else {
-//       return res.status;
-//     }
-//   } catch (error) {
-//     return error;
-//   }
-// }
-
 function timeFormater(time) {
   return new Date(time).toLocaleString("en-GB", {
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
 }
 
-function ENUMToTitleCase(str) {
 function ENUMToTitleCase(str){
   if(str === null || str === '') return 'No Status' 
   // str ?? return 'No Status'
@@ -138,6 +114,3 @@ function ENUMToTitleCase(str){
 function titleCaseToENUM(str) {
   return str.split(" ").join("_").toUpperCase();
 }
-
-// console.log(titleCaseToENUM('No Status'))
-// console.log(ENUMToTitleCase('NO_STATUS'))
