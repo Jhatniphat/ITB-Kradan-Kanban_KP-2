@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
 import { getTaskById, editTask } from "../lib/fetchUtils.js";
-
 import router from "@/router";
 
 const emit = defineEmits(["closeModal"]);
@@ -10,9 +9,13 @@ const props = defineProps({
     type: Number,
     require: true,
   },
+  Isedit: {
+    type: Boolean,
+    require: true,
+  },
 });
 
-const editMode = ref(false); // Track if component is in edit mode
+const editMode = props.Isedit; // Track if component is in edit mode
 const statusList = ["To Do", "Doing", "Done"];
 const canSave = ref(false);
 const loading = ref(false);
@@ -67,7 +70,6 @@ async function saveTask() {
     delete taskDetail.value.updatedOn;
     res = await editTask(props.taskId, taskDetail.value);
     taskDetail.value = res;
-    editMode.value = false;
     console.log(res);
   } catch (error) {
     console.log(error);
@@ -266,18 +268,18 @@ function sendCloseModal() {
           Cancel
         </button>
 
-        <button
+        <!-- <button
           v-if="!editMode"
           class="btn btn-outline btn-primary basis-1/6"
           @click="editMode = true"
         >
           Edit
-        </button>
+        </button> -->
 
         <button
           v-if="editMode"
           class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
-          :disabled="!canSave"
+          :disabled="!canSave && editMode"
           @click="saveTask"
         >
           {{ loading ? "" : "Save" }}

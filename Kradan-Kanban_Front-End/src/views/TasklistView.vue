@@ -13,6 +13,8 @@ import router from "@/router";
 import Modal from "../components/Modal.vue";
 import AddTaskModal from "@/components/AddTaskModal.vue";
 
+const editMode = ref(false);
+
 const showDetailModal = ref(false);
 
 const showDeleteModal = ref(false);
@@ -27,6 +29,7 @@ const toast = ref({ status: "", msg: "" });
 
 const openEditMode = (id) => {
   showDetailModal.value = true;
+  editMode.value = true;
   router.push(`/task/${id}`);
 };
 
@@ -129,13 +132,9 @@ onBeforeMount(() => {
     </div>
     <!-- Manage Status Button -->
     <RouterLink to="/status">
-    <div class="manage-status">
-      <button
-        class="btn btn-square btn-outline w-16"
-      >
-        Manage Status
-      </button>
-    </div>
+      <div class="manage-status">
+        <button class="btn btn-square btn-outline w-16">Manage Status</button>
+      </div>
     </RouterLink>
   </div>
 
@@ -226,7 +225,10 @@ onBeforeMount(() => {
     <!-- DetailsModal -->
     <!-- EditModal -->
     <Modal :show-modal="showDetailModal">
-      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal()"
+      <Taskdetail
+        :taskId="parseInt(selectedid)"
+        @closeModal="closeEditModal()"
+        :Isedit="editMode"
     /></Modal>
     <!-- Add Modal -->
     <Modal :show-modal="showAddModal">
