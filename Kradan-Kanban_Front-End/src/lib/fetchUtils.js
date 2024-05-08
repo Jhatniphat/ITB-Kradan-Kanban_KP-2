@@ -1,11 +1,10 @@
 // ! -------------------------------- Task ------------------------------------------
 export async function getAllTasks() {
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`, {
+    let res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`, {
       method: "GET",
     }); //GET Method
-    const items = await res.json();
-    return items;
+    return await res.json();
   } catch (error) {}
 }
 
@@ -53,7 +52,7 @@ export async function addTask(newTask) {
 export async function editTask(id, Task) {
   Task.status = titleCaseToENUM(Task.status);
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+    let res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -62,8 +61,7 @@ export async function editTask(id, Task) {
     });
 
     if (res.ok) {
-      const updatedTask = await res.json();
-      return updatedTask;
+      return await res.json();
     } else {
       throw new Error(`Failed to update task: ${res.status}`);
     }
@@ -74,11 +72,11 @@ export async function editTask(id, Task) {
 
 export async function deleteTask(id) {
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+    let res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
       method: "DELETE",
     });
     if (res.ok) {
-      const item = await res.json();
+      let item = await res.json();
       item.status = ENUMToTitleCase(item.status);
       return item;
     } else {
@@ -92,11 +90,10 @@ export async function deleteTask(id) {
 // ! ------------------------------- Status --------------------------------
 export async function getAllStatus() {
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses`, {
+    let res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses`, {
       method: "GET",
     }); //GET Method
-    const items = await res.json();
-    return items;
+    return await res.json();
   } catch (error) {}
 }
 
@@ -141,7 +138,7 @@ export async function addStatus(newStatus) {
 }
 
 export async function editStatus(id, Task) {
-  let res , item
+  let res
   try {
     res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`, {
       method: "PUT",
@@ -211,8 +208,8 @@ function timeFormater(time) {
 function ENUMToTitleCase(str){
   if(str === null || str === '') return 'No Status' 
   // str ?? return 'No Status'
-  const words = str.split("_");
-  const titleCaseWords = words.map((word) => {
+  let words = str.split("_");
+  let titleCaseWords = words.map((word) => {
     return word[0].toUpperCase() + word.slice(1).toLowerCase();
   });
   return titleCaseWords.join(" ");
