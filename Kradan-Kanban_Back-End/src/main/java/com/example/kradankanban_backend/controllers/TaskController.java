@@ -6,7 +6,6 @@ import com.example.kradankanban_backend.entities.TaskEntity;
 import com.example.kradankanban_backend.services.TaskService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +23,6 @@ public class TaskController {
     private TaskService service;
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private ServerProperties serverProperties;
 
     @GetMapping("") //DTO
     public ResponseEntity<Object> getAllTasks() {
@@ -43,7 +40,7 @@ public class TaskController {
     public ResponseEntity<Object> addTask(@RequestBody TaskEntity task) {
         TaskEntity createdTask = service.addTask(task);
         DetailTaskDTO createdTaskDTO = modelMapper.map(createdTask, DetailTaskDTO.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTaskDTO);
+        return new ResponseEntity<>(createdTaskDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -51,7 +48,7 @@ public class TaskController {
         TaskEntity updatedTask = service.editTask(id, task);
         DetailTaskDTO updatedTaskDTO = modelMapper.map(updatedTask, DetailTaskDTO.class);
         Map<String, Object> result = updatedTaskDTO.toMap();
-        return ResponseEntity.ok(result);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -59,4 +56,5 @@ public class TaskController {
         SimpleTaskDTO simpleTaskDTO = modelMapper.map(service.deleteTask(id), SimpleTaskDTO.class);
         return ResponseEntity.ok().body(simpleTaskDTO);
     }
+
 }

@@ -4,7 +4,7 @@ import { getTaskById, editTask } from "../lib/fetchUtils.js";
 
 import router from "@/router";
 
-defineEmits(["closeModal"]);
+const emit = defineEmits(["closeModal"]);
 const props = defineProps({
   taskId: {
     type: Number,
@@ -29,14 +29,14 @@ watch(() => props.taskId, fetchData, { immediate: true });
 
 watch(
   taskDetail,
-  (newVal, oldVal) => {
+  (newVal) => {
     if (
       !loading.value &&
       JSON.stringify(newVal) !== JSON.stringify(originalTask.value)
     ) {
-      canSave.value = true; // Enable save button if task details are different
+      canSave.value = true;
     } else {
-      canSave.value = false; // Disable save button if task details are unchanged or still loading
+      canSave.value = false;
     }
   },
   { deep: true }
@@ -47,9 +47,8 @@ async function fetchData(id) {
   loading.value = true;
   try {
     const originalTaskDetails = await getTaskById(id);
-    originalTask.value = { ...originalTaskDetails }; // Create a copy of the original task details
+    originalTask.value = { ...originalTaskDetails };
     taskDetail.value = { ...originalTaskDetails };
-    // replace `getPost` with your data fetching util / API wrapper
     if (taskDetail.value == 404) {
       router.push("/task");
     }
@@ -61,20 +60,26 @@ async function fetchData(id) {
 }
 async function saveTask() {
   loading.value = true;
+  let res;
   try {
     delete taskDetail.value.id;
     delete taskDetail.value.createdOn;
     delete taskDetail.value.updatedOn;
-    const updatedTask = await editTask(props.taskId, taskDetail.value);
-    taskDetail.value = updatedTask;
+    res = await editTask(props.taskId, taskDetail.value);
+    taskDetail.value = res;
     editMode.value = false;
-    router.push("/task");
-    window.location.reload();
-    $emit("closeModal", false);
+    console.log(res);
   } catch (error) {
+    console.log(error);
   } finally {
     loading.value = false;
+    router.push("/task");
+    emit("closeModal", res);
   }
+}
+function sendCloseModal() {
+  router.push("/task");
+  emit("closeModal", null);
 }
 </script>
 
@@ -256,7 +261,7 @@ async function saveTask() {
         <!-- Cancel button -->
         <button
           class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
-          @click="router.push(`/task`), $emit('closeModal', false)"
+          @click="sendCloseModal()"
         >
           Cancel
         </button>

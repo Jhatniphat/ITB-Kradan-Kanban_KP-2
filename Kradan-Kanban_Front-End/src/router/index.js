@@ -34,6 +34,11 @@ const router = createRouter({
       path: "/task/:id/edit", // Define a route for editing task
       component: () => import("../views/TasklistView.vue"),
     },
+    {
+      path: "/status",
+      name: "statuslist",
+      component: () => import("../views/StatusListView.vue")
+    }
   ],
 });
 
