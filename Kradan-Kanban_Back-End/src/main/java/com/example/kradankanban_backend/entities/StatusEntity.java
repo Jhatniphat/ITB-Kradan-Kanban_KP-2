@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "status", schema = "intergrate-kp-2", catalog = "")
+@Table(name = "status", schema = "intergrate-kp-2")
 public class StatusEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +22,10 @@ public class StatusEntity {
     private int id;
 
     @Column(name = "statusName")
-    private String statusName;
+    private String name;
 
     @Column(name = "statusDescription")
-    private String statusDescription;
+    private String description;
 
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
     @Column(name = "createdOn", insertable = false, updatable = false)

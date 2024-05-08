@@ -37,17 +37,17 @@ public class StatusService {
     // * addStatus
     @Transactional
     public StatusEntity addStatus(StatusEntity status) {
-        if (status.getStatusName().trim().isEmpty() || status.getStatusName() == null) {
+        if (status.getName().trim().isEmpty() || status.getName() == null) {
             throw new BadRequestException( "Status Name is null !!!");
         }
-        if (status.getStatusName().trim().length() > 50) {
+        if (status.getName().trim().length() > 50) {
             throw new BadRequestException("Status Name length should be less than 20 !!!");
         }
-        if (status.getStatusDescription().trim().length() > 200) {
+        if (status.getDescription().trim().length() > 200) {
             throw new BadRequestException("Status Description length should be less than 200 !!!");
         }
-        // ? เช็คว่ามี statusName นั้นหรือยัง
-        if (repository.existsByStatusName(status.getStatusName())) {
+        // ? เช็คว่ามี Name นั้นหรือยัง
+        if (repository.existsByName(status.getName())) {
             throw new BadRequestException("Status Name already exists !!!");
         }
         try {
@@ -60,19 +60,19 @@ public class StatusService {
     // * editStatus
     @Transactional
     public StatusEntity editStatus(int id, StatusEntity status) {
-        if (status.getStatusName().trim().isEmpty() || status.getStatusName() == null) {
+        if (status.getName().trim().isEmpty() || status.getName() == null) {
             throw new BadRequestException("Status Name is null !!!");
         }
-        if (status.getStatusName().trim().length() > 50) {
+        if (status.getName().trim().length() > 50) {
             throw new BadRequestException("Status Name length should be less than 20 !!!");
         }
-        if (status.getStatusDescription().trim().length() > 200) {
+        if (status.getDescription().trim().length() > 200) {
             throw new BadRequestException("Status Description length should be less than 200 !!!");
         }
         try {
-            String oldStatusName = repository.findById(id).orElseThrow().getStatusName();
-            if( !status.getStatusName().trim().equals(oldStatusName) ) {
-                taskRepository.updateTaskStatus(oldStatusName , status.getStatusName());
+            String oldName = repository.findById(id).orElseThrow().getName();
+            if( !status.getName().trim().equals(oldName) ) {
+                taskRepository.updateTaskStatus(oldName , status.getName());
             }
             status.setId(id);
             return repository.save(status);
@@ -84,14 +84,17 @@ public class StatusService {
     // * deleteStatus
     public StatusEntity deleteStatus(int id) {
         StatusEntity status = repository.findById(id).orElseThrow( () -> new ItemNotFoundException("No status found with id: " + id) );
-        if (status.getStatusName() == "No Status") {
+        if (taskRepository.existsByStatus(status.getName())) {
+            throw new BadRequestException("Have Task On This Status");
+        }
+        if (status.getName().equals("No Status")) {
             throw new BadRequestException("Cannot delete 'No Status'!!!");
         }
         try {
             repository.delete(status);
             return status;
         }catch (Exception e){
-            throw new ItemNotFoundException("Database Exception");
+            throw new ItemNotFoundException(e.toString());
         }
     }
 
@@ -107,9 +110,9 @@ public class StatusService {
             throw new ItemNotFoundException("No status found with id: " + newId);
         }
         StatusEntity oldStatus = repository.findById(oldId).orElseThrow();
-        String newStatusName = repository.findById(newId).orElseThrow().getStatusName();
+        String newgetName = repository.findById(newId).orElseThrow().getName();
         try {
-            taskRepository.updateTaskStatus(oldStatus.getStatusName() , newStatusName);
+            taskRepository.updateTaskStatus(oldStatus.getName() , newgetName);
             repository.delete(oldStatus);
             return oldStatus;
         }catch (Exception message){

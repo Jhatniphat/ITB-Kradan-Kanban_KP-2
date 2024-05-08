@@ -34,7 +34,9 @@ public class StatusController {
 
     @PostMapping("")
     public ResponseEntity<Object> addStatus(@RequestBody StatusEntity status) {
-        return new ResponseEntity<> (service.addStatus(status) , HttpStatus.CREATED);
+        StatusEntity createdStatus = service.addStatus(status);
+        SimpleStatusDTO simpleStatusDTO = modelMapper.map(createdStatus, SimpleStatusDTO.class);
+        return new ResponseEntity<> (simpleStatusDTO , HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

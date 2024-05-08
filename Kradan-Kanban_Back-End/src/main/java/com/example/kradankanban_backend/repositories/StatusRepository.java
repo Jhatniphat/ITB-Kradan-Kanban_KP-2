@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StatusRepository extends JpaRepository<StatusEntity, Integer> {
 
-    boolean existsByStatusName(String statusName);
+    boolean existsByName(String name);
 }

@@ -50,7 +50,7 @@ public class TaskService {
         if (task.getAssignees() != null && task.getAssignees().length() > 30) {
             throw new BadRequestException("Task assignees length should be less than 30 !!!");
         }
-        if (!statusRepository.existsByStatusName(task.getStatus()) ){
+        if (!statusRepository.existsByName(task.getStatus()) ){
             throw new BadRequestException("Task status not exist !!!");
         }
         try {
@@ -79,7 +79,7 @@ public class TaskService {
             task.setDescription(newTask.getDescription());
             task.setAssignees(newTask.getAssignees());
             task.setStatus(newTask.getStatus());
-            if (!repository.existsByStatus(task.getStatus())){
+            if (!statusRepository.existsByName(task.getStatus())){
 //                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task status not exist !!!");
                 throw new ItemNotFoundException("Task status not exist !!!");
             }

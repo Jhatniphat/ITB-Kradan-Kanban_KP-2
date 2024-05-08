@@ -9,6 +9,6 @@ import lombok.Setter;
 
 public class SimpleStatusDTO {
     private int id;
-    private String StatusName;
-    private String StatusDescription;
+    private String name;
+    private String description;
 }
