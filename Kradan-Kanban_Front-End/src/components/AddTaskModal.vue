@@ -170,14 +170,5 @@ function sendCloseModal() {
 </template>
 
 <style scoped>
-::backdrop {
-  background-image: linear-gradient(
-    45deg,
-    magenta,
-    rebeccapurple,
-    dodgerblue,
-    green
-  );
-  opacity: 0.75;
-}
+
 </style>
