@@ -1,20 +1,51 @@
 <script setup>
-import { ref } from "vue";
-import AddStatusModal from "@/components/AddStatusModal.vue";
-import Modal from "@/components/Modal.vue";
-const showAddModal = ref(true)
-const status = [
-  {
-    id: 1,
-    name: "No Status",
-    description: "blabla",
-  },
-  {
-    id: 2,
-    name: "To Do",
-    description: "Lasdwla,;dlws",
-  },
-];
+import { onMounted, ref } from "vue"
+import AddStatusModal from "@/components/AddStatusModal.vue"
+import Modal from "@/components/Modal.vue"
+import { getAllStatus } from "@/lib/fetchUtils"
+import { useRoute } from "vue-router"
+import router from "@/router"
+
+const showAddModal = ref(false)
+const error = ref(null)
+const status = ref(null)
+const loading = ref(false)
+const toast = ref({ status: "", msg: "" })
+
+const closeAddModal = (res) => {
+  showAddModal.value = false
+  if (res === null) return 0
+  if ("id" in res) showToast({ status: "success", msg: "Add task successfuly" })
+  else showToast({ status: "error", msg: "Add task Failed" })
+}
+
+onMounted(() => {
+  fetchStatusData()
+})
+
+const showToast = (toastData) => {
+  toast.value = toastData
+  console.log(toastData)
+  setTimeout(() => {
+    toast.value = { ...{ status: "" } }
+  }, 5000)
+}
+
+async function fetchStatusData(id) {
+  if (id !== undefined) {
+    openModal(id)
+  }
+  error.value = status.value = null
+  loading.value = true
+  try {
+    status.value = await getAllStatus()
+  } catch (err) {
+    error.value = err.toString()
+  } finally {
+    loading.value = false
+    console.table(status.value)
+  }
+}
 </script>
 
 <template>
@@ -28,10 +59,12 @@ const status = [
     </div>
     <!-- Add Status -->
     <div class="navbar-end">
-      <button 
-      class="btn btn-square btn-outline w-16"
-      @click="showAddModal = true"
-      >ADD STATUS</button>
+      <button
+        class="btn btn-square btn-outline w-16"
+        @click="showAddModal = true"
+      >
+        ADD STATUS
+      </button>
     </div>
   </div>
 
@@ -78,10 +111,7 @@ const status = [
               {{ status.description }}
             </td>
             <td class="itbkk-action-button">
-              <button 
-              class="itbkk-button-edit btn m-2"
-              @click=""
-              >Edit</button>
+              <button class="itbkk-button-edit btn m-2" @click="">Edit</button>
               <button class="itbkk-button-delete btn m-2">Delete</button>
             </td>
           </tr>
@@ -92,7 +122,7 @@ const status = [
 
   <!-- Add Status Modal-->
   <Modal :show-modal="showAddModal">
-      <AddStatusModal @closeModal="closeAddModal" />
+    <AddStatusModal @closeModal="closeAddModal" />
   </Modal>
 </template>
 
