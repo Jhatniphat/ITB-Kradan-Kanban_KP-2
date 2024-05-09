@@ -1,37 +1,62 @@
 <script setup>
+import { addStatus } from "@/lib/fetchUtils";
 import { ref, watch } from "vue";
 const emit = defineEmits(["closeModal"]);
+const canSave = ref(false);
 const statusData = ref({
-    name: "",
-    description: ""
-})
+  name: "",
+  description: "",
+});
 
 const Errortext = ref({
-    name: "",
-    description: ""
-})
+  name: "",
+  description: "",
+});
 
-const loading = ref(false)
+watch(statusData.value, () => {
+  if (statusData.value.name.trim().length > 50)
+    Errortext.value.name = "Status Name can't long more 50 character";
+  else if (statusData.value.name.trim().length == 0)
+    Errortext.value.name = "Status Name can't be empty";
+  else Errortext.value.name = "";
+  if (statusData.value.description.trim().length > 200)
+    Errortext.value.description =
+      "Status Description can't long more 200 character";
+  else Errortext.value.description = "";
+  canSave.value =
+    Errortext.value.name === "" && Errortext.value.description === "";
+});
+
+const loading = ref(false);
 async function fetchStatusData() {
-    statusData.value.name = statusData.value.name.trim();
-    statusData.value.description = statusData.value.description.trim();
-    loading.value = true;
-    let res;
-    // try {
-    //     res = await add
-    // }
+  statusData.value.name = statusData.value.name.trim();
+  statusData.value.description = statusData.value.description.trim();
+  loading.value = true;
+  let res;
+  try {
+    res = await addStatus(statusData.value);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    loading.value = false;
+    emit("closeModal", null);
+  }
+}
+
+function sendCloseModal() {
+  emit("closeModal", null);
 }
 </script>
- 
+
 <template>
-<!-- div -->
-<div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
+  <!-- div -->
+  <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
     <!-- title -->
     <label class="form-control w-full">
-        <div class="label">
-            <!-- Add Status Text -->
-            <span class="label-text">Add Status</span>
-        </div>
+      <div class="label">
+        <!-- Add Status Text -->
+        <span class="label-text">Add Status</span>
+      </div>
     </label>
     <hr />
 
@@ -87,7 +112,7 @@ async function fetchStatusData() {
         class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
         :disabled="!canSave"
         :class="!canSave ? 'disabled' : ''"
-        @click="fetchData()"
+        @click="fetchStatusData()"
       >
         {{ loading ? "" : "Save" }}
         <span
@@ -96,9 +121,7 @@ async function fetchStatusData() {
         ></span>
       </button>
     </div>
-</div>
+  </div>
 </template>
- 
-<style scoped>
 
-</style>
+<style scoped></style>

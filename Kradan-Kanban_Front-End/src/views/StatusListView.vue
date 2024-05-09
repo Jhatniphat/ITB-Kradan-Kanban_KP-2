@@ -1,20 +1,39 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import AddStatusModal from "@/components/AddStatusModal.vue";
 import Modal from "@/components/Modal.vue";
-const showAddModal = ref(true)
-const status = [
-  {
-    id: 1,
-    name: "No Status",
-    description: "blabla",
-  },
-  {
-    id: 2,
-    name: "To Do",
-    description: "Lasdwla,;dlws",
-  },
-];
+import { getAllStatus } from "@/lib/fetchUtils";
+
+const showAddModal = ref(false);
+const error = ref(null)
+const status = ref(null)
+const loading = ref(false)
+
+const closeAddModal = (res) => {
+  showAddModal.value = false;
+  if (res === null) return 0;
+  if ("id" in res)
+    showToast({ status: "success", msg: "Add task successfuly" });
+  else showToast({ status: "error", msg: "Add task Failed" });
+};
+onMounted(() => {
+  fetchStatusData()
+})
+async function fetchStatusData(id) {
+  if (id !== undefined) {
+    openModal(id)
+  }
+  error.value = status.value = null
+  loading.value = true;
+  try {
+    status.value = await getAllStatus();
+  } catch (err) {
+    error.value = err.toString();
+  } finally{
+    loading.value = false
+    console.table(status.value)
+  }
+}
 </script>
 
 <template>
@@ -28,10 +47,12 @@ const status = [
     </div>
     <!-- Add Status -->
     <div class="navbar-end">
-      <button 
-      class="btn btn-square btn-outline w-16"
-      @click="showAddModal = true"
-      >ADD STATUS</button>
+      <button
+        class="btn btn-square btn-outline w-16"
+        @click="showAddModal = true"
+      >
+        ADD STATUS
+      </button>
     </div>
   </div>
 
@@ -47,7 +68,7 @@ const status = [
   <div class="opacity">
     <div class="flex flex-col">
       <!-- Table -->
-      <Table
+      <table
         class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
       >
         <!-- Head -->
@@ -70,7 +91,7 @@ const status = [
             :key="status.id"
             class="itbkk-item hover"
           >
-            <th>{{ index + 1 }}</th>
+            <td>{{ index + 1 }}</td>
             <td class="itbkk-status-name">
               {{ status.name }}
             </td>
@@ -78,21 +99,18 @@ const status = [
               {{ status.description }}
             </td>
             <td class="itbkk-action-button">
-              <button 
-              class="itbkk-button-edit btn m-2"
-              @click=""
-              >Edit</button>
+              <button class="itbkk-button-edit btn m-2">Edit</button>
               <button class="itbkk-button-delete btn m-2">Delete</button>
             </td>
           </tr>
         </tbody>
-      </Table>
+      </table>
     </div>
   </div>
 
   <!-- Add Status Modal-->
   <Modal :show-modal="showAddModal">
-      <AddStatusModal @closeModal="closeAddModal" />
+    <AddStatusModal @closeModal="closeAddModal" />
   </Modal>
 </template>
 
