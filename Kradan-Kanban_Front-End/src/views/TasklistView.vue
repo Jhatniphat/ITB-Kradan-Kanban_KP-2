@@ -2,18 +2,10 @@
 import { onBeforeMount, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import Taskdetail from "../components/Taskdetail.vue";
-import {
-  getAllTasks,
-  getTaskById,
-  addTask,
-  editTask,
-  deleteTask,
-} from "../lib/fetchUtils.js";
+import { getAllTasks, deleteTask } from "../lib/fetchUtils.js";
 import router from "@/router";
 import Modal from "../components/Modal.vue";
-import AddTaskModal from "@/components/AddTaskModal.vue";
-
-const editMode = ref(false);
+import AddTaskModal from "@/components/Tasks/AddTaskModal.vue";
 
 const showDetailModal = ref(false);
 
@@ -29,7 +21,6 @@ const toast = ref({ status: "", msg: "" });
 
 const openEditMode = (id) => {
   showDetailModal.value = true;
-  editMode.value = true;
   router.push(`/task/${id}`);
 };
 
@@ -45,9 +36,9 @@ const closeEditModal = (res) => {
   console.log(res);
   showDetailModal.value = false;
   if (res === null) return 0;
-  if ("id" in res)
-    showToast({ status: "success", msg: "Edit task successfuly" });
-  else showToast({ status: "error", msg: "Edit task Failed" });
+  // if ("id" in res)
+  //   showToast({ status: "success", msg: "Edit task successfuly" });
+  // else showToast({ status: "error", msg: "Edit task Failed" });
 };
 
 const showToast = (toastData) => {
@@ -124,23 +115,21 @@ onBeforeMount(() => {
     <!-- Add button -->
     <div class="navbar-end">
       <button
-        class="btn btn-square btn-outline w-16"
+        class="btn btn-square btn-outline w-16 m-2"
         @click="showAddModal = true"
       >
         + ADD
       </button>
+      <div class="manage-status">
+        <button
+          @click="router.push('/status')"
+          class="btn btn-square btn-outline w-20 m-2"
+        >
+          Manage Status
+        </button>
+      </div>
     </div>
     <!-- Manage Status Button -->
-    <RouterLink to="/status">
-    <div class="manage-status">
-      <button
-        class="btn btn-square btn-outline w-full"
-      >
-        Manage Status
-      </button>
-    </div>
-
-    </RouterLink>
   </div>
 
   <!-- Content -->
@@ -230,10 +219,7 @@ onBeforeMount(() => {
     <!-- DetailsModal -->
     <!-- EditModal -->
     <Modal :show-modal="showDetailModal">
-      <Taskdetail
-        :taskId="parseInt(selectedid)"
-        @closeModal="closeEditModal()"
-        :Isedit="editMode"
+      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal()"
     /></Modal>
     <!-- Add Modal -->
     <Modal :show-modal="showAddModal">
