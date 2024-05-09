@@ -1,49 +1,49 @@
 <script setup>
-import { onMounted, ref } from "vue"
-import AddStatusModal from "@/components/AddStatusModal.vue"
-import Modal from "@/components/Modal.vue"
-import { getAllStatus } from "@/lib/fetchUtils"
-import { useRoute } from "vue-router"
-import router from "@/router"
+import { onMounted, ref } from "vue";
+import AddStatusModal from "@/components/AddStatusModal.vue";
+import Modal from "@/components/Modal.vue";
+import { getAllStatus } from "@/lib/fetchUtils";
+import { useRoute } from "vue-router";
 
-const showAddModal = ref(false)
-const error = ref(null)
-const status = ref(null)
-const loading = ref(false)
-const toast = ref({ status: "", msg: "" })
+const showAddModal = ref(false);
+const error = ref(null);
+const status = ref(null);
+const loading = ref(false);
+const toast = ref({ status: "", msg: "" });
 
 const closeAddModal = (res) => {
-  showAddModal.value = false
-  if (res === null) return 0
-  if ("id" in res) showToast({ status: "success", msg: "Add task successfuly" })
-  else showToast({ status: "error", msg: "Add task Failed" })
-}
+  showAddModal.value = false;
+  if (res === null) return 0;
+  if ("id" in res)
+    showToast({ status: "success", msg: "Add task successfuly" });
+  else showToast({ status: "error", msg: "Add task Failed" });
+};
 
 onMounted(() => {
-  fetchStatusData()
-})
+  fetchStatusData();
+});
 
 const showToast = (toastData) => {
-  toast.value = toastData
-  console.log(toastData)
+  toast.value = toastData;
+  console.log(toastData);
   setTimeout(() => {
-    toast.value = { ...{ status: "" } }
-  }, 5000)
-}
+    toast.value = { ...{ status: "" } };
+  }, 5000);
+};
 
 async function fetchStatusData(id) {
   if (id !== undefined) {
-    openModal(id)
+    openModal(id);
   }
-  error.value = status.value = null
-  loading.value = true
+  error.value = status.value = null;
+  loading.value = true;
   try {
-    status.value = await getAllStatus()
+    status.value = await getAllStatus();
   } catch (err) {
-    error.value = err.toString()
+    error.value = err.toString();
   } finally {
-    loading.value = false
-    console.table(status.value)
+    loading.value = false;
+    console.table(status.value);
   }
 }
 </script>
@@ -80,7 +80,7 @@ async function fetchStatusData(id) {
   <div class="opacity">
     <div class="flex flex-col">
       <!-- Table -->
-      <Table
+      <table
         class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
       >
         <!-- Head -->
@@ -103,11 +103,11 @@ async function fetchStatusData(id) {
             :key="status.id"
             class="itbkk-item hover"
           >
-            <th>{{ index + 1 }}</th>
-            <td class="itbkk-status-name">
+            <td>{{ index + 1 }}</td>
+            <td class="itbkk-status-name break-all">
               {{ status.name }}
             </td>
-            <td class="itbkk-status-description">
+            <td class="itbkk-status-description break-all">
               {{ status.description }}
             </td>
             <td class="itbkk-action-button">
@@ -116,7 +116,7 @@ async function fetchStatusData(id) {
             </td>
           </tr>
         </tbody>
-      </Table>
+      </table>
     </div>
   </div>
 
@@ -124,6 +124,45 @@ async function fetchStatusData(id) {
   <Modal :show-modal="showAddModal">
     <AddStatusModal @closeModal="closeAddModal" />
   </Modal>
+  <!-- Toast -->
+  <div class="toast">
+    <div
+      role="alert"
+      class="alert"
+      :class="`alert-${toast.status}`"
+      v-if="toast.status !== ''"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="stroke-current shrink-0 h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        v-if="toast.status === 'success'"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="stroke-current shrink-0 h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        v-if="toast.status === 'error'"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <span>{{ toast.msg }}</span>
+    </div>
+  </div>
 </template>
 
 <style scoped></style>
