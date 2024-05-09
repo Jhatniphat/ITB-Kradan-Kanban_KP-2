@@ -111,7 +111,7 @@ async function fetchStatusData(id) {
               {{ status.description }}
             </td>
             <td class="itbkk-action-button">
-              <button class="itbkk-button-edit btn m-2">Edit</button>
+              <button class="itbkk-button-edit btn m-2" @click="">Edit</button>
               <button class="itbkk-button-delete btn m-2">Delete</button>
             </td>
           </tr>
