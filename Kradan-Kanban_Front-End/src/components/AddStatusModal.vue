@@ -39,13 +39,14 @@ async function fetchStatusData() {
     console.log(error);
   } finally {
     loading.value = false;
-    emit("closeModal", null);
+    emit("closeModal", res);
   }
 }
 
 function sendCloseModal() {
   emit("closeModal", null);
 }
+
 </script>
 
 <template>
@@ -69,7 +70,7 @@ function sendCloseModal() {
       <input
         v-model="statusData.name"
         type="text"
-        placeholder="Type here"
+        placeholder="Type Status Name Here"
         class="itbkk-status-name input input-bordered w-full bg-white"
       />
       <div class="label">
@@ -87,7 +88,7 @@ function sendCloseModal() {
         <textarea
           v-model="statusData.description"
           class="itbkk-status-description textarea textarea-bordered h-72 bg-white"
-          placeholder="Bio"
+          placeholder="Type Status Description Here"
         ></textarea>
         <div class="label">
           <!-- ? Error Text -->

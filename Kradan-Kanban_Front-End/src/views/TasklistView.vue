@@ -131,7 +131,7 @@ onBeforeMount(() => {
     <RouterLink to="/status">
     <div class="manage-status">
       <button
-        class="btn btn-square btn-outline w-16"
+        class="btn btn-square btn-outline w-full"
       >
         Manage Status
       </button>
