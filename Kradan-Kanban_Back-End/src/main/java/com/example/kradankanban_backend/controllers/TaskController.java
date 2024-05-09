@@ -6,7 +6,6 @@ import com.example.kradankanban_backend.entities.TaskEntity;
 import com.example.kradankanban_backend.services.TaskService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +23,6 @@ public class TaskController {
     private TaskService service;
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private ServerProperties serverProperties;
 
     @GetMapping("") //DTO
     public ResponseEntity<Object> getAllTasks() {
@@ -59,4 +56,5 @@ public class TaskController {
         SimpleTaskDTO simpleTaskDTO = modelMapper.map(service.deleteTask(id), SimpleTaskDTO.class);
         return ResponseEntity.ok().body(simpleTaskDTO);
     }
+
 }

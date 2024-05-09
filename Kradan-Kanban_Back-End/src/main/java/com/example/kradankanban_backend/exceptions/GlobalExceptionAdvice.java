@@ -15,6 +15,11 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         return errorResponse(ex.getMessage(), HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(Exception ex, WebRequest request) {
+        return errorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST, request);
+    }
+
     private ResponseEntity<ErrorResponse> errorResponse(String message, HttpStatus status, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(status.value(), message, request.getDescription(false).replace("uri=", ""));
         return ResponseEntity.status(status).body(errorResponse);

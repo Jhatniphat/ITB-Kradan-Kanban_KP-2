@@ -7,6 +7,21 @@ set character_set_server='utf8';
 DROP SCHEMA IF EXISTS `intergrate-kp-2` ;
 CREATE SCHEMA IF NOT EXISTS `intergrate-kp-2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 USE `intergrate-kp-2` ;
+
+-- Table `intergrate-kp-2`.`status`
+DROP TABLE IF EXISTS `intergrate-kp-2`.`status` ;
+CREATE TABLE `intergrate-kp-2`.`status` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `statusName` VARCHAR(50) NOT NULL,
+  `statusDescription` VARCHAR(200) NULL,
+  `createdOn` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedOn` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id` ,`statusName`),
+  UNIQUE INDEX `statusName_UNIQUE` (`statusName` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
 -- Table `intergrate-kp-2`.`task`
 DROP TABLE IF EXISTS `intergrate-kp-2`.`task` ;
 CREATE TABLE IF NOT EXISTS `intergrate-kp-2`.`task` (
@@ -14,15 +29,25 @@ CREATE TABLE IF NOT EXISTS `intergrate-kp-2`.`task` (
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(500) NULL DEFAULT NULL,
   `assignees` VARCHAR(30) NULL DEFAULT NULL,
-  `status` ENUM('NO_STATUS', 'TO_DO', 'DOING', 'DONE') NULL DEFAULT 'NO_STATUS',
+  `status` VARCHAR(50) NOT NULL,
   `createdOn` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedOn` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`Id`))
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`status`)
+        REFERENCES `intergrate-kp-2`.`status`(`statusName`)
+        ON DELETE RESTRICT
+        )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
-ALTER DATABASE `intergrate-kp-2` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+
+insert into `intergrate-kp-2`.`status` (`statusName`) value ("No Status");
+insert into `intergrate-kp-2`.`status` (`statusName`) value ("To Do");
+insert into `intergrate-kp-2`.`status` (`statusName`) value ("Doing");
+insert into `intergrate-kp-2`.`status` (`statusName`) value ("Done");
+
+ALTER DATABASE `intergrate-kp-2` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 DROP USER IF EXISTS 'dev'@'%';
 CREATE USER 'dev'@'%' IDENTIFIED BY 'ip23kp2mysql';
