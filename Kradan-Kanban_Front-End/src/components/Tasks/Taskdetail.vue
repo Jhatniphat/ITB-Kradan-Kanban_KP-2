@@ -1,10 +1,9 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getTaskById, editTask } from "../lib/fetchUtils.js";
-
+import { getTaskById, editTask } from "@/lib/fetchUtils.js";
 import router from "@/router";
 
-const emit = defineEmits(["closeModal"]);
+const emit = defineEmits(["closeModal", "editMode"]);
 const props = defineProps({
   taskId: {
     type: Number,
@@ -12,12 +11,12 @@ const props = defineProps({
   },
 });
 
-const editMode = ref(false); // Track if component is in edit mode
+const editMode = ref(false);
 const statusList = ["To Do", "Doing", "Done"];
 const canSave = ref(false);
 const loading = ref(false);
 const taskDetail = ref(null);
-const originalTask = ref(null); // Hold a copy of the original task details
+const originalTask = ref(null);
 const error = ref(null);
 const Errortext = ref({
   title: "",
@@ -67,7 +66,6 @@ async function saveTask() {
     delete taskDetail.value.updatedOn;
     res = await editTask(props.taskId, taskDetail.value);
     taskDetail.value = res;
-    editMode.value = false;
     console.log(res);
   } catch (error) {
     console.log(error);
@@ -155,8 +153,9 @@ function sendCloseModal() {
             <span class="label-text">Description</span>
           </div>
           <textarea
+            :readonly="!editMode"
             v-model="taskDetail.description"
-            class="itbkk-description textarea textarea-bordered h-72 bg-white"
+            class="itbkk-description textarea textarea-bordered h-72 bg-white resize-none"
             placeholder="No Description Provided"
             :class="taskDetail.description === '' ? 'italic text-gray-600' : ''"
             >{{
@@ -184,8 +183,9 @@ function sendCloseModal() {
               <span class="label-text">Assignees</span>
             </div>
             <textarea
+              :readonly="!editMode"
               v-model="taskDetail.assignees"
-              class="itbkk-assignees textarea textarea-bordered h-24 bg-white"
+              class="itbkk-assignees textarea textarea-bordered h-24 bg-white resize-none"
               placeholder="Unassigned"
               :class="
                 taskDetail.assignees === '' || taskDetail.assignees === null
@@ -215,6 +215,7 @@ function sendCloseModal() {
               <span class="label-text">Status</span>
             </div>
             <select
+              :disabled="!editMode"
               class="itbkk-status select select-bordered bg-white"
               v-model="taskDetail.status"
             >
@@ -277,7 +278,7 @@ function sendCloseModal() {
         <button
           v-if="editMode"
           class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
-          :disabled="!canSave"
+          :disabled="!canSave && editMode"
           @click="saveTask"
         >
           {{ loading ? "" : "Save" }}

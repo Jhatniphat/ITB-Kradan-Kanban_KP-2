@@ -1,17 +1,14 @@
 <script setup>
 import { onBeforeMount, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import Taskdetail from "../components/Taskdetail.vue";
-import {
-  getAllTasks,
-  getTaskById,
-  addTask,
-  editTask,
-  deleteTask,
-} from "../lib/fetchUtils.js";
+import Taskdetail from "../components/Tasks/Taskdetail.vue";
+import { getAllTasks, deleteTask } from "../lib/fetchUtils.js";
 import router from "@/router";
 import Modal from "../components/Modal.vue";
-import AddTaskModal from "@/components/AddTaskModal.vue";
+import AddTaskModal from "@/components/Tasks/AddTaskModal.vue";
+import { useTaskStore } from "@/stores/task"
+ 
+const taskStore = useTaskStore();
 
 const showDetailModal = ref(false);
 
@@ -33,8 +30,10 @@ const openEditMode = (id) => {
 const closeAddModal = (res) => {
   showAddModal.value = false;
   if (res === null) return 0;
-  if ("id" in res)
+  if ("id" in res) {
     showToast({ status: "success", msg: "Add task successfuly" });
+    taskStore.addStoreTask(res);
+  }
   else showToast({ status: "error", msg: "Add task Failed" });
 };
 
@@ -42,9 +41,9 @@ const closeEditModal = (res) => {
   console.log(res);
   showDetailModal.value = false;
   if (res === null) return 0;
-  if ("id" in res)
-    showToast({ status: "success", msg: "Edit task successfuly" });
-  else showToast({ status: "error", msg: "Edit task Failed" });
+  // if ("id" in res)
+  //   showToast({ status: "success", msg: "Edit task successfuly" });
+  // else showToast({ status: "error", msg: "Edit task Failed" });
 };
 
 const showToast = (toastData) => {
@@ -86,12 +85,11 @@ async function fetchData(id) {
   if (id !== undefined) {
     openModal(id);
   }
-
   error.value = allTasks.value = null;
   loading.value = true;
   try {
     // replace `getPost` with your data fetching util / API wrapper
-    allTasks.value = await getAllTasks();
+    allTasks.value = await taskStore.getAllTasks();
   } catch (err) {
     error.value = err.toString();
   } finally {
@@ -121,22 +119,21 @@ onBeforeMount(() => {
     <!-- Add button -->
     <div class="navbar-end">
       <button
-        class="btn btn-square btn-outline w-16"
+        class="btn btn-square btn-outline w-16 m-2"
         @click="showAddModal = true"
       >
         + ADD
       </button>
+      <div class="manage-status">
+        <button
+          @click="router.push('/status')"
+          class="btn btn-square btn-outline w-20 m-2"
+        >
+          Manage Status
+        </button>
+      </div>
     </div>
     <!-- Manage Status Button -->
-    <RouterLink to="/status">
-    <div class="manage-status">
-      <button
-        class="btn btn-square btn-outline w-16"
-      >
-        Manage Status
-      </button>
-    </div>
-    </RouterLink>
   </div>
 
   <!-- Content -->
