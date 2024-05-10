@@ -47,7 +47,7 @@ async function fetchData(id) {
     originalsDetail.value = { ...originalstatusDetails };
     statusDetail.value = { ...originalstatusDetails };
     console.log(statusDetail.value);
-    if (statusDetail.value == 404) {
+    if (statusDetail.value === 404) {
       router.push("/status");
     }
   } catch (err) {
@@ -84,7 +84,7 @@ function sendCloseModal() {
 
 <template>
   <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
-    <label class="form-control w-full">
+    <label class="form-control w-full" >
       <div class="label">
         <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
           Loading Data For StatusId = {{ props.statusId }}
@@ -98,7 +98,8 @@ function sendCloseModal() {
         </div>
         <hr />
       </div>
-      <input
+      <input v-if="loading === false"
+          v-model="statusDetail.name"
         type="text"
         placeholder="Type here"
         class="itbkk-title input input-bordered w-full bg-white"

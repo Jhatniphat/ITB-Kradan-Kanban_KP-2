@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getTaskById, editTask } from "@/lib/fetchUtils.js";
+import {getTaskById, editTask, getAllStatus} from "@/lib/fetchUtils.js";
 import router from "@/router";
 
 const emit = defineEmits(["closeModal", "editMode"]);
@@ -12,7 +12,7 @@ const props = defineProps({
 });
 
 const editMode = ref(false);
-const statusList = ["To Do", "Doing", "Done"];
+const statusList = ref([])
 const canSave = ref(false);
 const loading = ref(false);
 const taskDetail = ref(null);
@@ -46,8 +46,11 @@ async function fetchData(id) {
   loading.value = true;
   try {
     const originalTaskDetails = await getTaskById(id);
+    const fetchStatus = await getAllStatus();
+    statusList.value = fetchStatus.map((item) => item.name);
     originalTask.value = { ...originalTaskDetails };
     taskDetail.value = { ...originalTaskDetails };
+
     if (taskDetail.value == 404) {
       router.push("/task");
     }
@@ -56,6 +59,7 @@ async function fetchData(id) {
   } finally {
     loading.value = false;
   }
+
 }
 async function saveTask() {
   loading.value = true;
@@ -219,7 +223,6 @@ function sendCloseModal() {
               class="itbkk-status select select-bordered bg-white"
               v-model="taskDetail.status"
             >
-              <option value="No Status" selected>No Status</option>
               <option v-for="status in statusList" :value="status">
                 {{ status }}
               </option>

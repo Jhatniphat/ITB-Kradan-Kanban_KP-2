@@ -9,6 +9,7 @@ export async function getAllTasks() {
 }
 
 export async function getTaskById(id) {
+  console.log(`GET !! ${id}`)
   let res, item;
   try {
     res = await fetch(`${import.meta.env.VITE_API_ROOT}/tasks/${id}`, {
@@ -50,7 +51,6 @@ export async function addTask(newTask) {
 }
 
 export async function editTask(id, Task) {
-  Task.status = titleCaseToENUM(Task.status);
   try {
     let res = await fetch(`${import.meta.env.VITE_API_ROOT}/tasks/${id}`, {
       method: "PUT",
