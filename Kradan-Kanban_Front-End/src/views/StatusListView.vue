@@ -4,6 +4,7 @@ import { getAllStatus } from "@/lib/fetchUtils";
 import { useRoute } from "vue-router";
 import AddStatusModal from "@/components/Status/AddStatusModal.vue";
 import EditStatus from "@/components/Status/EditStatus.vue";
+import DeleteStatus from "@/components/Status/DeleteStatus.vue";
 import Modal from "@/components/Modal.vue";
 import router from "@/router";
 
@@ -12,6 +13,7 @@ const selectedid = ref(0);
 const showAddModal = ref(false);
 const showEdit = ref(false);
 const showDelete = ref(false);
+const deleteTitle = ref("");
 const error = ref(null);
 const status = ref(null);
 const loading = ref(false);
@@ -70,6 +72,20 @@ const closeEdit = (res) => {
   if ("id" in res)
     showToast({ status: "success", msg: "Edit task successfuly" });
   else showToast({ status: "error", msg: "Edit task Failed" });
+};
+
+const openDelete = (id, title) => {
+  selectedid.value = id;
+  deleteTitle.value = title;
+  showDelete.value = true;
+};
+
+const closeDelete = (res) => {
+  showDelete.value = false;
+  if (res === null) return 0;
+  if ("id" in res)
+    showToast({ status: "success", msg: "Delete task successfuly" });
+  else showToast({ status: "error", msg: "Delete task Failed" });
 };
 </script>
 
@@ -142,7 +158,12 @@ const closeEdit = (res) => {
               >
                 Edit
               </button>
-              <button class="itbkk-button-delete btn m-2">Delete</button>
+              <button
+                class="itbkk-button-delete btn m-2"
+                @click="openDelete(status.id, status.name)"
+              >
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -160,7 +181,13 @@ const closeEdit = (res) => {
     <EditStatus :status-id="parseInt(selectedid)" @close-modal="closeEdit" />
   </Modal>
   <!-- Delete Modal -->
-  <!-- <Modal :show-modal="showDelete"> </Modal> -->
+  <Modal :show-modal="showDelete">
+    <DeleteStatus
+      :delete-id="parseInt(selectedid)"
+      :deleteTitle="deleteTitle"
+      @close-modal="closeDelete"
+    />
+  </Modal>
   <!-- Toast -->
   <div class="toast">
     <div

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getStatusById, editStatus } from "../lib/fetchUtils";
+import { getStatusById, editStatus } from "../../lib/fetchUtils";
 import router from "@/router";
 
 const canSave = ref(false);
@@ -8,11 +8,6 @@ const loading = ref(false);
 const statusDetail = ref(null);
 const originalsDetail = ref(null);
 const error = ref(null);
-// const Errortext = ref({
-//   title: "",
-//   description: "",
-//   assignees: "",
-// })
 const emit = defineEmits(["closeModal"]);
 const props = defineProps({
   statusId: {
@@ -20,6 +15,11 @@ const props = defineProps({
     require: true,
   },
 });
+// const Errortext = ref({
+//   title: "",
+//   description: "",
+//   assignees: "",
+// })
 
 watch(() => props.statusId, fetchData, { immediate: true });
 
@@ -41,12 +41,10 @@ watch(
 async function fetchData(id) {
   error.value = statusDetail.value = null;
   loading.value = true;
-  console.log(id);
   try {
     const originalstatusDetails = await getStatusById(id);
     originalsDetail.value = { ...originalstatusDetails };
     statusDetail.value = { ...originalstatusDetails };
-    console.log(statusDetail.value);
     if (statusDetail.value == 404) {
       router.push("/status");
     }
@@ -54,6 +52,7 @@ async function fetchData(id) {
     error.value = err.toString();
   } finally {
     loading.value = false;
+    console.table(statusDetail.value);
   }
 }
 
@@ -98,6 +97,7 @@ function sendCloseModal() {
         </div>
         <hr />
       </div>
+      <!-- Problem v-model="statusDetail.name" below here -->
       <input
         type="text"
         placeholder="Type here"

@@ -50,7 +50,6 @@ export async function addTask(newTask) {
 }
 
 export async function editTask(id, Task) {
-  Task.status = titleCaseToENUM(Task.status);
   try {
     let res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
       method: "PUT",
@@ -138,7 +137,7 @@ export async function addStatus(newStatus) {
 }
 
 export async function editStatus(id, Task) {
-  let res
+  let res;
   try {
     res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`, {
       method: "PUT",
@@ -170,20 +169,23 @@ export async function deleteStatus(id) {
       item.createdOn = timeFormater(item.createdOn);
       item.updatedOn = timeFormater(item.updatedOn);
       return item;
-    }else {
-      return res.status
+    } else {
+      return res.status;
     }
-  }catch (error) {
+  } catch (error) {
     return error;
   }
 }
 
-export async function transferStatus(oldId , newId) {
+export async function transferStatus(oldId, newId) {
   let res, item;
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses/${oldId}/${newId}`, {
-      method : "DELETE"
-    })
+    res = await fetch(
+      `${import.meta.env.VITE_BASE_URL}/statuses/${oldId}/${newId}`,
+      {
+        method: "DELETE",
+      }
+    );
     if (res.ok) {
       item = await res.json();
       return item;
@@ -192,7 +194,7 @@ export async function transferStatus(oldId , newId) {
       item = await res.json();
       return item;
     }
-  } catch (err){
+  } catch (err) {
     return err;
   }
 }
@@ -205,8 +207,8 @@ function timeFormater(time) {
   });
 }
 
-function ENUMToTitleCase(str){
-  if(str === null || str === '') return 'No Status' 
+function ENUMToTitleCase(str) {
+  if (str === null || str === "") return "No Status";
   // str ?? return 'No Status'
   let words = str.split("_");
   let titleCaseWords = words.map((word) => {

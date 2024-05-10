@@ -1,14 +1,13 @@
 <script setup>
 import { onBeforeMount, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import Taskdetail from "../components/Taskdetail.vue";
+import Taskdetail from "../components/Tasks/Taskdetail.vue";
 import { getAllTasks, deleteTask } from "../lib/fetchUtils.js";
 import router from "@/router";
 import Modal from "../components/Modal.vue";
 import AddTaskModal from "@/components/Tasks/AddTaskModal.vue";
 
 const showDetailModal = ref(false);
-
 const showDeleteModal = ref(false);
 const route = useRoute();
 
@@ -33,7 +32,6 @@ const closeAddModal = (res) => {
 };
 
 const closeEditModal = (res) => {
-  console.log(res);
   showDetailModal.value = false;
   if (res === null) return 0;
   // if ("id" in res)

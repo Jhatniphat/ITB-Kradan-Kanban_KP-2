@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getTaskById, editTask } from "../lib/fetchUtils.js";
+import { getTaskById, editTask, getAllStatus } from "../../lib/fetchUtils";
 import router from "@/router";
 
 const emit = defineEmits(["closeModal", "editMode"]);
@@ -12,7 +12,7 @@ const props = defineProps({
 });
 
 const editMode = ref(false);
-const statusList = ["To Do", "Doing", "Done"];
+const statusList = ref(null);
 const canSave = ref(false);
 const loading = ref(false);
 const taskDetail = ref(null);
@@ -24,7 +24,7 @@ const Errortext = ref({
   assignees: "",
 });
 
-watch(() => props.taskId, fetchData, { immediate: true });
+watch(() => props.taskId, fetchTask, { immediate: true });
 
 watch(
   taskDetail,
@@ -41,22 +41,50 @@ watch(
   { deep: true }
 );
 
-async function fetchData(id) {
-  error.value = taskDetail.value = null;
+async function fetchTask(id) {
+  error.value = taskDetail.value = statusList.value = null;
   loading.value = true;
   try {
     const originalTaskDetails = await getTaskById(id);
+    const allStatus = await getAllStatus();
+
+    if (originalTaskDetails === 404) {
+      router.push("/task");
+      return;
+    }
+
+    if (!allStatus || allStatus === 404) {
+      router.push("/task");
+      return;
+    }
+
     originalTask.value = { ...originalTaskDetails };
     taskDetail.value = { ...originalTaskDetails };
-    if (taskDetail.value == 404) {
-      router.push("/task");
-    }
+    statusList.value = allStatus;
   } catch (err) {
     error.value = err.toString();
   } finally {
     loading.value = false;
+    console.log(taskDetail.value);
+    console.log(statusList.value.id);
   }
 }
+// async function fetchTask(id) {
+//   error.value = taskDetail.value = null;
+//   loading.value = true;
+//   try {
+//     const originalTaskDetails = await getTaskById(id);
+//     originalTask.value = { ...originalTaskDetails };
+//     taskDetail.value = { ...originalTaskDetails };
+//     if (taskDetail.value == 404) {
+//       router.push("/task");
+//     }
+//   } catch (err) {
+//     error.value = err.toString();
+//   } finally {
+//     loading.value = false;
+//   }
+// }
 async function saveTask() {
   loading.value = true;
   let res;
@@ -219,9 +247,9 @@ function sendCloseModal() {
               class="itbkk-status select select-bordered bg-white"
               v-model="taskDetail.status"
             >
-              <option value="No Status" selected>No Status</option>
+              <!-- <option value="No Status" selected>No Status</option> -->
               <option v-for="status in statusList" :value="status">
-                {{ status }}
+                {{ status.name }}
               </option>
             </select>
           </label>
