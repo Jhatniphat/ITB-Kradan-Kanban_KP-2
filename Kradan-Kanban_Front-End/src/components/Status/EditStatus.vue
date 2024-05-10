@@ -83,7 +83,7 @@ function sendCloseModal() {
 
 <template>
   <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
-    <label class="form-control w-full">
+    <label class="form-control w-full" v-if="loading === false">
       <div class="label">
         <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
           Loading Data For StatusId = {{ props.statusId }}
@@ -99,6 +99,8 @@ function sendCloseModal() {
       </div>
       <!-- Problem v-model="statusDetail.name" below here -->
       <input
+        v-if="loading === false"
+        v-model="statusDetail.name"
         type="text"
         placeholder="Type here"
         class="itbkk-title input input-bordered w-full bg-white"
@@ -117,6 +119,7 @@ function sendCloseModal() {
             <span class="label-text">Description</span>
           </div>
           <textarea
+            v-if="loading === false"
             v-model="statusDetail.description"
             class="itbkk-description textarea textarea-bordered h-72 bg-white"
             placeholder="No Description Provided"
