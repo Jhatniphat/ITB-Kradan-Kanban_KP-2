@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getStatusById, editStatus } from "../lib/fetchUtils";
+import { getStatusById, editStatus } from "@/lib/fetchUtils";
 import router from "@/router";
 
 const canSave = ref(false);

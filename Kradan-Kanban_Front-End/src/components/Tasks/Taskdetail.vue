@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getTaskById, editTask } from "../lib/fetchUtils.js";
+import { getTaskById, editTask } from "@/lib/fetchUtils.js";
 import router from "@/router";
 
 const emit = defineEmits(["closeModal", "editMode"]);
