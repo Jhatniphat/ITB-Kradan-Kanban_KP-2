@@ -26,6 +26,7 @@ onMounted(async () => {
     console.table(statusList.value);
   } catch (error) {
   }
+  statusList.value.splice(statusList.value.findIndex( status => status.id == props.deleteId) , 1)
 })
 
 // watch(() => props.deleteId, { immediate: true });
