@@ -171,7 +171,8 @@ export async function deleteStatus(id) {
       item.updatedOn = timeFormater(item.updatedOn);
       return item;
     } else {
-      return res.status;
+      console.log(res.json())
+      return res.json();
     }
   } catch (error) {
     return error;
