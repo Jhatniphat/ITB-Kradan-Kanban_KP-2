@@ -58,9 +58,10 @@ const deleteThisTask = async () => {
   let res;
   try {
     res = await deleteTask(selectedid.value);
-    if ("id" in res)
+    if ("id" in res) {
+      taskStore.deleteStoreTask(res)
       showToast({ status: "success", msg: "Delete task successfuly" });
-    else showToast({ status: "error", msg: "Delete task Failed" });
+    } else showToast({ status: "error", msg: "Delete task Failed" });
   } catch (error) {
     console.log(error);
   } finally {
@@ -84,7 +85,7 @@ async function fetchData(id) {
     openModal(id);
   }
   error.value = allTasks.value = null;
-  loading.value = true;
+  loading.value = false;
   try {
     // replace `getPost` with your data fetching util / API wrapper
     allTasks.value = await taskStore.getAllTasks();

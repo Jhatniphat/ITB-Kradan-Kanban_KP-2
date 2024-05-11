@@ -18,6 +18,12 @@ export const useStatusStore = defineStore('status', {
         },
     addStoreStatus(newStatus) {
         this.status.push(newStatus)
+    },
+    deleteStoreStatus(statusToDelete) {
+        const index = this.status.findIndex(status => status.id === statusToDelete.id);
+        if (index !== -1) {
+            this.status.splice(index, 1);
+        }
     }
     }
 })

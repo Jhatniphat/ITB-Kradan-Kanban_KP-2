@@ -72,8 +72,9 @@ const openEdit = (id) => {
 const closeEdit = (res) => {
   showEdit.value = false;
   if (res === null) return 0;
-  if ("id" in res)
+  if ("id" in res) {
     showToast({ status: "success", msg: "Edit task successfuly" });
+  }
   else showToast({ status: "error", msg: "Edit task Failed" });
 };
 
@@ -86,9 +87,10 @@ const openDelete = (id, title) => {
 const closeDelete = (res) => {
   showDelete.value = false;
   if (res === null) return 0;
-  if ("id" in res)
+  if ("id" in res) {
+    statusStore.deleteStoreStatus(res)
     showToast({ status: "success", msg: "Delete task successfuly" });
-  else showToast({ status: "error", msg: "Delete task Failed" });
+  } else showToast({ status: "error", msg: "Delete task Failed" });
 };
 </script>
 
@@ -115,7 +117,7 @@ const closeDelete = (res) => {
   <!-- Home Button -->
   <div class="text-base breadcrumbs flex p-10">
     <ul>
-      <li><RouterLink to="/task">Home</RouterLink></li>
+      <li @click="router.push('/task')" class="cursor-pointer">Home</li>
       <li class="text-base font-semibold">Task Status</li>
     </ul>
   </div>

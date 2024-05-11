@@ -97,8 +97,8 @@ async function saveTask() {
   }
 }
 function sendCloseModal() {
-  router.push("/task");
   emit("closeModal", null);
+  router.push("/task");
 }
 </script>
 
