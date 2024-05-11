@@ -71,9 +71,9 @@ public class StatusService {
         }
         try {
             String oldName = repository.findById(id).orElseThrow().getName();
-            if( !status.getName().trim().equals(oldName) ) {
-                taskRepository.updateTaskStatus(oldName , status.getName());
-            }
+//            if( !status.getName().trim().equals(oldName) ) {
+//                taskRepository.updateTaskStatus(oldName , status.getName());
+//            }
             status.setId(id);
             return repository.save(status);
         } catch (Exception e) {
