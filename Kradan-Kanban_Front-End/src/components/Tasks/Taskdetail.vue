@@ -247,21 +247,19 @@ function sendCloseModal() {
           </label>
 
           <div class="mt-2 text-sm text-black">
-            <div
-              class="flex flex-row justify-around border-solid border-slate-400"
-            >
+            <div class="flex flex-row justify-between">
               <h1 class="font-bold">TimeZone</h1>
               <h1 class="itbkk-timezone font-semibold">
                 {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
               </h1>
             </div>
-            <div class="flex flex-row justify-around">
+            <div class="flex flex-row justify-between">
               <h1 class="font-bold">Created On</h1>
               <h1 class="itbkk-created-on font-semibold">
                 {{ taskDetail.createdOn }}
               </h1>
             </div>
-            <div class="flex flex-row justify-around">
+            <div class="flex flex-row justify-between">
               <h1 class="font-bold">Updated On</h1>
               <h1 class="itbkk-updated-on font-semibold">
                 {{ taskDetail.updatedOn }}

@@ -112,7 +112,7 @@ function sendCloseModal() {
       class="flex mb-5 mx-auto flex-col w-full"
       v-if="loading === false && error === null"
     >
-      <div class="flex flex-row gap-3">
+      <div class="flex flex-col gap-3">
         <label class="form-control basis-3/4">
           <div class="label">
             <!-- ? Head -->
@@ -134,23 +134,23 @@ function sendCloseModal() {
             }}</textarea
           >
         </label>
-        <div class="mt-2 text-sm text-black">
-          <div
-            class="flex flex-row justify-around border-solid border-slate-400"
-          >
-            <h1 class="font-bold">TimeZone</h1>
+        <div
+          class="mt-2 text-sm text-black flex flex-col justify-between mb-5 lg:flex-row"
+        >
+          <div class="flex flex-row mx-2">
+            <h1 class="font-bold pr-5">TimeZone:</h1>
             <h1 class="itbkk-timezone font-semibold">
               {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
             </h1>
           </div>
-          <div class="flex flex-row justify-around">
-            <h1 class="font-bold">Created On</h1>
+          <div class="flex flex-row mx-2">
+            <h1 class="font-bold pr-5">Created On:</h1>
             <h1 class="itbkk-created-on font-semibold">
               {{ statusDetail.createdOn }}
             </h1>
           </div>
-          <div class="flex flex-row justify-around">
-            <h1 class="font-bold">Updated On</h1>
+          <div class="flex flex-row mx-2">
+            <h1 class="font-bold pr-5">Updated On:</h1>
             <h1 class="itbkk-updated-on font-semibold">
               {{ statusDetail.updatedOn }}
             </h1>
