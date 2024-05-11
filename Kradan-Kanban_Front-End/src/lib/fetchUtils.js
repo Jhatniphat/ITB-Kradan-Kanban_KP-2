@@ -1,7 +1,7 @@
 // ! -------------------------------- Task ------------------------------------------
 export async function getAllTasks() {
   try {
-    let res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`, {
+    let res = await fetch(`${import.meta.env.VITE_API_ROOT}/tasks`, {
       method: "GET",
     }); //GET Method
     return await res.json();
@@ -9,9 +9,10 @@ export async function getAllTasks() {
 }
 
 export async function getTaskById(id) {
+  console.log(`GET !! ${id}`);
   let res, item;
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+    res = await fetch(`${import.meta.env.VITE_API_ROOT}/tasks/${id}`, {
       method: "GET",
     });
     if (res.status === 200) {
@@ -31,7 +32,7 @@ export async function addTask(newTask) {
   let res, item;
   // console.log(JSON.stringify({ ...newTask }));
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks`, {
+    res = await fetch(`${import.meta.env.VITE_API_ROOT}/tasks`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +52,7 @@ export async function addTask(newTask) {
 
 export async function editTask(id, Task) {
   try {
-    let res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+    let res = await fetch(`${import.meta.env.VITE_API_ROOT}/tasks/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -71,7 +72,7 @@ export async function editTask(id, Task) {
 
 export async function deleteTask(id) {
   try {
-    let res = await fetch(`${import.meta.env.VITE_BASE_URL}/tasks/${id}`, {
+    let res = await fetch(`${import.meta.env.VITE_API_ROOT}/tasks/${id}`, {
       method: "DELETE",
     });
     if (res.ok) {
@@ -89,7 +90,7 @@ export async function deleteTask(id) {
 // ! ------------------------------- Status --------------------------------
 export async function getAllStatus() {
   try {
-    let res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses`, {
+    let res = await fetch(`${import.meta.env.VITE_API_ROOT}/statuses`, {
       method: "GET",
     }); //GET Method
     return await res.json();
@@ -99,7 +100,7 @@ export async function getAllStatus() {
 export async function getStatusById(id) {
   let res, item;
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`, {
+    res = await fetch(`${import.meta.env.VITE_API_ROOT}/statuses/${id}`, {
       method: "GET",
     });
     if (res.status === 200) {
@@ -118,7 +119,7 @@ export async function getStatusById(id) {
 export async function addStatus(newStatus) {
   let res, item;
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses`, {
+    res = await fetch(`${import.meta.env.VITE_API_ROOT}/statuses`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -139,7 +140,7 @@ export async function addStatus(newStatus) {
 export async function editStatus(id, Task) {
   let res;
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`, {
+    res = await fetch(`${import.meta.env.VITE_API_ROOT}/statuses/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -161,7 +162,7 @@ export async function editStatus(id, Task) {
 export async function deleteStatus(id) {
   let res, item;
   try {
-    res = await fetch(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`, {
+    res = await fetch(`${import.meta.env.VITE_API_ROOT}/statuses/${id}`, {
       method: "DELETE",
     });
     if (res.ok) {
@@ -181,7 +182,7 @@ export async function transferStatus(oldId, newId) {
   let res, item;
   try {
     res = await fetch(
-      `${import.meta.env.VITE_BASE_URL}/statuses/${oldId}/${newId}`,
+      `${import.meta.env.VITE_API_ROOT}/statuses/${oldId}/${newId}`,
       {
         method: "DELETE",
       }

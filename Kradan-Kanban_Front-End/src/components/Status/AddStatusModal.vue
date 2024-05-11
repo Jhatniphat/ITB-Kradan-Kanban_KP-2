@@ -55,8 +55,8 @@ function sendCloseModal() {
     <!-- title -->
     <label class="form-control w-full">
       <div class="label">
-        <!-- Add Status Text -->
-        <span class="label-text">Add Status</span>
+        <!-- Add New Status Text -->
+        <span class="font-semibold text-xl">Add New Status</span>
       </div>
     </label>
     <hr />

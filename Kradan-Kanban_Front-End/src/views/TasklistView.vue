@@ -6,6 +6,9 @@ import { getAllTasks, deleteTask } from "../lib/fetchUtils.js";
 import router from "@/router";
 import Modal from "../components/Modal.vue";
 import AddTaskModal from "@/components/Tasks/AddTaskModal.vue";
+import { useTaskStore } from "@/stores/task"
+ 
+const taskStore = useTaskStore();
 
 const showDetailModal = ref(false);
 const showDeleteModal = ref(false);
@@ -26,8 +29,10 @@ const openEditMode = (id) => {
 const closeAddModal = (res) => {
   showAddModal.value = false;
   if (res === null) return 0;
-  if ("id" in res)
+  if ("id" in res) {
     showToast({ status: "success", msg: "Add task successfuly" });
+    taskStore.addStoreTask(res);
+  }
   else showToast({ status: "error", msg: "Add task Failed" });
 };
 
@@ -78,12 +83,11 @@ async function fetchData(id) {
   if (id !== undefined) {
     openModal(id);
   }
-
   error.value = allTasks.value = null;
   loading.value = true;
   try {
     // replace `getPost` with your data fetching util / API wrapper
-    allTasks.value = await getAllTasks();
+    allTasks.value = await taskStore.getAllTasks();
   } catch (err) {
     error.value = err.toString();
   } finally {

@@ -1,4 +1,3 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { getAllTasks } from '@/lib/fetchUtils'
 
@@ -22,6 +21,9 @@ export const useTaskStore = defineStore('tasks', {
         }
 
       }
+    },
+    addStoreTask(newTask) {
+        this.tasks.push(newTask)
     }
   }
 

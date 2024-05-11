@@ -1,8 +1,8 @@
 <script setup>
-import { addTask } from "@/lib/fetchUtils";
-import { ref, watch } from "vue";
+import {addTask, getAllStatus} from "@/lib/fetchUtils";
+import {onMounted, ref, watch} from "vue";
 const emit = defineEmits(["closeModal"]);
-const statusList = ["To Do", "Doing", "Done"];
+const statusList = ref([])
 
 const canSave = ref(false);
 const taskData = ref({
@@ -36,6 +36,15 @@ watch(taskData.value, () => {
     Errortext.value.description === "" &&
     Errortext.value.assignees === "";
 });
+
+onMounted(async () => {
+  try {
+    const fetchStatus = await getAllStatus();
+    statusList.value = fetchStatus.map((item) => item.name);
+  }catch (err){
+    console.log(err)
+  }
+})
 
 const loading = ref(false);
 async function fetchData() {
@@ -137,7 +146,6 @@ function sendCloseModal() {
             class="itbkk-status select select-bordered bg-white"
             v-model="taskData.status"
           >
-            <option value="No Status" selected>No Status</option>
             <option v-for="status in statusList" :value="status">
               {{ status }}
             </option>

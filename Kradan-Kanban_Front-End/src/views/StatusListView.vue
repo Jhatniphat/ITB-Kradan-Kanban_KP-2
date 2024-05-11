@@ -7,7 +7,9 @@ import EditStatus from "@/components/Status/EditStatus.vue";
 import DeleteStatus from "@/components/Status/DeleteStatus.vue";
 import Modal from "@/components/Modal.vue";
 import router from "@/router";
+import { useStatusStore } from "@/stores/status.js";
 
+const statusStore = useStatusStore();
 const route = useRoute();
 const selectedid = ref(0);
 const showAddModal = ref(false);
@@ -35,7 +37,7 @@ async function fetchStatusData(id) {
   error.value = status.value = null;
   loading.value = true;
   try {
-    status.value = await getAllStatus();
+    status.value = await statusStore.getAllStatus();
   } catch (err) {
     error.value = err.toString();
   } finally {
@@ -55,9 +57,10 @@ const showToast = (toastData) => {
 const closeAddModal = (res) => {
   showAddModal.value = false;
   if (res === null) return 0;
-  if ("id" in res)
+  if ("id" in res){
     showToast({ status: "success", msg: "Add task successfuly" });
-  else showToast({ status: "error", msg: "Add task Failed" });
+    statusStore.addStoreStatus(res);
+  } else showToast({ status: "error", msg: "Add task Failed" });
 };
 
 const openEdit = (id) => {

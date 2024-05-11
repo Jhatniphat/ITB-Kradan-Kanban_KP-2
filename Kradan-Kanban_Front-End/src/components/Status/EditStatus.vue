@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getStatusById, editStatus } from "../../lib/fetchUtils";
+import { getStatusById, editStatus } from "@/lib/fetchUtils";
 import router from "@/router";
 
 const canSave = ref(false);
@@ -45,7 +45,8 @@ async function fetchData(id) {
     const originalstatusDetails = await getStatusById(id);
     originalsDetail.value = { ...originalstatusDetails };
     statusDetail.value = { ...originalstatusDetails };
-    if (statusDetail.value == 404) {
+    console.log(statusDetail.value);
+    if (statusDetail.value === 404) {
       router.push("/status");
     }
   } catch (err) {
@@ -83,7 +84,7 @@ function sendCloseModal() {
 
 <template>
   <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
-    <label class="form-control w-full" v-if="loading === false">
+    <label class="form-control w-full">
       <div class="label">
         <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
           Loading Data For StatusId = {{ props.statusId }}
@@ -97,7 +98,6 @@ function sendCloseModal() {
         </div>
         <hr />
       </div>
-      <!-- Problem v-model="statusDetail.name" below here -->
       <input
         v-if="loading === false"
         v-model="statusDetail.name"
