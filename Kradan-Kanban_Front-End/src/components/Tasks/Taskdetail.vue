@@ -241,7 +241,7 @@ function sendCloseModal() {
               v-model="taskDetail.status"
             >
               <option v-for="status in statusList" :value="status">
-                {{ status.name }}
+                {{ status }}
               </option>
             </select>
           </label>
