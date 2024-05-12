@@ -10,7 +10,7 @@ defineProps(["showModal"]);
         class="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm z-50 shadow-lg"
       >
         <div
-          class="fixed left-0 right-0 z-50 top-32 m-auto w-1/2 h-2/3 rounded-lg text-ellipsis text-base"
+          class="fixed left-0 right-0 z-50 top-16 m-auto w-1/2 h-2/3 rounded-lg text-ellipsis text-base"
         >
           <slot></slot>
         </div>

@@ -1,20 +1,16 @@
 <script setup>
 import { onBeforeMount, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import Taskdetail from "../components/Taskdetail.vue";
-import {
-  getAllTasks,
-  getTaskById,
-  addTask,
-  editTask,
-  deleteTask,
-} from "../lib/fetchUtils.js";
+import Taskdetail from "../components/Tasks/Taskdetail.vue";
+import { getAllTasks, deleteTask } from "../lib/fetchUtils.js";
 import router from "@/router";
 import Modal from "../components/Modal.vue";
-import AddTaskModal from "@/components/AddTaskModal.vue";
+import AddTaskModal from "@/components/Tasks/AddTaskModal.vue";
+import { useTaskStore } from "@/stores/task"
+ 
+const taskStore = useTaskStore();
 
 const showDetailModal = ref(false);
-
 const showDeleteModal = ref(false);
 const route = useRoute();
 
@@ -33,18 +29,23 @@ const openEditMode = (id) => {
 const closeAddModal = (res) => {
   showAddModal.value = false;
   if (res === null) return 0;
-  if ("id" in res)
+  if ("id" in res) {
     showToast({ status: "success", msg: "Add task successfuly" });
+    taskStore.addStoreTask(res);
+  }
   else showToast({ status: "error", msg: "Add task Failed" });
 };
 
 const closeEditModal = (res) => {
-  console.log(res);
   showDetailModal.value = false;
   if (res === null) return 0;
-  if ("id" in res)
+  console.log(res)
+  if ("id" in res) {
     showToast({ status: "success", msg: "Edit task successfuly" });
-  else showToast({ status: "error", msg: "Edit task Failed" });
+    taskStore.editStoreTask(res);
+  } else {
+    showToast({ status: "error", msg: "Edit task Failed" });
+  }
 };
 
 const showToast = (toastData) => {
@@ -61,9 +62,10 @@ const deleteThisTask = async () => {
   let res;
   try {
     res = await deleteTask(selectedid.value);
-    if ("id" in res)
+    if ("id" in res) {
+      taskStore.deleteStoreTask(res)
       showToast({ status: "success", msg: "Delete task successfuly" });
-    else showToast({ status: "error", msg: "Delete task Failed" });
+    } else showToast({ status: "error", msg: "Delete task Failed" });
   } catch (error) {
     console.log(error);
   } finally {
@@ -86,12 +88,11 @@ async function fetchData(id) {
   if (id !== undefined) {
     openModal(id);
   }
-
   error.value = allTasks.value = null;
-  loading.value = true;
+  loading.value = false;
   try {
     // replace `getPost` with your data fetching util / API wrapper
-    allTasks.value = await getAllTasks();
+    allTasks.value = await taskStore.getAllTasks();
   } catch (err) {
     error.value = err.toString();
   } finally {
@@ -121,22 +122,21 @@ onBeforeMount(() => {
     <!-- Add button -->
     <div class="navbar-end">
       <button
-        class="btn btn-square btn-outline w-16"
+        class="btn btn-square btn-outline w-16 m-2"
         @click="showAddModal = true"
       >
         + ADD
       </button>
+      <div class="manage-status">
+        <button
+          @click="router.push('/status')"
+          class="btn btn-square btn-outline w-20 m-2"
+        >
+          Manage Status
+        </button>
+      </div>
     </div>
     <!-- Manage Status Button -->
-    <RouterLink to="/status">
-    <div class="manage-status">
-      <button
-        class="btn btn-square btn-outline w-16"
-      >
-        Manage Status
-      </button>
-    </div>
-    </RouterLink>
   </div>
 
   <!-- Content -->
@@ -149,7 +149,7 @@ onBeforeMount(() => {
         <!-- head -->
         <thead>
           <tr>
-            <th>Id</th>
+            <th>No</th>
             <th>Title</th>
             <th>Assignees</th>
             <th>Status</th>
@@ -163,11 +163,11 @@ onBeforeMount(() => {
           </tr>
           <tr
             v-if="allTasks !== null"
-            v-for="task in allTasks"
+            v-for="(task, index) in allTasks"
             :key="task.id"
             class="itbkk-item hover"
           >
-            <th>{{ task.id }}</th>
+            <th>{{ index + 1 }}</th>
             <td class="itbkk-title">
               <!-- <RouterLink :to="`/task/${task.id}`"> -->
               <button @click="router.push(`/task/${task.id}`)">
@@ -226,7 +226,7 @@ onBeforeMount(() => {
     <!-- DetailsModal -->
     <!-- EditModal -->
     <Modal :show-modal="showDetailModal">
-      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal()"
+      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal"
     /></Modal>
     <!-- Add Modal -->
     <Modal :show-modal="showAddModal">

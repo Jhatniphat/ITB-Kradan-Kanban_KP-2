@@ -29,7 +29,7 @@ public class TaskEntity {
     private String assignees;
 
     @Column(name = "status")
-    private String status = "NO_STATUS";
+    private String status;
 
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
     @Column(name = "createdOn", insertable = false, updatable = false)

@@ -47,8 +47,7 @@ public class TaskController {
     public ResponseEntity<Object> editTask(@PathVariable int id, @RequestBody TaskEntity task) {
         TaskEntity updatedTask = service.editTask(id, task);
         DetailTaskDTO updatedTaskDTO = modelMapper.map(updatedTask, DetailTaskDTO.class);
-        Map<String, Object> result = updatedTaskDTO.toMap();
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(updatedTaskDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

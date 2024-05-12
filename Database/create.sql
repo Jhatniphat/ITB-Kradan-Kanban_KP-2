@@ -36,17 +36,16 @@ CREATE TABLE IF NOT EXISTS `intergrate-kp-2`.`task` (
   FOREIGN KEY (`status`)
         REFERENCES `intergrate-kp-2`.`status`(`statusName`)
         ON DELETE RESTRICT
+        ON UPDATE CASCADE
         )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
-
 insert into `intergrate-kp-2`.`status` (`statusName`) value ("No Status");
 insert into `intergrate-kp-2`.`status` (`statusName`) value ("To Do");
 insert into `intergrate-kp-2`.`status` (`statusName`) value ("Doing");
 insert into `intergrate-kp-2`.`status` (`statusName`) value ("Done");
-
 ALTER DATABASE `intergrate-kp-2` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 DROP USER IF EXISTS 'dev'@'%';
