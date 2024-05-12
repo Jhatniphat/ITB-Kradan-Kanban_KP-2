@@ -38,9 +38,14 @@ export const useTaskStore = defineStore("tasks", {
       }
       }
     },
-    // transferStatus(status) {
+    transferStatus(oldStatus , newStatus) {
     // need to do but not now
-    // }
+      this.tasks.forEach((task) => {
+        if (task.status === oldStatus) {
+          task.status = newStatus;
+        }
+      })
+    },
   },
 
   // return { count, doubleCount, increment }
