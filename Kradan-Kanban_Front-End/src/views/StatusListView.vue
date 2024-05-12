@@ -157,7 +157,9 @@ const closeDelete = (res) => {
             <td class="itbkk-status-description break-all">
               {{ status.description }}
             </td>
-            <td class="itbkk-action-button">
+            <td 
+            v-if="status.name !== 'No Status'"
+            class="itbkk-action-button">
               <button
                 class="itbkk-button-edit btn m-2"
                 @click="openEdit(status.id)"
