@@ -2,7 +2,9 @@
 import { ref, watch } from "vue";
 import { getTaskById, editTask, getAllStatus } from "@/lib/fetchUtils.js";
 import router from "@/router";
+import { useTaskStore } from "@/stores/task";
 
+const taskStore = useTaskStore()
 const emit = defineEmits(["closeModal", "editMode"]);
 const props = defineProps({
   taskId: {
@@ -88,6 +90,7 @@ async function saveTask() {
     res = await editTask(props.taskId, taskDetail.value);
     taskDetail.value = res;
     console.log(res);
+    taskStore.editStoreTask(res);
   } catch (error) {
     console.log(error);
   } finally {

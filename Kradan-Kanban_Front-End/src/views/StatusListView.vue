@@ -74,6 +74,7 @@ const closeEdit = (res) => {
   if (res === null) return 0;
   if ("id" in res) {
     showToast({ status: "success", msg: "Edit task successfuly" });
+    statusStore.editStoreStatus(res)
   }
   else showToast({ status: "error", msg: "Edit task Failed" });
 };

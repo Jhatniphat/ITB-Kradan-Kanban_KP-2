@@ -24,6 +24,12 @@ export const useStatusStore = defineStore('status', {
         if (index !== -1) {
             this.status.splice(index, 1);
         }
-    }
-    }
+    },
+    editStoreStatus(updatedStatus) {
+        const index = this.status.findIndex(status => status.id === updatedStatus.id)
+        if (index !== -1) {
+            this.status.splice(index, 1, updatedStatus)
+        }
+    }   
+}
 })

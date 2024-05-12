@@ -25,11 +25,22 @@ export const useTaskStore = defineStore("tasks", {
       this.tasks.push(newTask);
     },
     deleteStoreTask(taskToDelete) {
-      const index = this.tasks.findIndex(task => task.id === taskToDelete.id);
+      const index = this.tasks.findIndex((task) => task.id === taskToDelete.id);
       if (index !== -1) {
-          this.tasks.splice(index, 1);
+        this.tasks.splice(index, 1);
       }
-  }
+    },
+    editStoreTask(updatedTask) {
+      if (updatedTask) {
+        const index = this.tasks.findIndex((task) => task.id === updatedTask.id);
+      if (index !== -1) {
+        this.tasks.splice(index, 1, updatedTask)
+      }
+      }
+    },
+    // transferStatus(status) {
+    // need to do but not now
+    // }
   },
 
   // return { count, doubleCount, increment }

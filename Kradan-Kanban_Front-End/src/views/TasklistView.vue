@@ -39,9 +39,13 @@ const closeAddModal = (res) => {
 const closeEditModal = (res) => {
   showDetailModal.value = false;
   if (res === null) return 0;
-  // if ("id" in res)
-  //   showToast({ status: "success", msg: "Edit task successfuly" });
-  // else showToast({ status: "error", msg: "Edit task Failed" });
+  console.log(res)
+  if ("id" in res) {
+    showToast({ status: "success", msg: "Edit task successfuly" });
+    taskStore.editStoreTask(res);
+  } else {
+    showToast({ status: "error", msg: "Edit task Failed" });
+  }
 };
 
 const showToast = (toastData) => {
@@ -145,7 +149,7 @@ onBeforeMount(() => {
         <!-- head -->
         <thead>
           <tr>
-            <th>Id</th>
+            <th>No</th>
             <th>Title</th>
             <th>Assignees</th>
             <th>Status</th>
@@ -159,11 +163,11 @@ onBeforeMount(() => {
           </tr>
           <tr
             v-if="allTasks !== null"
-            v-for="task in allTasks"
+            v-for="(task, index) in allTasks"
             :key="task.id"
             class="itbkk-item hover"
           >
-            <th>{{ task.id }}</th>
+            <th>{{ index + 1 }}</th>
             <td class="itbkk-title">
               <!-- <RouterLink :to="`/task/${task.id}`"> -->
               <button @click="router.push(`/task/${task.id}`)">
@@ -222,7 +226,7 @@ onBeforeMount(() => {
     <!-- DetailsModal -->
     <!-- EditModal -->
     <Modal :show-modal="showDetailModal">
-      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal()"
+      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal"
     /></Modal>
     <!-- Add Modal -->
     <Modal :show-modal="showAddModal">
