@@ -1,17 +1,13 @@
 package com.example.kradankanban_backend.services;
 
 import com.example.kradankanban_backend.entities.StatusEntity;
-import com.example.kradankanban_backend.entities.TaskEntity;
 import com.example.kradankanban_backend.exceptions.BadRequestException;
 import com.example.kradankanban_backend.exceptions.ItemNotFoundException;
 import com.example.kradankanban_backend.repositories.StatusRepository;
 import com.example.kradankanban_backend.repositories.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
@@ -22,9 +18,6 @@ public class StatusService {
 
     @Autowired
     TaskRepository taskRepository;
-
-    @Autowired
-    private DataSourceTransactionManagerAutoConfiguration dataSourceTransactionManagerAutoConfiguration;
 
     public List<StatusEntity> getAll() {
         return repository.findAll();
@@ -43,7 +36,7 @@ public class StatusService {
         if (status.getName().trim().length() > 50) {
             throw new BadRequestException("Status Name length should be less than 20 !!!");
         }
-        if (status.getDescription().trim().length() > 200) {
+        if (status.getDescription() != null && status.getDescription().trim().length() > 200) {
             throw new BadRequestException("Status Description length should be less than 200 !!!");
         }
         // ? เช็คว่ามี Name นั้นหรือยัง
@@ -60,20 +53,19 @@ public class StatusService {
     // * editStatus
     @Transactional
     public StatusEntity editStatus(int id, StatusEntity status) {
+        if (id == 1){
+            throw new BadRequestException("'No Status' cannot be edited !!!");
+        }
         if (status.getName().trim().isEmpty() || status.getName() == null) {
             throw new BadRequestException("Status Name is null !!!");
         }
         if (status.getName().trim().length() > 50) {
             throw new BadRequestException("Status Name length should be less than 20 !!!");
         }
-        if (status.getDescription().trim().length() > 200) {
+        if (status.getDescription() != null && status.getDescription().trim().length() > 200) {
             throw new BadRequestException("Status Description length should be less than 200 !!!");
         }
         try {
-            String oldName = repository.findById(id).orElseThrow().getName();
-//            if( !status.getName().trim().equals(oldName) ) {
-//                taskRepository.updateTaskStatus(oldName , status.getName());
-//            }
             status.setId(id);
             return repository.save(status);
         } catch (Exception e) {
