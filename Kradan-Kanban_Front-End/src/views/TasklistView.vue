@@ -122,7 +122,7 @@ onBeforeMount(() => {
     <!-- Add button -->
     <div class="navbar-end">
       <button
-        class="btn btn-square btn-outline w-16 m-2"
+        class="itbkk-button-add btn btn-square btn-outline w-16 m-2"
         @click="showAddModal = true"
       >
         + ADD
@@ -130,7 +130,7 @@ onBeforeMount(() => {
       <div class="manage-status">
         <button
           @click="router.push('/status')"
-          class="btn btn-square btn-outline w-20 m-2"
+          class="itbkk-manage-status btn btn-square btn-outline w-20 m-2"
         >
           Manage Status
         </button>
