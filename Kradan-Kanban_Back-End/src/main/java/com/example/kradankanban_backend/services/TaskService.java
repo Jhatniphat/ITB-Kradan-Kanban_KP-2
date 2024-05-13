@@ -3,7 +3,6 @@ package com.example.kradankanban_backend.services;
 import com.example.kradankanban_backend.dtos.SimpleTaskDTO;
 import com.example.kradankanban_backend.entities.TaskEntity;
 import com.example.kradankanban_backend.exceptions.BadRequestException;
-import com.example.kradankanban_backend.exceptions.ErrorResponse;
 import com.example.kradankanban_backend.exceptions.ItemNotFoundException;
 import com.example.kradankanban_backend.exceptions.TaskIdNotFound;
 import com.example.kradankanban_backend.repositories.StatusRepository;
@@ -12,9 +11,7 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
@@ -38,6 +35,11 @@ public class TaskService {
 
     @Transactional
     public TaskEntity addTask(TaskEntity task) {
+        String newTaskStatus = task.getStatus();
+        if(isNumeric(newTaskStatus)){
+            newTaskStatus = statusRepository.findById(Integer.valueOf(newTaskStatus)).orElseThrow(() -> new ItemNotFoundException("Status Id : " + task.getStatus() + "Not Found!!")).getName();
+            task.setStatus(newTaskStatus);
+        }
         if (task.getTitle() == null || task.getTitle().isEmpty()) {
             throw new BadRequestException("Task title is null !!!");
         }
@@ -51,7 +53,7 @@ public class TaskService {
             throw new BadRequestException("Task assignees length should be less than 30 !!!");
         }
         if (!statusRepository.existsByName(task.getStatus()) ){
-            throw new BadRequestException("Task status not exist !!!");
+            throw new ItemNotFoundException("Task status not exist !!!");
         }
         try {
             return repository.save(task);
@@ -70,6 +72,17 @@ public class TaskService {
 
     @Transactional
     public TaskEntity editTask(int id, TaskEntity newTask) {
+        String newTaskStatus = newTask.getStatus();
+        if(isNumeric(newTaskStatus)){
+            newTaskStatus = statusRepository.findById(Integer.valueOf(newTaskStatus)).orElseThrow().getName();
+        }
+//        try {
+//            double d = Double.parseDouble(newTaskStatus);
+//        } catch (NumberFormatException nfe) {
+////            return false;
+//        } finally {
+//            newTaskStatus = statusRepository.findById(Integer.valueOf(newTaskStatus)).orElseThrow().getName();
+//        }
         TaskEntity task = repository.findById(id).orElseThrow(() -> new ItemNotFoundException("NOT FOUND"));
         if (newTask.getTitle() == null || newTask.getTitle().isEmpty()) {
             throw new ItemNotFoundException("NOT FOUND");
@@ -78,12 +91,24 @@ public class TaskService {
             task.setTitle(newTask.getTitle());
             task.setDescription(newTask.getDescription());
             task.setAssignees(newTask.getAssignees());
-            task.setStatus(newTask.getStatus());
+            task.setStatus(newTaskStatus);
             if (!statusRepository.existsByName(task.getStatus())){
 //                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task status not exist !!!");
                 throw new ItemNotFoundException("Task status not exist !!!");
             }
             return repository.save(newTask);
         }
+    }
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 }

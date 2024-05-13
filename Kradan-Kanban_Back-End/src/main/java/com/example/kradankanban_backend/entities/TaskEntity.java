@@ -18,24 +18,24 @@ public class TaskEntity {
     @Id
     @Column(name = "id")
     private int id;
-    
+
     @Column(name = "title")
     private String title;
-    
+
     @Column(name = "description")
     private String description;
-    
+
     @Column(name = "assignees")
     private String assignees;
 
     @Column(name = "status")
     private String status;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
     @Column(name = "createdOn", insertable = false, updatable = false)
     private LocalDateTime createdOn;
-    
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" , timezone = "UTC")
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
     @Column(name = "updatedOn", insertable = false, updatable = false)
     private LocalDateTime updatedOn;
 
@@ -49,24 +49,24 @@ public class TaskEntity {
 //    private StatusEntity statusEntity;
 
     public void setTitle(String title) {
-        if (title != null) {
-            title = title.trim();
-        }
-        this.title = title;
+        if(title != null || !title.isEmpty())
+            this.title = title.trim();
     }
 
     public void setDescription(String description) {
-        if (description != null) {
-            description = description.trim();
-        }
-        this.description = description;
+        if ( description == null || description.trim().isEmpty()) {
+            this.description = null;
+        } else this.description = description.trim();
     }
 
     public void setAssignees(String assignees) {
-        if (assignees != null) {
-            assignees = assignees.trim();
-        }
-        this.assignees = assignees;
+//        if (assignees != null) {
+//            assignees = assignees.trim();
+//        }
+//        this.assignees = assignees;
+        if (assignees == null || assignees.trim().isEmpty()) {
+            this.assignees = null;
+        }else this.assignees = assignees.trim();
     }
 
     public void setStatus(String status) {

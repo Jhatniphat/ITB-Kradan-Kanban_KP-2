@@ -38,4 +38,17 @@ public class StatusEntity {
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "status" , cascade = CascadeType.ALL)
     private Set<TaskEntity> recordings = new HashSet<>();
+
+    public void setName(String name) {
+        if (name != null) {
+            name = name.trim();
+        }
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            this.description = null;
+        } else this.description = description.trim();
+    }
 }
