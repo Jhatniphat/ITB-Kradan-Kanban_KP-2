@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --base=/kp2/",
     "preview": "vite preview",
     "test:unit": "vitest",
     "cypress:open": "cypress open",
