@@ -7,8 +7,8 @@ import {
   getStatusById,
 } from "@/lib/fetchUtils";
 import { onMounted, ref } from "vue";
-import {useStatusStore} from "@/stores/status.js";
-import {useTaskStore} from "@/stores/task.js";
+import { useStatusStore } from "@/stores/status.js";
+import { useTaskStore } from "@/stores/task.js";
 
 const emit = defineEmits(["closeModal"]);
 const props = defineProps({
@@ -38,12 +38,6 @@ onMounted(async () => {
     1
   );
 });
-
-// watch(() => props.deleteId, { immediate: true });
-
-// onMounted(() => {
-//   fetchData();
-// });
 
 const deleteThisStatus = async () => {
   loading.value = true;
@@ -85,13 +79,11 @@ const isStatusInUse = async (StatusId) => {
   let Status = await getStatusById(StatusId);
   let TaskList = await getAllTasks();
   return await TaskList.some((task) => task.status === Status.name);
-  // statusList.value = await getAllStatus();
-  // return statusList.some((status) => status.id === statusId && status.inUse);
 };
 
 const transferTheStatus = async (newId) => {
-  let oldStatusName = useStatusStore().findById(props.deleteId).name
-  let newStatusName = useStatusStore().findById(newId).name
+  let oldStatusName = useStatusStore().findById(props.deleteId).name;
+  let newStatusName = useStatusStore().findById(newId).name;
   let res;
   try {
     res = await transferStatus(props.deleteId, newId);
@@ -99,7 +91,7 @@ const transferTheStatus = async (newId) => {
     console.log(error);
   } finally {
     emit("closeModal", res);
-    useTaskStore().transferStatus(oldStatusName , newStatusName)
+    useTaskStore().transferStatus(oldStatusName, newStatusName);
   }
 };
 </script>
@@ -119,7 +111,7 @@ const transferTheStatus = async (newId) => {
           @click="closeThisModal"
           class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
         >
-        Cancel
+          Cancel
         </button>
         <button
           @click="deleteThisStatus()"
