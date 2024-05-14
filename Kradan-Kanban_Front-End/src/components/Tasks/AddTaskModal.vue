@@ -1,9 +1,11 @@
 <script setup>
 import {addTask, getAllStatus} from "@/lib/fetchUtils";
 import {onMounted, ref, watch} from "vue";
+import {useStatusStore} from "@/stores/status.js";
 const emit = defineEmits(["closeModal"]);
-const statusList = ref([])
+const statusStore = useStatusStore();
 
+const statusList = ref([])
 const canSave = ref(false);
 const taskData = ref({
   title: "",
@@ -38,12 +40,13 @@ watch(taskData.value, () => {
 });
 
 onMounted(async () => {
-  try {
-    const fetchStatus = await getAllStatus();
-    statusList.value = fetchStatus.map((item) => item.name);
-  }catch (err){
-    console.log(err)
-  }
+  // try {
+  //   const fetchStatus = await getAllStatus();
+  //   statusList.value = fetchStatus.map((item) => item.name);
+  // }catch (err){
+  //   console.log(err)
+  // }
+  statusList.value = statusStore.getAllStatusWithLimit()
 })
 
 const loading = ref(false);
@@ -146,8 +149,8 @@ function sendCloseModal() {
             class="itbkk-status select select-bordered bg-white"
             v-model="taskData.status"
           >
-            <option v-for="status in statusList" :value="status">
-              {{ status }}
+            <option v-for="status in statusList" :value="status.name" :disabled="status.isLimit">
+              {{ status.name }} <span class="text-error"> {{ status.isLimit ? '(max)':'' }} </span>
             </option>
           </select>
         </label>

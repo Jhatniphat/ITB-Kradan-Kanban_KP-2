@@ -1,5 +1,6 @@
 import {getAllStatus, getAllTasks} from "@/lib/fetchUtils";
 import {defineStore} from "pinia";
+import {useTaskStore} from "@/stores/task.js";
 
 export const useStatusStore = defineStore('status', {
     state: () => ({
@@ -52,7 +53,8 @@ export const useStatusStore = defineStore('status', {
             return this.status.find(status => status.id === id)
         },
         countStatus(status){
-            return this.status.filter( S => S === status).length
+            // return this.status.filter( S => S === status).length
+            return useTaskStore().tasks.filter((task) => task.status === status).length
         },
         // ? ไว้ใช้ตอนสร้าง task
         // ? ถ้า limitEnable : false > isLimit จะเป็น false ทั้งหมด
@@ -60,11 +62,10 @@ export const useStatusStore = defineStore('status', {
             let limitStatus = []
             this.status.forEach( s => {
                 if (s.name === 'No Status') limitStatus.push( { name : s.name , isLimit : false } )
-                else limitStatus.push( { name : s.name , isLimit : this.limitEnable ? this.countStatus(s) >= this.limit : false } )
+                else limitStatus.push( { name : s.name , isLimit : this.limitEnable ? this.countStatus(s.name) >= this.limit : false } )
             }  )
             return limitStatus
         },
-
         getLimit(){
             return this.limit
         },

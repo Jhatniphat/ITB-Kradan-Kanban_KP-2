@@ -132,6 +132,7 @@ async function filterData([filter, sort]) {
 }
 
 onBeforeMount(() => {
+  statusStore.getAllStatus()
   if (route.params.id !== undefined) {
     selectedid.value = parseInt(route.params.id);
     showDetailModal.value = true;

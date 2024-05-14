@@ -1,10 +1,12 @@
 <script setup>
-import { ref, watch } from "vue";
-import { getTaskById, editTask, getAllStatus } from "@/lib/fetchUtils.js";
+import {ref, watch} from "vue";
+import {getTaskById, editTask, getAllStatus} from "@/lib/fetchUtils.js";
 import router from "@/router";
-import { useTaskStore } from "@/stores/task";
+import {useTaskStore} from "@/stores/task";
+import {useStatusStore} from "@/stores/status.js";
 
 const taskStore = useTaskStore()
+const statusStore = useStatusStore()
 const emit = defineEmits(["closeModal", "editMode"]);
 const props = defineProps({
   taskId: {
@@ -26,32 +28,32 @@ const Errortext = ref({
   assignees: "",
 });
 
-watch(() => props.taskId, fetchTask, { immediate: true });
+watch(() => props.taskId, fetchTask, {immediate: true});
 
 watch(
-  taskDetail,
-  (newVal) => {
-    if (
-      !loading.value &&
-      JSON.stringify(newVal) !== JSON.stringify(originalTask.value)
-    ) {
-      canSave.value = true;
-    } else {
-      canSave.value = false;
-    }
-  },
-  { deep: true }
+    taskDetail,
+    (newVal) => {
+      if (
+          !loading.value &&
+          JSON.stringify(newVal) !== JSON.stringify(originalTask.value)
+      ) {
+        canSave.value = true;
+      } else {
+        canSave.value = false;
+      }
+    },
+    {deep: true}
 );
 
 async function fetchTask(id) {
   error.value = taskDetail.value = statusList.value = null;
   loading.value = true;
+  statusList.value = statusStore.getAllStatusWithLimit()
   try {
     const originalTaskDetails = await getTaskById(id);
     const fetchStatus = await getAllStatus();
-    statusList.value = fetchStatus.map((item) => item.name);
-    originalTask.value = { ...originalTaskDetails };
-    taskDetail.value = { ...originalTaskDetails };
+    originalTask.value = {...originalTaskDetails};
+    taskDetail.value = {...originalTaskDetails};
 
     if (taskDetail.value == 404) {
       router.push("/task");
@@ -64,6 +66,7 @@ async function fetchTask(id) {
     console.log(statusList.value.id);
   }
 }
+
 // async function fetchTask(id) {
 //   error.value = taskDetail.value = null;
 //   loading.value = true;
@@ -99,6 +102,7 @@ async function saveTask() {
     emit("closeModal", res);
   }
 }
+
 function sendCloseModal() {
   emit("closeModal", null);
   router.push("/task");
@@ -118,23 +122,23 @@ function sendCloseModal() {
             <h1 class="m-2 mt-0 text-2xl font-bold text-wrap break-all">
               Edit task
             </h1>
-            <hr />
+            <hr/>
             <span class="label-text">Title</span>
           </div>
-          <hr />
+          <hr/>
         </div>
         <input
-          v-model="taskDetail.title"
-          type="text"
-          placeholder="Type here"
-          class="itbkk-title input input-bordered w-full bg-white"
+            v-model="taskDetail.title"
+            type="text"
+            placeholder="Type here"
+            class="itbkk-title input input-bordered w-full bg-white"
         />
         <div class="label">
           <!-- ? Error Text -->
           <span
-            v-if="Errortext.title !== ''"
-            class="label-text-alt text-error"
-            >{{ Errortext.title }}</span
+              v-if="Errortext.title !== ''"
+              class="label-text-alt text-error"
+          >{{ Errortext.title }}</span
           >
         </div>
       </label>
@@ -147,19 +151,19 @@ function sendCloseModal() {
             Loading Data For TaskId = {{ props.taskId }}
           </h1>
           <h1
-            class="itbkk-title m-2 text-2xl font-bold text-wrap break-all"
-            v-if="loading === false && error === null"
+              class="itbkk-title m-2 text-2xl font-bold text-wrap break-all"
+              v-if="loading === false && error === null"
           >
             {{ taskDetail.title }}
           </h1>
         </div>
-        <hr />
+        <hr/>
         <div class="label">
           <!-- ? Error Text -->
           <span
-            v-if="Errortext.title !== ''"
-            class="label-text-alt text-error"
-            >{{ Errortext.title }}</span
+              v-if="Errortext.title !== ''"
+              class="label-text-alt text-error"
+          >{{ Errortext.title }}</span
           >
         </div>
       </label>
@@ -167,8 +171,8 @@ function sendCloseModal() {
 
     <!-- * description -->
     <div
-      class="flex mb-5 mx-auto flex-col w-full"
-      v-if="loading === false && error === null"
+        class="flex mb-5 mx-auto flex-col w-full"
+        v-if="loading === false && error === null"
     >
       <div class="flex flex-row gap-3">
         <label class="form-control basis-3/4">
@@ -177,12 +181,12 @@ function sendCloseModal() {
             <span class="label-text">Description</span>
           </div>
           <textarea
-            :readonly="!editMode"
-            v-model="taskDetail.description"
-            class="itbkk-description textarea textarea-bordered h-72 bg-white resize-none"
-            placeholder="No Description Provided"
-            :class="taskDetail.description === '' ? 'italic text-gray-600' : ''"
-            >{{
+              :readonly="!editMode"
+              v-model="taskDetail.description"
+              class="itbkk-description textarea textarea-bordered h-72 bg-white resize-none"
+              placeholder="No Description Provided"
+              :class="taskDetail.description === '' ? 'italic text-gray-600' : ''"
+          >{{
               taskDetail.description == "" || taskDetail.description === null
                 ? "No Description Provided"
                 : taskDetail.description
@@ -191,8 +195,8 @@ function sendCloseModal() {
           <div class="label">
             <!-- ? Error Text -->
             <span
-              v-if="Errortext.description !== ''"
-              class="label-text-alt text-error"
+                v-if="Errortext.description !== ''"
+                class="label-text-alt text-error"
             >
               {{ Errortext.description }}</span
             >
@@ -207,16 +211,16 @@ function sendCloseModal() {
               <span class="label-text">Assignees</span>
             </div>
             <textarea
-              :readonly="!editMode"
-              v-model="taskDetail.assignees"
-              class="itbkk-assignees textarea textarea-bordered h-24 bg-white resize-none"
-              placeholder="Unassigned"
-              :class="
+                :readonly="!editMode"
+                v-model="taskDetail.assignees"
+                class="itbkk-assignees textarea textarea-bordered h-24 bg-white resize-none"
+                placeholder="Unassigned"
+                :class="
                 taskDetail.assignees === '' || taskDetail.assignees === null
                   ? 'italic text-gray-600'
                   : ''
               "
-              >{{
+            >{{
                 taskDetail.assignees == "" || taskDetail.assignees === null
                   ? "Unassigned"
                   : taskDetail.assignees
@@ -225,8 +229,8 @@ function sendCloseModal() {
             <div class="label">
               <!-- ? Error Text -->
               <span
-                v-if="Errortext.assignees !== ''"
-                class="label-text-alt text-error"
+                  v-if="Errortext.assignees !== ''"
+                  class="label-text-alt text-error"
               >
                 {{ Errortext.assignees }}</span
               >
@@ -239,12 +243,12 @@ function sendCloseModal() {
               <span class="label-text">Status</span>
             </div>
             <select
-              :disabled="!editMode"
-              class="itbkk-status select select-bordered bg-white"
-              v-model="taskDetail.status"
+                :disabled="!editMode"
+                class="itbkk-status select select-bordered bg-white"
+                v-model="taskDetail.status"
             >
-              <option v-for="status in statusList" :value="status">
-                {{ status }}
+              <option v-for="status in statusList" :value="status.name" :disabled="originalTask.status !== status.name && status.isLimit">
+                {{ status.name }} <span class="text-error"> {{ status.isLimit ? '(max)':'' }} </span>
               </option>
             </select>
           </label>
@@ -278,34 +282,34 @@ function sendCloseModal() {
         </div>
       </div>
 
-      <hr />
+      <hr/>
       <div class="flex flex-row-reverse gap-4 mt-5">
         <!-- Cancel button -->
         <button
-          class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
-          @click="sendCloseModal()"
+            class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
+            @click="sendCloseModal()"
         >
           Cancel
         </button>
 
         <button
-          v-if="!editMode"
-          class="btn btn-outline btn-primary basis-1/6"
-          @click="editMode = true"
+            v-if="!editMode"
+            class="btn btn-outline btn-primary basis-1/6"
+            @click="editMode = true"
         >
           Edit
         </button>
 
         <button
-          v-if="editMode"
-          class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
-          :disabled="!canSave && editMode"
-          @click="saveTask"
+            v-if="editMode"
+            class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
+            :disabled="!canSave && editMode"
+            @click="saveTask"
         >
           {{ loading ? "" : "Save" }}
           <span
-            class="loading loading-spinner text-success"
-            v-if="loading"
+              class="loading loading-spinner text-success"
+              v-if="loading"
           ></span>
         </button>
       </div>
