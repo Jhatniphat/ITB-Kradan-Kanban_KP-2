@@ -2,28 +2,35 @@
 import { onBeforeMount, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import Taskdetail from "../components/Tasks/Taskdetail.vue";
-import { getAllTasks, deleteTask } from "../lib/fetchUtils.js";
+import { deleteTask } from "../lib/fetchUtils.js";
 import router from "@/router";
 import Modal from "../components/Modal.vue";
 import AddTaskModal from "@/components/Tasks/AddTaskModal.vue";
 import { useTaskStore } from "@/stores/task"
 import { useStatusStore } from "@/stores/status";
 
+// ! ================= Variable ======================
+// ? ----------------- Store and Route ---------------
 const taskStore = useTaskStore();
 const statusStore = useStatusStore();
-
-const showDetailModal = ref(false);
-const showDeleteModal = ref(false);
 const route = useRoute();
 
-const loading = ref(false);
-const allTasks = ref(null);
-const filteredTasks = ref(null);
-const error = ref(null);
-const selectedid = ref(0);
+// ? ----------------- Modal -------------------------
+const showDetailModal = ref(false);
+const showDeleteModal = ref(false);
 const showAddModal = ref(false);
 const toast = ref({ status: "", msg: "" });
+const showEditLimit = ref(false); // * show modal edit limit of task status
 
+// ? ----------------- Common -------------------------
+const loading = ref(false);
+const allTasks = ref(null);
+const filteredTasks = ref(null); // * allTasks that filter ready to show!
+const error = ref(null);
+const selectedId = ref(0); // * use to show detail and delete
+const limitStatusValue = ref(null); // * obj for EditLimit modal
+
+// ! ================= Modal ======================
 const openEditMode = (id) => {
   showDetailModal.value = true;
   router.push(`/task/${id}`);
@@ -52,6 +59,7 @@ const closeEditModal = (res) => {
   }
 };
 
+// ! ================= Toast ======================
 const showToast = (toastData) => {
   toast.value = toastData;
   console.log(toastData);
@@ -60,12 +68,13 @@ const showToast = (toastData) => {
   }, 5000);
 };
 
+// ! ================= Delete Confirm ======================
 const deleteTaskTitle = ref("");
 
 const deleteThisTask = async () => {
   let res;
   try {
-    res = await deleteTask(selectedid.value);
+    res = await deleteTask(selectedId.value);
     if ("id" in res) {
       taskStore.deleteStoreTask(res)
       showToast({ status: "success", msg: "Delete task successfuly" });
@@ -79,12 +88,13 @@ const deleteThisTask = async () => {
 
 const openDeleteModal = (taskTitle, id) => {
   deleteTaskTitle.value = taskTitle;
-  selectedid.value = id;
+  selectedId.value = id;
   showDeleteModal.value = true;
 };
 
+// ! ================= open Detail ======================
 const openModal = (id) => {
-  selectedid.value = id;
+  selectedId.value = id;
   showDetailModal.value = true;
 };
 
@@ -107,13 +117,15 @@ async function fetchData(id) {
   }
 }
 watch(() => route.params.id, fetchData, { immediate: true });
-// ! filter
+
+// ! ================= Filter and Sort ======================
 const filterBy = ref(['No Status', 'To Do', 'Doing', 'Done'])
 const sortBy = ref('ASC')
 watch(() => [filterBy.value, sortBy.value], filterData, { immediate: true })
 
 async function filterData([filter, sort]) {
-  let allTasks = [...await taskStore.getAllTasks()]
+  let allTasks = []
+  allTasks = [...await taskStore.getAllTasks()]
   filteredTasks.value = allTasks.filter(task => {
     return filter.some((fil) => fil === task.status)
   })
@@ -134,7 +146,7 @@ async function filterData([filter, sort]) {
 onBeforeMount(() => {
   statusStore.getAllStatus()
   if (route.params.id !== undefined) {
-    selectedid.value = parseInt(route.params.id);
+    selectedId.value = parseInt(route.params.id);
     showDetailModal.value = true;
   }
 });
@@ -245,7 +257,7 @@ onBeforeMount(() => {
     <!-- DetailsModal -->
     <!-- EditModal -->
     <Modal :show-modal="showDetailModal">
-      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal" />
+      <Taskdetail :taskId="parseInt(selectedId)" @closeModal="closeEditModal" />
     </Modal>
     <!-- Add Modal -->
     <Modal :show-modal="showAddModal">

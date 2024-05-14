@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { getAllStatus } from "@/lib/fetchUtils";
 import { useRoute } from "vue-router";
 import AddStatusModal from "@/components/Status/AddStatusModal.vue";
 import EditStatus from "@/components/Status/EditStatus.vue";
@@ -9,24 +8,30 @@ import Modal from "@/components/Modal.vue";
 import router from "@/router";
 import { useStatusStore } from "@/stores/status.js";
 
+// ! ================= Variable ======================
+// ? ----------------- Store and Route ---------------
 const statusStore = useStatusStore();
 const route = useRoute();
-const selectedid = ref(0);
+
+// ? ----------------- Modal ---------------
+const toast = ref({ status: "", msg: "" });
 const showAddModal = ref(false);
 const showEdit = ref(false);
 const showDelete = ref(false);
+
+// ? ----------------- Common -------------------------
+const selectedId = ref(0);
 const deleteTitle = ref("");
 const error = ref(null);
 const status = ref(null);
 const loading = ref(false);
-const toast = ref({ status: "", msg: "" });
 
 onMounted(() => {
   fetchStatusData();
   if (route.params.id !== undefined) {
-    selectedid.value = parseInt(route.params.id);
+    selectedId.value = parseInt(route.params.id);
     showEdit.value = true;
-    console.log(selectedid.value, showEdit.value);
+    console.log(selectedId.value, showEdit.value);
   }
 });
 
@@ -46,6 +51,7 @@ async function fetchStatusData(id) {
   }
 }
 
+// ! ================= Modal ======================
 const showToast = (toastData) => {
   toast.value = toastData;
   console.log(toastData);
@@ -64,7 +70,7 @@ const closeAddModal = (res) => {
 };
 
 const openEdit = (id) => {
-  selectedid.value = id;
+  selectedId.value = id;
   showEdit.value = true;
   router.push(`/status/${id}`);
 };
@@ -81,7 +87,7 @@ const closeEdit = (res) => {
 };
 
 const openDelete = (id, title) => {
-  selectedid.value = id;
+  selectedId.value = id;
   deleteTitle.value = title;
   showDelete.value = true;
 };
@@ -176,11 +182,11 @@ const closeDelete = (res) => {
   </Modal>
   <!-- Edit Modal -->
   <Modal :show-modal="showEdit">
-    <EditStatus :status-id="parseInt(selectedid)" @close-modal="closeEdit" />
+    <EditStatus :status-id="parseInt(selectedId)" @close-modal="closeEdit" />
   </Modal>
   <!-- Delete Modal -->
   <Modal :show-modal="showDelete">
-    <DeleteStatus :delete-id="parseInt(selectedid)" :deleteTitle="deleteTitle" @close-modal="closeDelete" />
+    <DeleteStatus :delete-id="parseInt(selectedId)" :deleteTitle="deleteTitle" @close-modal="closeDelete" />
   </Modal>
   <!-- Toast -->
   <div class="toast">
