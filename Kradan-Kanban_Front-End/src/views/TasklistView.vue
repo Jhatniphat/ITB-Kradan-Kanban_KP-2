@@ -194,13 +194,13 @@ onBeforeMount(() => {
   <div class="w-3/4 mx-auto mt-10 relative">
     <details class="dropdown">
       <summary class="m-1 btn">Status Filter</summary>
-      <ul class="absolute dropdown-menu z-[50] rounded-box">
-        <li
-          v-for="status in statusStore.status"
-          :key="status"
-          class="menu p-2 shadow bg-base-100 w-52"
-        >
-          <button class="hover:">{{ status.name }}</button>
+      <summary class="m-1 btn">Selected status = {{ selectedStatus }}</summary>
+      <ul class="absolute dropdown-menu z-[50] rounded-box ">
+        <li v-for="status in statusStore.status" :key="status" class="menu p-2 shadow bg-base-100 w-52">
+          <div>
+            <input type="checkbox" class="checkbox" :id="status.id" :value="status.name" v-model="selectedStatus" @click="filterData([selectedStatus,sortBy])">
+            <label :for=status.name>{{ status.name }}</label>
+          </div>
         </li>
       </ul>
     </details>
