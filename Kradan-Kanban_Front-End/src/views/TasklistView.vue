@@ -16,6 +16,7 @@ const route = useRoute();
 
 const loading = ref(false);
 const allTasks = ref(null);
+const filteredTasks = ref(null);
 const error = ref(null);
 const selectedid = ref(0);
 const showAddModal = ref(false);
@@ -94,14 +95,39 @@ async function fetchData(id) {
   try {
     // replace `getPost` with your data fetching util / API wrapper
     allTasks.value = await taskStore.getAllTasks();
+    if (typeof (allTasks.value) === 'object') {
+      filteredTasks.value = allTasks.value
+    }
   } catch (err) {
     error.value = err.toString();
   } finally {
     loading.value = false;
   }
 }
-
 watch(() => route.params.id, fetchData, { immediate: true });
+// ! filter
+const filterBy = ref(['No Status' , 'To Do' , 'Doing' , 'Done'])
+const sortBy = ref('ASC')
+watch( () => [ filterBy.value , sortBy.value ] , filterData , {immediate : true})
+
+async function filterData([filter, sort]) {
+  const allTasks = await taskStore.getAllTasks()
+  filteredTasks.value = allTasks.filter(task => {
+    return filter.some((fil) => fil === task.status)
+  })
+  switch (sort){
+    case '':break
+    case 'ASC':
+      filteredTasks.value = filteredTasks.value.sort((a, b) => a.status.localeCompare(b.status));
+      break
+    case 'DESC':
+      filteredTasks.value = filteredTasks.value.sort((a, b) => b.status.localeCompare(a.status));
+      break
+  }
+  // ? .sort ต้องการค่า - + ออกมา
+  // ? .localeCompare จะ  return ออกมาว่าห่างกันเท่าไหร่ เช่น 'a'.localeCompare('c') > -2
+  console.table(filteredTasks.value)
+}
 
 onBeforeMount(() => {
   if (route.params.id !== undefined) {
