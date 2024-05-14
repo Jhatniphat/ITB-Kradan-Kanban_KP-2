@@ -1,19 +1,36 @@
-import {getAllStatus} from "@/lib/fetchUtils";
+import {getAllStatus, getAllTasks} from "@/lib/fetchUtils";
 import {defineStore} from "pinia";
 
 export const useStatusStore = defineStore('status', {
     state: () => ({
         status: [],
+        limit : 10,
+        limitEnable : true
     }),
     actions: {
+        // async getAllStatus() {
+        //     let items
+        //     try {
+        //         items = await getAllStatus()
+        //         this.status = await items
+        //         return this.status
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // },
         async getAllStatus() {
-            let items
-            try {
-                items = await getAllStatus()
-                this.status = await items
-                return this.status
-            } catch (error) {
-                console.log(error)
+            if (this.status.length > 0) return this.status;
+            else {
+                let items;
+                try {
+                    items = await getAllStatus();
+                    this.status = await items;
+                    if (typeof items !== Number) {
+                        return this.status;
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
             }
         },
         addStoreStatus(newStatus) {
@@ -33,6 +50,26 @@ export const useStatusStore = defineStore('status', {
         },
         findById(id) {
             return this.status.find(status => status.id === id)
+        },
+        countStatus(status){
+            return this.status.filter( S => S === status).length
+        },
+        // ? ไว้ใช้ตอนสร้าง task
+        // ? ถ้า limitEnable : false > isLimit จะเป็น false ทั้งหมด
+        getAllStatusWithLimit(){
+            let limitStatus = []
+            this.status.forEach( s => {
+                if (s.name === 'No Status') limitStatus.push( { name : s.name , isLimit : false } )
+                else limitStatus.push( { name : s.name , isLimit : this.limitEnable ? this.countStatus(s) >= this.limit : false } )
+            }  )
+            return limitStatus
+        },
+
+        getLimit(){
+            return this.limit
+        },
+        setLimit(limit){
+            this.limit = limit
         }
     }
 })

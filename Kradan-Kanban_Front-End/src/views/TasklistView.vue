@@ -111,7 +111,7 @@ const sortBy = ref('ASC')
 watch( () => [ filterBy.value , sortBy.value ] , filterData , {immediate : true})
 
 async function filterData([filter, sort]) {
-  const allTasks = await taskStore.getAllTasks()
+  const allTasks = {...await taskStore.getAllTasks() }
   filteredTasks.value = allTasks.filter(task => {
     return filter.some((fil) => fil === task.status)
   })

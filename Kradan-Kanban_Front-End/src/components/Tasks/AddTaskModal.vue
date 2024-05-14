@@ -21,7 +21,7 @@ const Errortext = ref({
 watch(taskData.value, () => {
   if (taskData.value.title.trim().length > 100)
     Errortext.value.title = `Title can't long more than 100 character`;
-  else if (taskData.value.title.trim().length == 0)
+  else if (taskData.value.title.trim().length === 0)
     Errortext.value.title = `Title can't be empty`;
   else Errortext.value.title = "";
   if (taskData.value.description.trim().length > 500)
