@@ -43,12 +43,14 @@ async function fetchData(id) {
   loading.value = true;
   try {
     const originalstatusDetails = await getStatusById(id);
+    if (originalstatusDetails === 404) {
+      console.log("GOOOOOOOO")
+      router.push("/status");
+      emit("closeModal", 404);
+    }
     originalsDetail.value = { ...originalstatusDetails };
     statusDetail.value = { ...originalstatusDetails };
     console.log(statusDetail.value);
-    if (statusDetail.value === 404) {
-      router.push("/status");
-    }
   } catch (err) {
     error.value = err.toString();
   } finally {

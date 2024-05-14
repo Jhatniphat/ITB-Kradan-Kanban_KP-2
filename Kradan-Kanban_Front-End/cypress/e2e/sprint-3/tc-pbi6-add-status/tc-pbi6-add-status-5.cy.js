@@ -34,6 +34,8 @@ describe(`TC-PBI6-ADD-STATUS-5\n
     cy.get('@modal').find('.itbkk-assignees').type('Assignees1Assignees2Assignees3')
     cy.get('@modal').find('.itbkk-button-confirm').contains('save',{matchCase: false}).as('save') ;
     cy.get('@save').click()
+    // ! เพิ่มหน่วงเวลา เพราะข้อมูลยาว
+    cy.wait(500)
   })
 
   it('Add the "Repository" with "To Do" status.',()=>{

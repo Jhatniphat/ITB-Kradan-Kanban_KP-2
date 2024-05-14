@@ -37,7 +37,8 @@ describe(`TC-PBI6-ADD-STATUS-3\n
         cy.get('@modal').find('.itbkk-button-confirm').should('not.be.disabled')
         cy.get('@modal').find('.itbkk-status-description').type("Maximum001Maximum002Maximum003Maximum004Maximum005Maximum006Maximum007Maximum008Maximum009Maximum100Maximum001Maximum002Maximum003Maximum004Maximum005Maximum006Maximum007Maximum008Maximum009Maximum200")
         cy.get('@modal').find('.itbkk-button-confirm').should('exist').click()
-        cy.wait(100) 
+        // ! เพิ่มเวลาจาก 100 เป็น 1000
+        cy.wait(1000)
 
         cy.url().should('contain','/status')
     })

@@ -28,6 +28,7 @@ const openEditMode = (id) => {
 
 const closeAddModal = (res) => {
   showAddModal.value = false;
+  console.log("")
   if (res === null) return 0;
   if ("id" in res) {
     showToast({ status: "success", msg: "Add task successfuly" });

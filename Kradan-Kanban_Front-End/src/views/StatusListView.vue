@@ -72,6 +72,7 @@ const openEdit = (id) => {
 const closeEdit = (res) => {
   showEdit.value = false;
   if (res === null) return 0;
+  if (res === 404) showToast({ status: "error", msg: "An error has occurred, the status does not exist" });
   if ("id" in res) {
     showToast({ status: "success", msg: "Edit task successfuly" });
     statusStore.editStoreStatus(res)
@@ -194,7 +195,7 @@ const closeDelete = (res) => {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <span>{{ toast.msg }}</span>
+      <span class="itbkk-message">{{ toast.msg }}</span>
     </div>
   </div>
 </template>
