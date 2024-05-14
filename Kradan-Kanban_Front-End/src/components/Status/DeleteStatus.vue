@@ -119,7 +119,7 @@ const transferTheStatus = async (newId) => {
           @click="closeThisModal"
           class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
         >
-          Close
+        Cancel
         </button>
         <button
           @click="deleteThisStatus()"

@@ -57,7 +57,7 @@ const showToast = (toastData) => {
 const closeAddModal = (res) => {
   showAddModal.value = false;
   if (res === null) return 0;
-  if ("id" in res){
+  if ("id" in res) {
     showToast({ status: "success", msg: "Add task successfuly" });
     statusStore.addStoreStatus(res);
   } else showToast({ status: "error", msg: "Add task Failed" });
@@ -72,6 +72,7 @@ const openEdit = (id) => {
 const closeEdit = (res) => {
   showEdit.value = false;
   if (res === null) return 0;
+  if (res === 404) showToast({ status: "error", msg: "An error has occurred, the status does not exist" });
   if ("id" in res) {
     showToast({ status: "success", msg: "Edit task successfuly" });
     statusStore.editStoreStatus(res)
@@ -106,10 +107,7 @@ const closeDelete = (res) => {
     </div>
     <!-- Add Status -->
     <div class="navbar-end">
-      <button
-        class="btn btn-square btn-outline w-16"
-        @click="showAddModal = true"
-      >
+      <button class="itbkk-button-add btn btn-square btn-outline w-16" @click="showAddModal = true">
         Add Status
       </button>
     </div>
@@ -128,8 +126,7 @@ const closeDelete = (res) => {
     <div class="flex flex-col">
       <!-- Table -->
       <table
-        class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
-      >
+        class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1">
         <!-- Head -->
         <thead>
           <tr>
@@ -144,32 +141,25 @@ const closeDelete = (res) => {
           <tr v-if="status === null">
             <td colspan="4">Waiting For Data</td>
           </tr>
-          <tr
-            v-if="status !== null"
-            v-for="(status, index) in status"
-            :key="status.id"
-            class="itbkk-item hover"
-          >
+          <tr v-if="status !== null" v-for="(status, index) in status" :key="status.id" class="itbkk-item hover">
             <td>{{ index + 1 }}</td>
             <td class="itbkk-status-name break-all">
               {{ status.name }}
             </td>
-            <td class="itbkk-status-description break-all">
-              {{ status.description }}
+            <td class="itbkk-status-description break-all" :style="{
+              fontStyle: status.description ? 'normal' : 'italic',
+              color: status.description ? '' : 'gray',
+            }">
+              {{ status.description === null || status.description == ""
+                ? "No description is provided"
+                : status.description
+              }}
             </td>
-            <td 
-            v-if="status.name !== 'No Status'"
-            class="itbkk-action-button">
-              <button
-                class="itbkk-button-edit btn m-2"
-                @click="openEdit(status.id)"
-              >
+            <td v-if="status.name !== 'No Status'" class="itbkk-action-button">
+              <button class="itbkk-button-edit btn m-2" @click="openEdit(status.id)">
                 Edit
               </button>
-              <button
-                class="itbkk-button-delete btn m-2"
-                @click="openDelete(status.id, status.name)"
-              >
+              <button class="itbkk-button-delete btn m-2" @click="openDelete(status.id, status.name)">
                 Delete
               </button>
             </td>
@@ -190,49 +180,22 @@ const closeDelete = (res) => {
   </Modal>
   <!-- Delete Modal -->
   <Modal :show-modal="showDelete">
-    <DeleteStatus
-      :delete-id="parseInt(selectedid)"
-      :deleteTitle="deleteTitle"
-      @close-modal="closeDelete"
-    />
+    <DeleteStatus :delete-id="parseInt(selectedid)" :deleteTitle="deleteTitle" @close-modal="closeDelete" />
   </Modal>
   <!-- Toast -->
   <div class="toast">
-    <div
-      role="alert"
-      class="alert"
-      :class="`alert-${toast.status}`"
-      v-if="toast.status !== ''"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        v-if="toast.status === 'success'"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
+    <div role="alert" class="alert" :class="`alert-${toast.status}`" v-if="toast.status !== ''">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
+        v-if="toast.status === 'success'">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        v-if="toast.status === 'error'"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
+        v-if="toast.status === 'error'">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <span>{{ toast.msg }}</span>
+      <span class="itbkk-message">{{ toast.msg }}</span>
     </div>
   </div>
 </template>

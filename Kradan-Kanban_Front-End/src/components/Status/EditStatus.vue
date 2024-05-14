@@ -43,12 +43,14 @@ async function fetchData(id) {
   loading.value = true;
   try {
     const originalstatusDetails = await getStatusById(id);
+    if (originalstatusDetails === 404) {
+      console.log("GOOOOOOOO")
+      router.push("/status");
+      emit("closeModal", 404);
+    }
     originalsDetail.value = { ...originalstatusDetails };
     statusDetail.value = { ...originalstatusDetails };
     console.log(statusDetail.value);
-    if (statusDetail.value === 404) {
-      router.push("/status");
-    }
   } catch (err) {
     error.value = err.toString();
   } finally {
@@ -83,7 +85,7 @@ function sendCloseModal() {
 </script>
 
 <template>
-  <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
+  <div class="itbkk-modal-status flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
     <label class="form-control w-full">
       <div class="label">
         <h1 class="m-2 text-3xl font-bold" v-if="loading === true">
@@ -103,7 +105,7 @@ function sendCloseModal() {
         v-model="statusDetail.name"
         type="text"
         placeholder="Type here"
-        class="itbkk-title input input-bordered w-full bg-white"
+        class="itbkk-status-name input input-bordered w-full bg-white"
       />
     </label>
 
@@ -121,7 +123,7 @@ function sendCloseModal() {
           <textarea
             v-if="loading === false"
             v-model="statusDetail.description"
-            class="itbkk-description textarea textarea-bordered h-72 bg-white"
+            class="itbkk-status-description textarea textarea-bordered h-72 bg-white"
             placeholder="No Description Provided"
             :class="
               statusDetail.description === '' ? 'italic text-gray-600' : ''

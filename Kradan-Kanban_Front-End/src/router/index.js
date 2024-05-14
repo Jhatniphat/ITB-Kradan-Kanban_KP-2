@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router"
 import HomeView from "../views/HomeView.vue"
-import TaskList from "../views/TasklistView.vue"
+import TaskListView from "../views/TasklistView.vue"
+import StatusListView from "@/views/StatusListView.vue";
+import * as path from "node:path";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -24,21 +26,29 @@ const router = createRouter({
     {
       path: "/task",
       name: "tasklist",
-      component: TaskList,
+      component: TaskListView,
     },
     {
       path: "/task/:id",
-      component: () => import("../views/TasklistView.vue"),
+      component: TaskListView,
+    },
+    {
+      path: "/task/:id/edit",
+      component: TaskListView,
     },
     {
       path: "/status",
       name: "statuslist",
-      component: () => import("../views/StatusListView.vue"),
+      component: StatusListView,
     },
     {
       path: "/status/:id", // Define a route for editing task
-      component: () => import("../views/StatusListView.vue"),
+      component: StatusListView,
     },
+    {
+      path: "/status/:id/edit",
+      component: StatusListView,
+    }
   ],
 })
 

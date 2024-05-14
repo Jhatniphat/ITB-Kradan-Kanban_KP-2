@@ -71,7 +71,7 @@ function sendCloseModal() {
   <!-- <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg">
 
   </div> -->
-  <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
+  <div class="itbkk-modal-task flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
     <!-- * title -->
     <label class="form-control w-full">
       <div class="label">
