@@ -43,6 +43,7 @@ const closeAddModal = (res) => {
   if ("id" in res) {
     showToast({ status: "success", msg: "Add task successfuly" });
     taskStore.addStoreTask(res);
+    // const
   } else showToast({ status: "error", msg: "Add task Failed" });
 };
 
@@ -129,12 +130,15 @@ watch(() => [filterBy.value, sortBy.value], filterData, { immediate: true });
 
 async function filterData([filter, sort]) {
   let allTasks = [];
-  allTasks = [...(await taskStore.getAllTasks())];
+  allTasks = taskStore.tasks;
   filteredTasks.value = allTasks.filter((task) => {
     return filter.some((fil) => fil === task.status);
   });
   switch (sort) {
     case "":
+      filteredTasks.value = filteredTasks.value.sort((a, b) =>
+          a.id - b.id
+      );
       break;
     case "ASC":
       filteredTasks.value = filteredTasks.value.sort((a, b) =>
@@ -149,7 +153,6 @@ async function filterData([filter, sort]) {
   }
   // ? .sort ต้องการค่า - + ออกมา
   // ? .localeCompare จะ  return ออกมาว่าห่างกันเท่าไหร่ เช่น 'a'.localeCompare('c') > -2
-  console.table(filteredTasks.value);
 }
 
 onBeforeMount(() => {
@@ -194,11 +197,11 @@ onBeforeMount(() => {
   <div class="w-3/4 mx-auto mt-10 relative">
     <details class="dropdown">
       <summary class="m-1 btn">Status Filter</summary>
-      <summary class="m-1 btn">Selected status = {{ selectedStatus }}</summary>
+      <summary class="m-1 btn">Selected status = {{ filterBy }}</summary>
       <ul class="absolute dropdown-menu z-[50] rounded-box ">
         <li v-for="status in statusStore.status" :key="status" class="menu p-2 shadow bg-base-100 w-52">
           <div>
-            <input type="checkbox" class="checkbox" :id="status.id" :value="status.name" v-model="selectedStatus" @click="filterData([selectedStatus,sortBy])">
+            <input type="checkbox" class="checkbox" :id="status.id" :value="status.name" v-model="filterBy">
             <label :for=status.name>{{ status.name }}</label>
           </div>
         </li>
@@ -230,7 +233,7 @@ onBeforeMount(() => {
           </tr>
           <tr
             v-if="allTasks !== null"
-            v-for="(task, index) in allTasks"
+            v-for="(task, index) in filteredTasks"
             :key="task.id"
             class="itbkk-item hover"
           >
