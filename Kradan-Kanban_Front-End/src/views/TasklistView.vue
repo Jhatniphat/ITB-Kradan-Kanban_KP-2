@@ -7,8 +7,10 @@ import router from "@/router";
 import Modal from "../components/Modal.vue";
 import AddTaskModal from "@/components/Tasks/AddTaskModal.vue";
 import { useTaskStore } from "@/stores/task"
- 
+import { useStatusStore } from "@/stores/status";
+
 const taskStore = useTaskStore();
+const statusStore = useStatusStore();
 
 const showDetailModal = ref(false);
 const showDeleteModal = ref(false);
@@ -106,17 +108,17 @@ async function fetchData(id) {
 }
 watch(() => route.params.id, fetchData, { immediate: true });
 // ! filter
-const filterBy = ref(['No Status' , 'To Do' , 'Doing' , 'Done'])
+const filterBy = ref(['No Status', 'To Do', 'Doing', 'Done'])
 const sortBy = ref('ASC')
-watch( () => [ filterBy.value , sortBy.value ] , filterData , {immediate : true})
+watch(() => [filterBy.value, sortBy.value], filterData, { immediate: true })
 
 async function filterData([filter, sort]) {
-  let allTasks = [...await taskStore.getAllTasks() ]
+  let allTasks = [...await taskStore.getAllTasks()]
   filteredTasks.value = allTasks.filter(task => {
     return filter.some((fil) => fil === task.status)
   })
-  switch (sort){
-    case '':break
+  switch (sort) {
+    case '': break
     case 'ASC':
       filteredTasks.value = filteredTasks.value.sort((a, b) => a.status.localeCompare(b.status));
       break
@@ -148,17 +150,11 @@ onBeforeMount(() => {
     </div>
     <!-- Add button -->
     <div class="navbar-end">
-      <button
-        class="itbkk-button-add btn btn-square btn-outline w-16 m-2"
-        @click="showAddModal = true"
-      >
+      <button class="itbkk-button-add btn btn-square btn-outline w-16 m-2" @click="showAddModal = true">
         + ADD
       </button>
       <div class="manage-status">
-        <button
-          @click="router.push('/status')"
-          class="itbkk-manage-status btn btn-square btn-outline w-20 m-2"
-        >
+        <button @click="router.push('/status')" class="itbkk-manage-status btn btn-square btn-outline w-20 m-2">
           Manage Status
         </button>
       </div>
@@ -166,13 +162,26 @@ onBeforeMount(() => {
     <!-- Manage Status Button -->
   </div>
 
+  <!-- dropdowns status -->
+  <div class="w-3/4 mx-auto mt-10 relative">
+    <details class="dropdown">
+      <summary class="m-1 btn">Status Filter</summary>
+      <ul class="absolute dropdown-menu z-[50] rounded-box ">
+        <li v-for="status in statusStore.status"
+          :key="status"
+          class="menu p-2 shadow bg-base-100 w-52">
+          <button class="hover:">{{ status.name }}</button>
+        </li>
+      </ul>
+    </details>
+  </div>
+
   <!-- Content -->
   <div class="opacity">
     <div class="flex flex-col">
       <!-- Table -->
       <table
-        class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
-      >
+        class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1">
         <!-- head -->
         <thead>
           <tr>
@@ -188,12 +197,7 @@ onBeforeMount(() => {
           <tr v-if="allTasks === null">
             <td colspan="4">Waiting For Data</td>
           </tr>
-          <tr
-            v-if="allTasks !== null"
-            v-for="(task, index) in allTasks"
-            :key="task.id"
-            class="itbkk-item hover"
-          >
+          <tr v-if="allTasks !== null" v-for="(task, index) in allTasks" :key="task.id" class="itbkk-item hover">
             <th>{{ index + 1 }}</th>
             <td class="itbkk-title">
               <!-- <RouterLink :to="`/task/${task.id}`"> -->
@@ -202,13 +206,10 @@ onBeforeMount(() => {
               </button>
               <!-- </RouterLink> -->
             </td>
-            <td
-              class="itbkk-assignees"
-              :style="{
-                fontStyle: task.assignees ? 'normal' : 'italic',
-                color: task.assignees ? '' : 'gray',
-              }"
-            >
+            <td class="itbkk-assignees" :style="{
+              fontStyle: task.assignees ? 'normal' : 'italic',
+              color: task.assignees ? '' : 'gray',
+            }">
               {{
                 task.assignees === null || task.assignees == ""
                   ? "Unassigned"
@@ -219,22 +220,12 @@ onBeforeMount(() => {
             <td class="">
               <div class="dropdown dropdown-bottom dropdown-end">
                 <div tabindex="0" role="button" class="btn m-1">
-                  <svg
-                    class="swap-off fill-current"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="32"
-                    height="32"
-                    viewBox="0 0 512 512"
-                  >
-                    <path
-                      d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z"
-                    />
+                  <svg class="swap-off fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                    viewBox="0 0 512 512">
+                    <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
                   </svg>
                 </div>
-                <ul
-                  tabindex="0"
-                  class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-                >
+                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                   <li>
                     <a @click="openEditMode(task.id)">Edit</a>
                   </li>
@@ -253,8 +244,8 @@ onBeforeMount(() => {
     <!-- DetailsModal -->
     <!-- EditModal -->
     <Modal :show-modal="showDetailModal">
-      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal"
-    /></Modal>
+      <Taskdetail :taskId="parseInt(selectedid)" @closeModal="closeEditModal" />
+    </Modal>
     <!-- Add Modal -->
     <Modal :show-modal="showAddModal">
       <AddTaskModal @closeModal="closeAddModal" />
@@ -273,21 +264,12 @@ onBeforeMount(() => {
         </h1>
         <hr />
         <div class="flex flex-row-reverse gap-4 mt-5">
-          <button
-            @click="showDeleteModal = false"
-            class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
-          >
+          <button @click="showDeleteModal = false" class="itbkk-button-cancel btn btn-outline btn-error basis-1/6">
             Close
           </button>
-          <button
-            @click="deleteThisTask()"
-            class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
-          >
+          <button @click="deleteThisTask()" class="itbkk-button-confirm btn btn-outline btn-success basis-1/6">
             {{ loading ? "" : "Confirm" }}
-            <span
-              class="loading loading-spinner text-success"
-              v-if="loading"
-            ></span>
+            <span class="loading loading-spinner text-success" v-if="loading"></span>
           </button>
         </div>
       </div>
@@ -295,39 +277,16 @@ onBeforeMount(() => {
 
     <!-- Toast -->
     <div class="toast">
-      <div
-        role="alert"
-        class="alert"
-        :class="`alert-${toast.status}`"
-        v-if="toast.status !== ''"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current shrink-0 h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          v-if="toast.status === 'success'"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
+      <div role="alert" class="alert" :class="`alert-${toast.status}`" v-if="toast.status !== ''">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
+          v-if="toast.status === 'success'">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current shrink-0 h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          v-if="toast.status === 'error'"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
+          v-if="toast.status === 'error'">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <span>{{ toast.msg }}</span>
       </div>
@@ -349,13 +308,11 @@ onBeforeMount(() => {
   align-items: center;
 } */
 ::backdrop {
-  background-image: linear-gradient(
-    45deg,
-    magenta,
-    rebeccapurple,
-    dodgerblue,
-    green
-  );
+  background-image: linear-gradient(45deg,
+      magenta,
+      rebeccapurple,
+      dodgerblue,
+      green);
   opacity: 0.75;
 }
 </style>
