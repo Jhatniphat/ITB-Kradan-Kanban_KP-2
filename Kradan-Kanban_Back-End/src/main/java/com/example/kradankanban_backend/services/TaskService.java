@@ -67,10 +67,10 @@ public class TaskService {
             throw new ItemNotFoundException("NOT FOUND");
         } else {
             newTask.setId(id);
-            task.setTitle(newTask.getTitle());
-            task.setDescription(newTask.getDescription());
-            task.setAssignees(newTask.getAssignees());
-            task.setStatus(newTask.getStatus());
+            newTask.setTitle(newTask.getTitle());
+            newTask.setDescription(newTask.getDescription());
+            newTask.setAssignees(newTask.getAssignees());
+            newTask.setStatus(newTask.getStatus());
             return repository.save(newTask);
         }
     }
