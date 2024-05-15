@@ -144,10 +144,14 @@ async function fetchData(id) {
 watch(() => route.params.id, fetchData, {immediate: true});
 
 // ! ================= Filter and Sort ======================
-const filterBy = ref(["No Status", "To Do", "Doing", "Done"]);
+const filterBy = ref([]);
 const sortBy = ref("ASC");
 watch(() => [filterBy.value, sortBy.value], filterData, {immediate: true});
-
+watch(filterBy, (newValue) => {
+  if (newValue.length === 0) {
+    filteredTasks.value = allTasks.value;
+  }
+});
 async function filterData([filter, sort]) {
   let allTasks = [];
   allTasks = taskStore.tasks;
