@@ -25,8 +25,8 @@ public class TaskController {
     private ModelMapper modelMapper;
 
     @GetMapping("") //DTO
-    public ResponseEntity<Object> getAllTasks() {
-        List<TaskEntity> tasks = service.findAll();
+    public ResponseEntity<Object> getAllTasks(@RequestParam(required = false) String sortBy, @RequestParam(required = false) List<String> filterStatuses) {
+        List<TaskEntity> tasks = service.findTasks(sortBy, filterStatuses);
         List<SimpleTaskDTO> simpleTaskDTOS = tasks.stream().map(p -> modelMapper.map(p, SimpleTaskDTO.class)).collect(Collectors.toList());
         return ResponseEntity.ok(simpleTaskDTOS);
     }
