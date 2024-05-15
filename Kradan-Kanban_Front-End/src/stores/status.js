@@ -5,8 +5,8 @@ import {useTaskStore} from "@/stores/task.js";
 export const useStatusStore = defineStore('status', {
     state: () => ({
         status: [],
-        limit : 10,
-        limitEnable : true
+        limit: 10,
+        limitEnable: true
     }),
     actions: {
         // async getAllStatus() {
@@ -52,28 +52,43 @@ export const useStatusStore = defineStore('status', {
         findById(id) {
             return this.status.find(status => status.id === id)
         },
-        countStatus(status){
+        countStatus(status) {
             // return this.status.filter( S => S === status).length
             return useTaskStore().tasks.filter((task) => task.status === status).length
         },
         // ? ไว้ใช้ตอนสร้าง task
         // ? ถ้า limitEnable : false > isLimit จะเป็น false ทั้งหมด
-        getAllStatusWithLimit(){
+        getAllStatusWithLimit() {
             let limitStatus = []
-            this.status.forEach( s => {
-                if (s.name === 'No Status') limitStatus.push( { name : s.name , isLimit : false } )
-                else limitStatus.push( { name : s.name , isLimit : this.limitEnable ? this.countStatus(s.name) >= this.limit : false } )
-            }  )
+            this.status.forEach(s => {
+                if (s.name === 'No Status') limitStatus.push({name: s.name, isLimit: false})
+                else limitStatus.push({
+                    name: s.name,
+                    isLimit: this.limitEnable ? this.countStatus(s.name) >= this.limit : false
+                })
+            })
             return limitStatus
         },
-        getLimit(){
+        getOverStatus() {
+            if (!this.limitEnable) return []
+            let overStatus = []
+            this.status.forEach(s => {
+                if (this.countStatus(s.name) >= this.limit && s.name !== 'No Status') overStatus.push(s.name)
+            })
+            return overStatus
+        },
+        getLimit() {
             return this.limit
         },
-        setLimit(limit){
+        setLimit(limit) {
             this.limit = limit
         },
-        setLimitEnable(limitEnable){
-            this.limitEndble = limitEnable
+        getLimitEnable() {
+            return this.limitEnable
         },
+        setLimitEnable(limitEnable) {
+            this.limitEnable = limitEnable
+        },
+
     }
 })
