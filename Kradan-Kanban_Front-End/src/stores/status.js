@@ -73,9 +73,12 @@ export const useStatusStore = defineStore('status', {
             if (!this.limitEnable) return []
             let overStatus = []
             this.status.forEach(s => {
-                if (this.countStatus(s.name) >= this.limit && s.name !== 'No Status') overStatus.push(s.name)
+                if (this.countStatus(s.name) > this.limit && s.name !== 'No Status') overStatus.push(s.name)
             })
             return overStatus
+        },
+        getCanOverStatus(){
+          return this.status.filter( s => s.name !== 'No Status' && s.name !== 'Done')
         },
         getLimit() {
             return this.limit

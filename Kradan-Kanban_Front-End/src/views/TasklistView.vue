@@ -1,13 +1,16 @@
 <script setup>
-import {onBeforeMount, ref, watch} from "vue";
+// ? import lib
+import {computed, onBeforeMount, ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import Taskdetail from "../components/Tasks/Taskdetail.vue";
 import {deleteTask} from "../lib/fetchUtils.js";
 import router from "@/router";
-import Modal from "../components/Modal.vue";
-import AddTaskModal from "@/components/Tasks/AddTaskModal.vue";
 import {useTaskStore} from "@/stores/task";
 import {useStatusStore} from "@/stores/status";
+// ? import component
+import Modal from "../components/Modal.vue";
+import Taskdetail from "../components/Tasks/Taskdetail.vue";
+import AddTaskModal from "@/components/Tasks/AddTaskModal.vue";
+import EditLimitStatus from "@/components/EditLimitStatus.vue";
 
 // ! ================= Variable ======================
 // ? ----------------- Store and Route ---------------
@@ -28,7 +31,7 @@ const allTasks = ref(null);
 const filteredTasks = ref(null); // * allTasks that filter ready to show!
 const error = ref(null);
 const selectedId = ref(0); // * use to show detail and delete
-const limitStatusValue = ref({}); // * obj for EditLimit modal
+const limitStatusValue = ref({isEnable: true, limit: 10}); // * obj for EditLimit modal
 
 // ! ================= Modal ======================
 const openEditMode = (id) => {
@@ -100,22 +103,25 @@ const openDeleteModal = (taskTitle, id) => {
 
 // watch( limitStatusValue.value , console.table(limitStatusValue.value) )
 // ? open = true , close = false
-function EditLimitModal(openOrClose) {
-  if (openOrClose) {
-    limitStatusValue.value = {isEnable: statusStore.getLimitEnable(), limit: statusStore.getLimit()}
-    showEditLimit.value = true
-    console.table(limitStatusValue.value)
-  } else {
-    statusStore.setLimitEnable(limitStatusValue.value.isEnable)
-    statusStore.setLimit(limitStatusValue.value.limit)
-    showEditLimit.value = false
-    let overStatus = statusStore.getOverStatus()
-    if (overStatus.length > 0) {
-      showToast({status: "error", msg: `Has Over Limit Status : ${overStatus.join(",")}`}, 5000);
-    }
-  }
-}
+// function EditLimitModal(openOrClose) {
+//   if (openOrClose) {
+//     limitStatusValue.value = { isEnable: statusStore.getLimitEnable(), limit: statusStore.getLimit() }
+//     showEditLimit.value = true
+//     console.table(limitStatusValue.value)
+//   } else {
+//     statusStore.setLimitEnable(limitStatusValue.value.isEnable)
+//     statusStore.setLimit(limitStatusValue.value.limit)
+//     showEditLimit.value = false
+//     let overStatus = statusStore.getOverStatus()
+//     if (overStatus.length > 0) {
+//       showToast({status: "error", msg: `Has Over Limit Status : ${overStatus.join(" , ")}`}, 5000);
+//     }
+//   }
+// }
 
+// const limitStatusValueError = computed( () => {
+//   return limitStatusValue.value.limit > 30 ? `Limit Can't Be Over 30!!` : '' }
+// )
 // ! ================= open Detail ======================
 const openModal = (id) => {
   selectedId.value = id;
@@ -152,6 +158,7 @@ watch(filterBy, (newValue) => {
     filteredTasks.value = allTasks.value;
   }
 });
+
 async function filterData([filter, sort]) {
   let allTasks = [];
   allTasks = taskStore.tasks;
@@ -236,7 +243,7 @@ onBeforeMount(() => {
     <div class="float-right">
       <button
           class="itbkk-button-add btn btn-square btn-outline w-16"
-          @click="EditLimitModal(true)"
+          @click="showEditLimit = true"
       >
         Limit Status
       </button>
@@ -373,25 +380,7 @@ onBeforeMount(() => {
 
     <!-- edit limit modal-->
     <Modal :show-modal="showEditLimit">
-      <div class="itbkk-modal-task flex flex-col gap-3 p-5 text-black bg-slate-50 rounded-lg w-3/4 m-auto">
-        <h1>Limit Status</h1>
-        <hr>
-        <div class="form-control w-fit">
-          <label class="cursor-pointer label">
-            <input type="checkbox" class="toggle toggle-primary" v-model="limitStatusValue.isEnable"/>
-            <span class="label-text pl-1">Enable Limit</span>
-          </label>
-        </div>
-        <div class="form-control">
-          <label class="label">Limit</label>
-          <input type="number" class="input" v-model="limitStatusValue.limit">
-        </div>
-        <div class="flex flex-row-reverse gap-4 mt-5">
-          <button class="btn btn-outline btn-success" @click="EditLimitModal(false)">Confirm</button>
-          <button class="btn btn-outline btn-error" @click="showEditLimit = false">Close</button>
-        </div>
-      </div>
-
+      <EditLimitStatus @close-modal="showEditLimit = false"/>
     </Modal>
 
     <!-- Toast -->
