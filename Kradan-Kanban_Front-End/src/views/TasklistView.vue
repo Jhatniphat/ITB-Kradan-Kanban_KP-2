@@ -151,14 +151,13 @@ watch(() => route.params.id, fetchData, {immediate: true});
 
 // ! ================= Filter and Sort ======================
 const filterBy = ref([]);
-const sortBy = ref("ASC");
-watch(() => [filterBy.value, sortBy.value], filterData, {immediate: true});
+const sortBy = ref("");
+watch(() => [filterBy.value, sortBy.value], filterData, { immediate: true });
 watch(filterBy, (newValue) => {
   if (newValue.length === 0) {
     filteredTasks.value = allTasks.value;
   }
 });
-
 async function filterData([filter, sort]) {
   let allTasks = [];
   allTasks = taskStore.tasks;
@@ -184,6 +183,22 @@ async function filterData([filter, sort]) {
   }
   // ? .sort ต้องการค่า - + ออกมา
   // ? .localeCompare จะ  return ออกมาว่าห่างกันเท่าไหร่ เช่น 'a'.localeCompare('c') > -2
+}
+
+
+// sort function
+function sortBtn() {
+  switch (sortBy.value) {
+    case "":
+      sortBy.value = "ASC";
+      break;
+    case "ASC":
+      sortBy.value = "DESC";
+      break;
+    case "DESC":
+      sortBy.value = "";
+      break;
+  }
 }
 
 onBeforeMount(() => {
@@ -228,16 +243,29 @@ onBeforeMount(() => {
   <div class="w-3/4 mx-auto mt-10 relative">
     <details class="dropdown">
       <summary class="m-1 btn">Status Filter</summary>
-      <summary class="m-1 btn">Selected status = {{ filterBy }}</summary>
-      <ul class="absolute dropdown-menu z-[50] rounded-box ">
-        <li v-for="status in statusStore.status" :key="status" class="menu p-2 shadow bg-base-100 w-52">
+      <ul class="absolute dropdown-menu z-[50] rounded-box">
+        <li
+          v-for="status in statusStore.status"
+          :key="status"
+          class="menu p-2 shadow bg-base-100 w-52"
+          tabindex="0"
+        >
           <div>
-            <input type="checkbox" class="checkbox" :id="status.id" :value="status.name" v-model="filterBy">
-            <label :for=status.name>{{ status.name }}</label>
+            <input
+              type="checkbox"
+              class="checkbox"
+              :id="status.id"
+              :value="status.name"
+              v-model="filterBy"
+            />
+            <label :for="status.name">{{ status.name }}</label>
           </div>
         </li>
       </ul>
     </details>
+
+    <!-- reset button -->
+    <button class="btn" @click="filterBy = []">Reset</button>
 
     <!-- show edit limit modal -->
     <div class="float-right">
@@ -256,67 +284,113 @@ onBeforeMount(() => {
     <div class="flex flex-col">
       <!-- Table -->
       <table
-          class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
+        class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
       >
         <!-- head -->
         <thead>
-        <tr>
-          <th>No</th>
-          <th>Title</th>
-          <th>Assignees</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
+          <tr>
+            <th>No</th>
+            <th>Title</th>
+            <th>Assignees</th>
+            <!-- sort button -->
+            <button @click="sortBtn()">
+              <th class="flex justify-center">
+                Status
+                <!-- default sort button -->
+                <svg
+                  v-if="sortBy === ''"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M11 9h9v2h-9zm0 4h7v2h-7zm0-8h11v2H11zm0 12h5v2h-5zm-6 3h2V8h3L6 4L2 8h3z"
+                  />
+                </svg>
+                <!-- ASC Button -->
+                <svg
+                  v-if="sortBy === 'ASC'"
+                  class="text-pink-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="#323ffb"
+                    d="M11 9h9v2h-9zm0 4h7v2h-7zm0-8h11v2H11zm0 12h5v2h-5zm-6 3h2V8h3L6 4L2 8h3z"
+                  />
+                </svg>
+                <!-- DESC Button -->
+                <svg
+                  v-if="sortBy === 'DESC'"
+                  class="text-pink-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="#323ffb"
+                    d="m6 20l4-4H7V4H5v12H2zm5-12h9v2h-9zm0 4h7v2h-7zm0-8h11v2H11zm0 12h5v2h-5z"
+                  />
+                </svg>
+              </th>
+            </button>
+            <th>Action</th>
+          </tr>
         </thead>
         <tbody>
-        <!-- Listing -->
-        <tr v-if="allTasks === null">
-          <td colspan="4">Waiting For Data</td>
-        </tr>
-        <tr
+          <!-- Listing -->
+          <tr v-if="allTasks === null">
+            <td colspan="4">Waiting For Data</td>
+          </tr>
+          <tr
             v-if="allTasks !== null"
             v-for="(task, index) in filteredTasks"
             :key="task.id"
             class="itbkk-item hover"
-        >
-          <th>{{ index + 1 }}</th>
-          <td class="itbkk-title">
-            <!-- <RouterLink :to="`/task/${task.id}`"> -->
-            <button @click="router.push(`/task/${task.id}`)">
-              {{ task.title }}
-            </button>
-            <!-- </RouterLink> -->
-          </td>
-          <td
+          >
+            <th>{{ index + 1 }}</th>
+            <td class="itbkk-title">
+              <!-- <RouterLink :to="`/task/${task.id}`"> -->
+              <button @click="router.push(`/task/${task.id}`)">
+                {{ task.title }}
+              </button>
+              <!-- </RouterLink> -->
+            </td>
+            <td
               class="itbkk-assignees"
               :style="{
                 fontStyle: task.assignees ? 'normal' : 'italic',
                 color: task.assignees ? '' : 'gray',
               }"
-          >
-            {{
-              task.assignees === null || task.assignees == ""
+            >
+              {{
+                task.assignees === null || task.assignees == ""
                   ? "Unassigned"
                   : task.assignees
-            }}
-          </td>
-          <td class="itbkk-status">{{ task.status }}</td>
-          <td class="">
-            <div class="dropdown dropdown-bottom dropdown-end">
-              <div tabindex="0" role="button" class="btn m-1">
-                <svg
+              }}
+            </td>
+            <td class="itbkk-status">{{ task.status }}</td>
+            <td class="">
+              <div class="dropdown dropdown-bottom dropdown-end">
+                <div tabindex="0" role="button" class="btn m-1">
+                  <svg
                     class="swap-off fill-current"
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
                     height="32"
                     viewBox="0 0 512 512"
-                >
-                  <path
+                  >
+                    <path
                       d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z"
-                  />
-                </svg>
-              </div>
-              <ul
+                    />
+                  </svg>
+                </div>
+                <ul
                   tabindex="0"
                   class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
               >
@@ -380,7 +454,25 @@ onBeforeMount(() => {
 
     <!-- edit limit modal-->
     <Modal :show-modal="showEditLimit">
-      <EditLimitStatus @close-modal="showEditLimit = false"/>
+      <div class="itbkk-modal-task flex flex-col gap-3 p-5 text-black bg-slate-50 rounded-lg w-3/4 m-auto">
+        <h1>Limit Status</h1>
+        <hr>
+        <div class="form-control w-fit">
+          <label class="cursor-pointer label">
+            <input type="checkbox" class="toggle toggle-primary" v-model="limitStatusValue.isEnable"/>
+            <span class="label-text pl-1">Enable Limit</span>
+          </label>
+        </div>
+        <div class="form-control">
+          <label class="label">Limit</label>
+          <input type="number" class="input" v-model="limitStatusValue.limit">
+        </div>
+        <div class="flex flex-row-reverse gap-4 mt-5">
+          <button class="btn btn-outline btn-success" @click="EditLimitModal(false)">Confirm</button>
+          <button class="btn btn-outline btn-error" @click="showEditLimit = false">Close</button>
+        </div>
+      </div>
+
     </Modal>
 
     <!-- Toast -->
