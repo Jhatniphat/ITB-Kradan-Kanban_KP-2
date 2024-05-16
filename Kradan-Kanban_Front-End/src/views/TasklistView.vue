@@ -153,7 +153,7 @@ watch(() => route.params.id, fetchData, { immediate: true });
 
 // ! ================= Filter and Sort ======================
 const filterBy = ref([]);
-const sortBy = ref("ASC");
+const sortBy = ref("");
 watch(() => [filterBy.value, sortBy.value], filterData, { immediate: true });
 watch(filterBy, (newValue) => {
   if (newValue.length === 0) {
@@ -167,47 +167,39 @@ async function filterData([filter, sort]) {
     return filter.some((fil) => fil === task.status);
   });
   switch (sort) {
-    // case "":
-    //   filteredTasks.value = filteredTasks.value.sort((a, b) => a.id - b.id);
-    //   break;
-    // case "ASC":
-    //   filteredTasks.value = filteredTasks.value.sort((a, b) =>
-    //     a.status.localeCompare(b.status)
-    //   );
-    //   break;
-    // case "DESC":
-    //   filteredTasks.value = filteredTasks.value.sort((a, b) =>
-    //     b.status.localeCompare(a.status)
-    //   );
-    //   break;
+    case "":
+      filteredTasks.value = filteredTasks.value.sort((a, b) => a.id - b.id);
+      break;
     case "ASC":
-      filteredTasks.value.sort((a, b) => a.status.localeCompare(b.status));
+      filteredTasks.value = filteredTasks.value.sort((a, b) =>
+        a.status.localeCompare(b.status)
+      );
       break;
     case "DESC":
-      filteredTasks.value.sort((a, b) => b.status.localeCompare(a.status));
+      filteredTasks.value = filteredTasks.value.sort((a, b) =>
+        b.status.localeCompare(a.status)
+      );
       break;
-    default:
-      // Default to ascending sorting
-      filteredTasks.value.sort((a, b) => a.status.localeCompare(b.status));
   }
   // ? .sort ต้องการค่า - + ออกมา
   // ? .localeCompare จะ  return ออกมาว่าห่างกันเท่าไหร่ เช่น 'a'.localeCompare('c') > -2
 }
 
-const sortBtn = ref("default");
 
-const sortBtnStatus = () => {
-  if (sortBtn.value === "default") {
-    sortBtn.value = "ASC";
-  } else if (sortBtn.value === "ASC") {
-    sortBtn.value = "DESC";
-  } else {
-    sortBtn.value = "default";
+// sort function
+function sortBtn() {
+  switch (sortBy.value) {
+    case "":
+      sortBy.value = "ASC";
+      break;
+    case "ASC":
+      sortBy.value = "DESC";
+      break;
+    case "DESC":
+      sortBy.value = "";
+      break;
   }
-};
-watch(sortBtn, () => {
-  filterData([filterBy.value, sortBtn.value]); // เรียกใช้ filterData() เมื่อมีการเปลี่ยนแปลงค่า sortBtn
-});
+}
 
 onBeforeMount(() => {
   statusStore.getAllStatus();
@@ -300,16 +292,15 @@ onBeforeMount(() => {
             <th>Title</th>
             <th>Assignees</th>
             <!-- sort button -->
-            <button @click="filterData([filterBy, sortBtn])">
+            <button @click="sortBtn()">
               <th class="flex justify-center">
                 Status
                 <!-- default sort button -->
                 <svg
-                  v-if="sortBtn === 'default'"
-                  @click="sortBtnStatus()"
+                  v-if="sortBy === ''"
                   xmlns="http://www.w3.org/2000/svg"
-                  width="12"
-                  height="12"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -319,12 +310,11 @@ onBeforeMount(() => {
                 </svg>
                 <!-- ASC Button -->
                 <svg
-                  v-if="sortBtn === 'ASC'"
-                  @click="sortBtnStatus()"
+                  v-if="sortBy === 'ASC'"
                   class="text-pink-400"
                   xmlns="http://www.w3.org/2000/svg"
-                  width="12"
-                  height="12"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -334,12 +324,11 @@ onBeforeMount(() => {
                 </svg>
                 <!-- DESC Button -->
                 <svg
-                  v-if="sortBtn === 'DESC'"
-                  @click="sortBtnStatus()"
+                  v-if="sortBy === 'DESC'"
                   class="text-pink-400"
                   xmlns="http://www.w3.org/2000/svg"
-                  width="12"
-                  height="12"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                 >
                   <path
