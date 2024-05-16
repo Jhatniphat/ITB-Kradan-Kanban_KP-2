@@ -152,18 +152,21 @@ watch(() => route.params.id, fetchData, {immediate: true});
 // ! ================= Filter and Sort ======================
 const filterBy = ref([]);
 const sortBy = ref("");
-watch(() => [filterBy.value, sortBy.value], filterData, { immediate: true });
-watch(filterBy, (newValue) => {
-  if (newValue.length === 0) {
-    filteredTasks.value = allTasks.value;
-  }
-});
+watch(() => [filterBy.value, sortBy.value], filterData, {immediate: true});
+// watch(filterBy, (newValue) => {
+//   if (newValue.length === 0) {
+//     filteredTasks.value = allTasks.value;
+//   }
+// });
+
 async function filterData([filter, sort]) {
   let allTasks = [];
   allTasks = taskStore.tasks;
-  filteredTasks.value = allTasks.filter((task) => {
-    return filter.some((fil) => fil === task.status);
-  });
+  if (filter.length > 0) {
+    filteredTasks.value = allTasks.filter((task) => {
+      return filter.some((fil) => fil === task.status);
+    });
+  } else filteredTasks.value = allTasks
   switch (sort) {
     case "":
       filteredTasks.value = filteredTasks.value.sort((a, b) =>
@@ -245,18 +248,18 @@ onBeforeMount(() => {
       <summary class="m-1 btn">Status Filter</summary>
       <ul class="absolute dropdown-menu z-[50] rounded-box">
         <li
-          v-for="status in statusStore.status"
-          :key="status"
-          class="menu p-2 shadow bg-base-100 w-52"
-          tabindex="0"
+            v-for="status in statusStore.status"
+            :key="status"
+            class="menu p-2 shadow bg-base-100 w-52"
+            tabindex="0"
         >
           <div>
             <input
-              type="checkbox"
-              class="checkbox"
-              :id="status.id"
-              :value="status.name"
-              v-model="filterBy"
+                type="checkbox"
+                class="checkbox"
+                :id="status.id"
+                :value="status.name"
+                v-model="filterBy"
             />
             <label :for="status.name">{{ status.name }}</label>
           </div>
@@ -284,113 +287,113 @@ onBeforeMount(() => {
     <div class="flex flex-col">
       <!-- Table -->
       <table
-        class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
+          class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1"
       >
         <!-- head -->
         <thead>
-          <tr>
-            <th>No</th>
-            <th>Title</th>
-            <th>Assignees</th>
-            <!-- sort button -->
-            <button @click="sortBtn()">
-              <th class="flex justify-center">
-                Status
-                <!-- default sort button -->
-                <svg
+        <tr>
+          <th>No</th>
+          <th>Title</th>
+          <th>Assignees</th>
+          <!-- sort button -->
+          <button @click="sortBtn()">
+            <th class="flex justify-center">
+              Status
+              <!-- default sort button -->
+              <svg
                   v-if="sortBy === ''"
                   xmlns="http://www.w3.org/2000/svg"
                   width="18"
                   height="18"
                   viewBox="0 0 24 24"
-                >
-                  <path
+              >
+                <path
                     fill="currentColor"
                     d="M11 9h9v2h-9zm0 4h7v2h-7zm0-8h11v2H11zm0 12h5v2h-5zm-6 3h2V8h3L6 4L2 8h3z"
-                  />
-                </svg>
-                <!-- ASC Button -->
-                <svg
+                />
+              </svg>
+              <!-- ASC Button -->
+              <svg
                   v-if="sortBy === 'ASC'"
                   class="text-pink-400"
                   xmlns="http://www.w3.org/2000/svg"
                   width="18"
                   height="18"
                   viewBox="0 0 24 24"
-                >
-                  <path
+              >
+                <path
                     fill="#323ffb"
                     d="M11 9h9v2h-9zm0 4h7v2h-7zm0-8h11v2H11zm0 12h5v2h-5zm-6 3h2V8h3L6 4L2 8h3z"
-                  />
-                </svg>
-                <!-- DESC Button -->
-                <svg
+                />
+              </svg>
+              <!-- DESC Button -->
+              <svg
                   v-if="sortBy === 'DESC'"
                   class="text-pink-400"
                   xmlns="http://www.w3.org/2000/svg"
                   width="18"
                   height="18"
                   viewBox="0 0 24 24"
-                >
-                  <path
+              >
+                <path
                     fill="#323ffb"
                     d="m6 20l4-4H7V4H5v12H2zm5-12h9v2h-9zm0 4h7v2h-7zm0-8h11v2H11zm0 12h5v2h-5z"
-                  />
-                </svg>
-              </th>
-            </button>
-            <th>Action</th>
-          </tr>
+                />
+              </svg>
+            </th>
+          </button>
+          <th>Action</th>
+        </tr>
         </thead>
         <tbody>
-          <!-- Listing -->
-          <tr v-if="allTasks === null">
-            <td colspan="4">Waiting For Data</td>
-          </tr>
-          <tr
+        <!-- Listing -->
+        <tr v-if="allTasks === null">
+          <td colspan="4">Waiting For Data</td>
+        </tr>
+        <tr
             v-if="allTasks !== null"
             v-for="(task, index) in filteredTasks"
             :key="task.id"
             class="itbkk-item hover"
-          >
-            <th>{{ index + 1 }}</th>
-            <td class="itbkk-title">
-              <!-- <RouterLink :to="`/task/${task.id}`"> -->
-              <button @click="router.push(`/task/${task.id}`)">
-                {{ task.title }}
-              </button>
-              <!-- </RouterLink> -->
-            </td>
-            <td
+        >
+          <th>{{ index + 1 }}</th>
+          <td class="itbkk-title">
+            <!-- <RouterLink :to="`/task/${task.id}`"> -->
+            <button @click="router.push(`/task/${task.id}`)">
+              {{ task.title }}
+            </button>
+            <!-- </RouterLink> -->
+          </td>
+          <td
               class="itbkk-assignees"
               :style="{
                 fontStyle: task.assignees ? 'normal' : 'italic',
                 color: task.assignees ? '' : 'gray',
               }"
-            >
-              {{
-                task.assignees === null || task.assignees == ""
+          >
+            {{
+              task.assignees === null || task.assignees == ""
                   ? "Unassigned"
                   : task.assignees
-              }}
-            </td>
-            <td class="itbkk-status">{{ task.status }}</td>
-            <td class="">
-              <div class="dropdown dropdown-bottom dropdown-end">
-                <div tabindex="0" role="button" class="btn m-1">
-                  <svg
+            }}
+          </td>
+          <td class="itbkk-status">{{ task.status }}</td>
+          <td class="">
+            <div class="dropdown dropdown-bottom dropdown-end">
+              <div tabindex="0" role="button" class="btn m-1">
+                <svg
                     class="swap-off fill-current"
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
                     height="32"
                     viewBox="0 0 512 512"
-                  >
-                    <path
+                >
+                  <path
                       d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z"
-                    />
-                  </svg>
-                </div>
-                <ul
+                  />
+                </svg>
+              </div>
+              <ul
                   tabindex="0"
                   class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
               >
