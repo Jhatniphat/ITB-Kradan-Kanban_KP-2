@@ -34,44 +34,51 @@ onBeforeMount(() => {
 //   }
 // }
 
-async function ConfirmEdit() {
+// async function ConfirmEdit() {
+//   statusStore.setLimitEnable(limitStatusValue.value.isEnable)
+//   statusStore.setLimit(limitStatusValue.value.limit)
+//   let overStatus = statusStore.getOverStatus()
+//   if (overStatus.length > 0) {
+//     if (overLimitTasks.value.length > 0) {
+//       let count = 0
+//       for (const task of overLimitTasks.value) {
+//         task.status = task.newStatus
+//         delete "newStatus" in task
+//         try {
+//           const res = await editTask(task.id, task)
+//           if (typeof res === "object") {
+//             taskStore.editStoreTask(task)
+//           }
+//         } catch (e) {
+//           console.log(e)
+//         } finally {
+//           count++;
+//           if (count >= overLimitTasks.value.length) {
+//             loading.value = false
+//             emit("closeModal")
+//           }
+//         }
+//       }
+//     } else {
+//       canConfirmBtn.value = false
+//       overLimitTasks.value = []
+//       overStatus.forEach(status => {
+//         taskStore.getTasksByStatus(status).forEach(overTask => {
+//           overLimitTasks.value.push(overTask)
+//         })
+//       })
+//       overLimitTasks.value.forEach(task => task.newStatus = task.status)
+//     }
+//   } else {
+//     emit("closeModal", null)
+//   }
+// }
+
+function confirmEdit(){
   statusStore.setLimitEnable(limitStatusValue.value.isEnable)
   statusStore.setLimit(limitStatusValue.value.limit)
   let overStatus = statusStore.getOverStatus()
-  if (overStatus.length > 0) {
-    if (overLimitTasks.value.length > 0) {
-      let count = 0
-      for (const task of overLimitTasks.value) {
-        task.status = task.newStatus
-        delete "newStatus" in task
-        try {
-          const res = await editTask(task.id, task)
-          if (typeof res === "object") {
-            taskStore.editStoreTask(task)
-          }
-        } catch (e) {
-          console.log(e)
-        } finally {
-          count++;
-          if (count >= overLimitTasks.value.length) {
-            loading.value = false
-            emit("closeModal")
-          }
-        }
-      }
-    } else {
-      canConfirmBtn.value = false
-      overLimitTasks.value = []
-      overStatus.forEach(status => {
-        taskStore.getTasksByStatus(status).forEach(overTask => {
-          overLimitTasks.value.push(overTask)
-        })
-      })
-      overLimitTasks.value.forEach(task => task.newStatus = task.status)
-    }
-  } else {
-    emit("closeModal", null)
-  }
+  emit("closeModal" , overStatus)
 }
 
 function canConfirm(tasks, oldTasks) {
@@ -87,7 +94,7 @@ function canConfirm(tasks, oldTasks) {
   )
 }
 
-watch(() => overLimitTasks.value, canConfirm, {deep: true})
+// watch(() => overLimitTasks.value, canConfirm, {deep: true})
 // watch(() => overLimitTasks.value, () => {
 //   console.log('new value', overLimitTasks.value);
 // }, { deep: true });
@@ -119,40 +126,40 @@ function closeEdit() {
       <label class="label">Limit {{ limitStatusValueError }}</label>
       <input type="number" class="input" v-model="limitStatusValue.limit">
     </div>
-    <div class="flex flex-col gap-2" v-if="overLimitTasks.length > 0">
-      <h2>Oh ,We have Status that over limit : {{ statusStore.getOverStatus().join(" , ") }}</h2>
-      <p>Please make progress or finish tasks in that status and try again.</p>
-      <div class="overflow-x-scroll max-h-56">
-        <table class="table table-zebra table-pin-rows">
-          <thead>
-          <tr>
-            <th>No.</th>
-            <th>Title</th>
-            <th>Assignees</th>
-            <th>Old Status</th>
-            <th>New Status</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="(task , index) in overLimitTasks">
-            <td>{{ index + 1 }}</td>
-            <td>{{ task.title }}</td>
-            <td>{{ task.assignees }}</td>
-            <td>{{ task.status }}</td>
-            <td>
-              <select class="select select-bordered" v-model="task.newStatus">
-                <option v-for="status in statusStore.getAllStatusWithLimit()" :value="status.name">{{ status.name }}
-                  {{ status.isLimit ? '(max)' : '' }}
-                </option>
-              </select>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+<!--    <div class="flex flex-col gap-2" v-if="overLimitTasks.length > 0">-->
+<!--      <h2>Oh ,We have Status that over limit : {{ statusStore.getOverStatus().join(" , ") }}</h2>-->
+<!--      <p>Please make progress or finish tasks in that status and try again.</p>-->
+<!--      <div class="overflow-x-scroll max-h-56">-->
+<!--        <table class="table table-zebra table-pin-rows">-->
+<!--          <thead>-->
+<!--          <tr>-->
+<!--            <th>No.</th>-->
+<!--            <th>Title</th>-->
+<!--            <th>Assignees</th>-->
+<!--            <th>Old Status</th>-->
+<!--            <th>New Status</th>-->
+<!--          </tr>-->
+<!--          </thead>-->
+<!--          <tbody>-->
+<!--          <tr v-for="(task , index) in overLimitTasks">-->
+<!--            <td>{{ index + 1 }}</td>-->
+<!--            <td>{{ task.title }}</td>-->
+<!--            <td>{{ task.assignees }}</td>-->
+<!--            <td>{{ task.status }}</td>-->
+<!--            <td>-->
+<!--              <select class="select select-bordered" v-model="task.newStatus">-->
+<!--                <option v-for="status in statusStore.getAllStatusWithLimit()" :value="status.name">{{ status.name }}-->
+<!--                  {{ status.isLimit ? '(max)' : '' }}-->
+<!--                </option>-->
+<!--              </select>-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--          </tbody>-->
+<!--        </table>-->
+<!--      </div>-->
+<!--    </div>-->
     <div class="flex flex-row-reverse gap-4 mt-5">
-      <button class="btn btn-outline btn-success" @click="ConfirmEdit"
+      <button class="btn btn-outline btn-success" @click="confirmEdit"
               :disabled="limitStatusValueError!=='' || !canConfirmBtn">{{ loading ? "" : "Confirm" }}
         <span
             class="loading loading-spinner text-success"

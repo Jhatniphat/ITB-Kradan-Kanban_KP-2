@@ -100,6 +100,13 @@ const openDeleteModal = (taskTitle, id) => {
   showDeleteModal.value = true;
 };
 
+function closeEditLimit(overStatus){
+  showEditLimit.value = false
+  if(overStatus === null || overStatus === undefined) return 0;
+  if (typeof(overStatus) === "object"){
+    showToast({ status : 'error' , msg : `These statuses that have reached the task limit.  No additional tasks can be added to these statuses. : ${overStatus.join(" , ")}`} , 10000)
+  }
+}
 // watch( limitStatusValue.value , console.table(limitStatusValue.value) )
 // ? open = true , close = false
 // function EditLimitModal(openOrClose) {
@@ -473,7 +480,7 @@ onBeforeMount(() => {
 
     <!-- edit limit modal-->
     <Modal :show-modal="showEditLimit">
-      <EditLimitStatus @close-modal="showEditLimit = false" />
+      <EditLimitStatus @close-modal="closeEditLimit" />
     </Modal>
 
     <!-- Toast -->
