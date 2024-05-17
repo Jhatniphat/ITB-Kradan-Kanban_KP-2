@@ -2,7 +2,7 @@
 import {computed, onBeforeMount, ref} from "vue";
 import {useStatusStore} from "@/stores/status.js";
 import {useTaskStore} from "@/stores/task.js";
-import {editTask} from "@/lib/fetchUtils.js";
+import {editTask, toggleLimitStatus} from "@/lib/fetchUtils.js";
 
 const taskStore = useTaskStore()
 const statusStore = useStatusStore()
@@ -74,11 +74,30 @@ onBeforeMount(() => {
 //   }
 // }
 
-function confirmEdit(){
-  statusStore.setLimitEnable(limitStatusValue.value.isEnable)
+async function confirmEdit() {
   statusStore.setLimit(limitStatusValue.value.limit)
+  if (limitStatusValue.value.isEnable !== statusStore.getLimitEnable()) {
+    try {
+      let res = await toggleLimitStatus()
+      console.log(res)
+      if (res === 200 || res  === 204) {
+        statusStore.setLimitEnable(limitStatusValue.value.isEnable)
+      }
+    } catch (e) {
+      console.log(e)
+    }
+
+  }
+  // statusStore.setLimitEnable(limitStatusValue.value.isEnable)
   let overStatus = statusStore.getOverStatus()
-  emit("closeModal" , overStatus)
+  if (overStatus.length > 0) {
+    let overStatusObj = []
+    overStatus.forEach((status) =>
+        overStatusObj.push({name: status, task: statusStore.countStatus(status)})
+    )
+    console.table(overStatusObj)
+    emit("closeModal", overStatusObj)
+  } else emit("closeModal", null)
 }
 
 function canConfirm(tasks, oldTasks) {
@@ -126,38 +145,38 @@ function closeEdit() {
       <label class="label">Limit {{ limitStatusValueError }}</label>
       <input type="number" class="input" v-model="limitStatusValue.limit">
     </div>
-<!--    <div class="flex flex-col gap-2" v-if="overLimitTasks.length > 0">-->
-<!--      <h2>Oh ,We have Status that over limit : {{ statusStore.getOverStatus().join(" , ") }}</h2>-->
-<!--      <p>Please make progress or finish tasks in that status and try again.</p>-->
-<!--      <div class="overflow-x-scroll max-h-56">-->
-<!--        <table class="table table-zebra table-pin-rows">-->
-<!--          <thead>-->
-<!--          <tr>-->
-<!--            <th>No.</th>-->
-<!--            <th>Title</th>-->
-<!--            <th>Assignees</th>-->
-<!--            <th>Old Status</th>-->
-<!--            <th>New Status</th>-->
-<!--          </tr>-->
-<!--          </thead>-->
-<!--          <tbody>-->
-<!--          <tr v-for="(task , index) in overLimitTasks">-->
-<!--            <td>{{ index + 1 }}</td>-->
-<!--            <td>{{ task.title }}</td>-->
-<!--            <td>{{ task.assignees }}</td>-->
-<!--            <td>{{ task.status }}</td>-->
-<!--            <td>-->
-<!--              <select class="select select-bordered" v-model="task.newStatus">-->
-<!--                <option v-for="status in statusStore.getAllStatusWithLimit()" :value="status.name">{{ status.name }}-->
-<!--                  {{ status.isLimit ? '(max)' : '' }}-->
-<!--                </option>-->
-<!--              </select>-->
-<!--            </td>-->
-<!--          </tr>-->
-<!--          </tbody>-->
-<!--        </table>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--    <div class="flex flex-col gap-2" v-if="overLimitTasks.length > 0">-->
+    <!--      <h2>Oh ,We have Status that over limit : {{ statusStore.getOverStatus().join(" , ") }}</h2>-->
+    <!--      <p>Please make progress or finish tasks in that status and try again.</p>-->
+    <!--      <div class="overflow-x-scroll max-h-56">-->
+    <!--        <table class="table table-zebra table-pin-rows">-->
+    <!--          <thead>-->
+    <!--          <tr>-->
+    <!--            <th>No.</th>-->
+    <!--            <th>Title</th>-->
+    <!--            <th>Assignees</th>-->
+    <!--            <th>Old Status</th>-->
+    <!--            <th>New Status</th>-->
+    <!--          </tr>-->
+    <!--          </thead>-->
+    <!--          <tbody>-->
+    <!--          <tr v-for="(task , index) in overLimitTasks">-->
+    <!--            <td>{{ index + 1 }}</td>-->
+    <!--            <td>{{ task.title }}</td>-->
+    <!--            <td>{{ task.assignees }}</td>-->
+    <!--            <td>{{ task.status }}</td>-->
+    <!--            <td>-->
+    <!--              <select class="select select-bordered" v-model="task.newStatus">-->
+    <!--                <option v-for="status in statusStore.getAllStatusWithLimit()" :value="status.name">{{ status.name }}-->
+    <!--                  {{ status.isLimit ? '(max)' : '' }}-->
+    <!--                </option>-->
+    <!--              </select>-->
+    <!--            </td>-->
+    <!--          </tr>-->
+    <!--          </tbody>-->
+    <!--        </table>-->
+    <!--      </div>-->
+    <!--    </div>-->
     <div class="flex flex-row-reverse gap-4 mt-5">
       <button class="btn btn-outline btn-success" @click="confirmEdit"
               :disabled="limitStatusValueError!=='' || !canConfirmBtn">{{ loading ? "" : "Confirm" }}
