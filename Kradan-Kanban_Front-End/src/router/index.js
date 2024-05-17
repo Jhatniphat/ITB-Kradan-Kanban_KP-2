@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import TaskListView from "../views/TasklistView.vue";
 import StatusListView from "@/views/StatusListView.vue";
-import * as path from "node:path";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [

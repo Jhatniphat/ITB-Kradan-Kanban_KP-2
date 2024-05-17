@@ -1,5 +1,5 @@
 <script setup>
-import {addTask, getAllStatus} from "@/lib/fetchUtils";
+import {addTask} from "@/lib/fetchUtils";
 import {onMounted, ref, watch} from "vue";
 import {useStatusStore} from "@/stores/status.js";
 const emit = defineEmits(["closeModal"]);

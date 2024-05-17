@@ -1,6 +1,6 @@
 <script setup>
 // ? import lib
-import { computed, onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { deleteTask } from "../lib/fetchUtils.js";
 import router from "@/router";

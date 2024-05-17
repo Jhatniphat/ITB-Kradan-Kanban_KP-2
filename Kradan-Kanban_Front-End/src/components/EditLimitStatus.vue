@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onBeforeMount, ref, watch} from "vue";
+import {computed, onBeforeMount, ref} from "vue";
 import {useStatusStore} from "@/stores/status.js";
 import {useTaskStore} from "@/stores/task.js";
 import {editTask} from "@/lib/fetchUtils.js";

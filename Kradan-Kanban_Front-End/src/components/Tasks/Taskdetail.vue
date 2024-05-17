@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getTaskById, editTask, getAllStatus } from "@/lib/fetchUtils.js";
+import { getTaskById, editTask} from "@/lib/fetchUtils.js";
 import router from "@/router";
 import { useTaskStore } from "@/stores/task";
 import { useStatusStore } from "@/stores/status.js";
