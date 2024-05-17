@@ -457,25 +457,7 @@ onBeforeMount(() => {
 
     <!-- edit limit modal-->
     <Modal :show-modal="showEditLimit">
-      <div class="itbkk-modal-task flex flex-col gap-3 p-5 text-black bg-slate-50 rounded-lg w-3/4 m-auto">
-        <h1>Limit Status</h1>
-        <hr>
-        <div class="form-control w-fit">
-          <label class="cursor-pointer label">
-            <input type="checkbox" class="toggle toggle-primary" v-model="limitStatusValue.isEnable"/>
-            <span class="label-text pl-1">Enable Limit</span>
-          </label>
-        </div>
-        <div class="form-control">
-          <label class="label">Limit</label>
-          <input type="number" class="input" v-model="limitStatusValue.limit">
-        </div>
-        <div class="flex flex-row-reverse gap-4 mt-5">
-          <button class="btn btn-outline btn-success" @click="EditLimitModal(false)">Confirm</button>
-          <button class="btn btn-outline btn-error" @click="showEditLimit = false">Close</button>
-        </div>
-      </div>
-
+      <EditLimitStatus @close-modal="showEditLimit = false"/>
     </Modal>
 
     <!-- Toast -->

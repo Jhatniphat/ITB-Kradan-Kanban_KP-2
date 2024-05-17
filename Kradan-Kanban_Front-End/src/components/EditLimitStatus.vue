@@ -140,7 +140,7 @@ function closeEdit() {
             <td>{{ task.assignees }}</td>
             <td>{{ task.status }}</td>
             <td>
-              <select v-model="task.newStatus">
+              <select class="select select-bordered" v-model="task.newStatus">
                 <option v-for="status in statusStore.getAllStatusWithLimit()" :value="status.name">{{ status.name }}
                   {{ status.isLimit ? '(max)' : '' }}
                 </option>

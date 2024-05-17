@@ -6,9 +6,9 @@ import {
   getAllTasks,
   getStatusById,
 } from "@/lib/fetchUtils";
-import { onMounted, ref } from "vue";
-import { useStatusStore } from "@/stores/status.js";
-import { useTaskStore } from "@/stores/task.js";
+import {onMounted, ref, watch} from "vue";
+import {useStatusStore} from "@/stores/status.js";
+import {useTaskStore} from "@/stores/task.js";
 
 const emit = defineEmits(["closeModal"]);
 const props = defineProps({
@@ -27,15 +27,24 @@ const loading = ref(false);
 const statusList = ref(null);
 const error = ref(null);
 const newId = ref(null);
+const errorMsg = ref('')
+
+watch(() => newId.value, checkCantransfer)
+function checkCantransfer() {
+  if (!transfer.value) return 0;
+  errorMsg.value = useStatusStore().canTransfer(props.deleteId, newId.value) ? '' : `Cannot transfer to ${useStatusStore().findById(newId.value).name} status since it will exceed the limit.  Please choose another status to transfer to.`
+  console.log(errorMsg.value)
+}
 
 onMounted(async () => {
   try {
     statusList.value = await getAllStatus();
     console.table(statusList.value);
-  } catch (error) {}
+  } catch (error) {
+  }
   statusList.value.splice(
-    statusList.value.findIndex((status) => status.id == props.deleteId),
-    1
+      statusList.value.findIndex((status) => status.id == props.deleteId),
+      1
   );
 });
 
@@ -101,26 +110,26 @@ const transferTheStatus = async (newId) => {
     <!-- Delete Modal -->
     <div v-if="!transfer">
       <h1 class="m-2 pb-4 text-2xl font-bold">Delete a Satus</h1>
-      <hr />
+      <hr/>
       <h1 class="itbkk-message font-semibold text-xl p-8">
         Do you want to delete the "{{ deleteTitle }}" Status?
       </h1>
-      <hr />
+      <hr/>
       <div class="flex flex-row-reverse gap-4 mt-5">
         <button
-          @click="closeThisModal"
-          class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
+            @click="closeThisModal"
+            class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
         >
           Cancel
         </button>
         <button
-          @click="deleteThisStatus()"
-          class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
+            @click="deleteThisStatus()"
+            class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
         >
           {{ loading ? "" : "Confirm" }}
           <span
-            class="loading loading-spinner text-success"
-            v-if="loading"
+              class="loading loading-spinner text-success"
+              v-if="loading"
           ></span>
         </button>
       </div>
@@ -128,7 +137,7 @@ const transferTheStatus = async (newId) => {
     <!-- Tranfers Modal -->
     <div v-if="transfer">
       <h1 class="m-2 pb-4 text-2xl font-bold">Transfer a Satus</h1>
-      <hr />
+      <hr/>
       <div class="p-3 flex flex-col">
         <h1 class="itbkk-message font-semibold text-xl">
           There is some task associated with the "{{ deleteTitle }}" Status?
@@ -137,38 +146,41 @@ const transferTheStatus = async (newId) => {
           <h1 class="font-semibold text-xl">Transfer to</h1>
           <label class="form-control w-full max-w-xs ml-2">
             <select
-              v-model="newId"
-              class="itbkk-status select select-bordered bg-white"
+                v-model="newId"
+                class="itbkk-status select select-bordered bg-white"
             >
               <!-- <option value="No Status" selected>No Status</option> -->
               <option
-                v-for="status in statusList"
-                :key="status.id"
-                :value="status.id"
+                  v-for="status in statusList"
+                  :key="status.id"
+                  :value="status.id"
               >
                 {{ status.name }}
               </option>
             </select>
           </label>
+
         </div>
+        <p class="text-error">{{ errorMsg }}</p>
       </div>
 
-      <hr />
+      <hr/>
       <div class="flex flex-row-reverse gap-4 mt-5">
         <button
-          @click="closeThisModal"
-          class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
+            @click="closeThisModal"
+            class="itbkk-button-cancel btn btn-outline btn-error basis-1/6"
         >
           Close
         </button>
         <button
-          @click="transferTheStatus(newId)"
-          class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
+            @click="transferTheStatus(newId)"
+            class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
+            :disabled="errorMsg !== ''"
         >
           {{ loading ? "" : "Tranfer" }}
           <span
-            class="loading loading-spinner text-success"
-            v-if="loading"
+              class="loading loading-spinner text-success"
+              v-if="loading"
           ></span>
         </button>
       </div>

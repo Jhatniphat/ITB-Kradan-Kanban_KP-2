@@ -156,7 +156,7 @@ const closeDelete = (res) => {
               fontStyle: status.description ? 'normal' : 'italic',
               color: status.description ? '' : 'gray',
             }">
-              {{ status.description === null || status.description == ""
+              {{ status.description === null || status.description === ""
                 ? "No description is provided"
                 : status.description
               }}
