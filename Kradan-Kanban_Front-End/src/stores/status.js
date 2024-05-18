@@ -1,4 +1,4 @@
-import {getAllStatus} from "@/lib/fetchUtils";
+import {getAllStatus, getLimitStatus} from "@/lib/fetchUtils";
 import {defineStore} from "pinia";
 import {useTaskStore} from "@/stores/task.js";
 
@@ -73,14 +73,14 @@ export const useStatusStore = defineStore('status', {
             if (!this.limitEnable) return []
             let overStatus = []
             this.status.forEach(s => {
-                if (this.countStatus(s.name) > this.limit && s.name !== 'No Status' &&  s.name !== 'Done') overStatus.push(s.name)
+                if (this.countStatus(s.name) > this.limit && s.name !== 'No Status' && s.name !== 'Done') overStatus.push(s.name)
             })
             return overStatus
         },
-        getCanOverStatus(){
-          return this.status.filter( s => s.name !== 'No Status' && s.name !== 'Done')
+        getCanOverStatus() {
+            return this.status.filter(s => s.name !== 'No Status' && s.name !== 'Done')
         },
-        canTransfer(oldId , newId = 1){
+        canTransfer(oldId, newId = 1) {
             const newStatus = this.findById(newId)
             console.table(newStatus)
             if (newStatus.name === 'No Status' || newStatus.name === 'Done') return true

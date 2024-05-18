@@ -2,7 +2,7 @@
 // ? import lib
 import {onBeforeMount, ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import {deleteTask} from "../lib/fetchUtils.js";
+import {deleteTask, getLimitStatus} from "../lib/fetchUtils.js";
 import router from "@/router";
 import {useTaskStore} from "@/stores/task";
 import {useStatusStore} from "@/stores/status";
@@ -214,8 +214,11 @@ function sortBtn() {
   }
 }
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   statusStore.getAllStatus();
+  statusStore.getLimitEnable();
+  const res = await getLimitStatus()
+  statusStore.setLimitEnable(await res)
   if (route.params.id !== undefined) {
     selectedId.value = parseInt(route.params.id);
     showDetailModal.value = true;
