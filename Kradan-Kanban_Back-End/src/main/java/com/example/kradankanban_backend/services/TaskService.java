@@ -100,6 +100,13 @@ public class TaskService {
         }
     }
 
+    public List<TaskEntity> findTasks(String sortBy, List<String> filterStatuses) {
+        if (sortBy == null || sortBy.isEmpty()) {
+            sortBy = "id"; // Default sort by id if sortBy is not provided
+        }
+        return repository.findTasksWithSortingAndFiltering(sortBy, filterStatuses);
+    }
+
     public static boolean isNumeric(String strNum) {
         if (strNum == null) {
             return false;

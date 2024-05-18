@@ -42,10 +42,22 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
+-- Table `intergrate-kp-2`.`limitSettings`
+DROP TABLE IF EXISTS `intergrate-kp-2`.`limitSettings`;
+CREATE TABLE IF NOT EXISTS `intergrate-kp-2`.`limitSettings` (
+  `limit` INT NOT NULL DEFAULT 10,
+  `isEnable` BOOLEAN NOT NULL DEFAULT TRUE
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
 insert into `intergrate-kp-2`.`status` (`statusName` , `statusDescription`) value ("No Status" , "The default status");
 insert into `intergrate-kp-2`.`status` (`statusName`) value ("To Do");
 insert into `intergrate-kp-2`.`status` (`statusName` , `statusDescription`) value ("Doing" , "Being worked on");
 insert into `intergrate-kp-2`.`status` (`statusName` , `statusDescription`) value ("Done" , "Finished");
+
+insert into `intergrate-kp-2`.`limitSettings` (`limit` , `isEnable`) value (10 ,TRUE);
 ALTER DATABASE `intergrate-kp-2` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 DROP USER IF EXISTS 'dev'@'%';

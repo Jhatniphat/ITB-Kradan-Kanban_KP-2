@@ -1,10 +1,12 @@
 <script setup>
 import { ref, watch } from "vue";
-import { getTaskById, editTask, getAllStatus } from "@/lib/fetchUtils.js";
+import { getTaskById, editTask} from "@/lib/fetchUtils.js";
 import router from "@/router";
 import { useTaskStore } from "@/stores/task";
+import { useStatusStore } from "@/stores/status.js";
 
-const taskStore = useTaskStore()
+const taskStore = useTaskStore();
+const statusStore = useStatusStore();
 const emit = defineEmits(["closeModal", "editMode"]);
 const props = defineProps({
   taskId: {
@@ -46,10 +48,14 @@ watch(
 async function fetchTask(id) {
   error.value = taskDetail.value = statusList.value = null;
   loading.value = true;
+  statusList.value = statusStore.getAllStatusWithLimit();
   try {
     const originalTaskDetails = await getTaskById(id);
-    const fetchStatus = await getAllStatus();
-    statusList.value = fetchStatus.map((item) => item.name);
+    console.log(originalTaskDetails);
+    if (originalTaskDetails === 404) {
+      router.push("/task");
+      emit("closeModal", 404);
+    }
     originalTask.value = { ...originalTaskDetails };
     taskDetail.value = { ...originalTaskDetails };
 
@@ -64,22 +70,7 @@ async function fetchTask(id) {
     console.log(statusList.value.id);
   }
 }
-// async function fetchTask(id) {
-//   error.value = taskDetail.value = null;
-//   loading.value = true;
-//   try {
-//     const originalTaskDetails = await getTaskById(id);
-//     originalTask.value = { ...originalTaskDetails };
-//     taskDetail.value = { ...originalTaskDetails };
-//     if (taskDetail.value == 404) {
-//       router.push("/task");
-//     }
-//   } catch (err) {
-//     error.value = err.toString();
-//   } finally {
-//     loading.value = false;
-//   }
-// }
+
 async function saveTask() {
   loading.value = true;
   let res;
@@ -99,6 +90,7 @@ async function saveTask() {
     emit("closeModal", res);
   }
 }
+
 function sendCloseModal() {
   emit("closeModal", null);
   router.push("/task");
@@ -243,8 +235,17 @@ function sendCloseModal() {
               class="itbkk-status select select-bordered bg-white"
               v-model="taskDetail.status"
             >
-              <option v-for="status in statusList" :value="status">
-                {{ status }}
+              <option
+                v-for="status in statusList"
+                :value="status.name"
+                :disabled="
+                  originalTask.status !== status.name && status.isLimit
+                "
+              >
+                {{ status.name }}
+                <span class="text-error">
+                  {{ status.isLimit ? "(max)" : "" }}
+                </span>
               </option>
             </select>
           </label>

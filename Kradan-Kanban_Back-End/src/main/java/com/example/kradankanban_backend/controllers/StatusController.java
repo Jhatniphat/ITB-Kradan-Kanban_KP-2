@@ -1,6 +1,7 @@
 package com.example.kradankanban_backend.controllers;
 
 import com.example.kradankanban_backend.dtos.SimpleStatusDTO;
+import com.example.kradankanban_backend.entities.LimitSettings;
 import com.example.kradankanban_backend.entities.StatusEntity;
 import com.example.kradankanban_backend.services.StatusService;
 import org.modelmapper.ModelMapper;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5174" , "http://localhost:5173"})
 //@CrossOrigin(origins = "http://ip23kp2.sit.kmutt.ac.th:80")
 @RestController
 @RequestMapping("/statuses")
@@ -54,5 +55,10 @@ public class StatusController {
     @DeleteMapping("/{id}/{newId}")
     public ResponseEntity<Object> transferStatus(@PathVariable int id, @PathVariable int newId) {
         return new ResponseEntity<>(service.transferStatus(id, newId) , HttpStatus.OK);
+    }
+    @PatchMapping("/maximum-task")
+    public ResponseEntity<Void> toggleMaximumTask() {
+        service.toggleIsEnable();
+        return ResponseEntity.noContent().build();
     }
 }

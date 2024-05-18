@@ -15,11 +15,6 @@ const props = defineProps({
     require: true,
   },
 });
-// const Errortext = ref({
-//   title: "",
-//   description: "",
-//   assignees: "",
-// })
 
 watch(() => props.statusId, fetchData, { immediate: true });
 
@@ -44,7 +39,7 @@ async function fetchData(id) {
   try {
     const originalstatusDetails = await getStatusById(id);
     if (originalstatusDetails === 404) {
-      console.log("GOOOOOOOO")
+      console.log("GOOOOOOOO");
       router.push("/status");
       emit("closeModal", 404);
     }
@@ -85,7 +80,9 @@ function sendCloseModal() {
 </script>
 
 <template>
-  <div class="itbkk-modal-status flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
+  <div
+    class="itbkk-modal-status flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full"
+  >
     <label class="form-control w-full">
       <div class="label">
         <h1 class="m-2 text-3xl font-bold" v-if="loading === true">

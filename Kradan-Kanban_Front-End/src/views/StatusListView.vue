@@ -1,32 +1,37 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { getAllStatus } from "@/lib/fetchUtils";
-import { useRoute } from "vue-router";
+import {onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
 import AddStatusModal from "@/components/Status/AddStatusModal.vue";
 import EditStatus from "@/components/Status/EditStatus.vue";
 import DeleteStatus from "@/components/Status/DeleteStatus.vue";
 import Modal from "@/components/Modal.vue";
 import router from "@/router";
-import { useStatusStore } from "@/stores/status.js";
+import {useStatusStore} from "@/stores/status.js";
 
+// ! ================= Variable ======================
+// ? ----------------- Store and Route ---------------
 const statusStore = useStatusStore();
 const route = useRoute();
-const selectedid = ref(0);
+
+// ? ----------------- Modal ---------------
+const toast = ref({status: "", msg: ""});
 const showAddModal = ref(false);
 const showEdit = ref(false);
 const showDelete = ref(false);
+
+// ? ----------------- Common -------------------------
+const selectedId = ref(0);
 const deleteTitle = ref("");
 const error = ref(null);
 const status = ref(null);
 const loading = ref(false);
-const toast = ref({ status: "", msg: "" });
 
 onMounted(() => {
   fetchStatusData();
   if (route.params.id !== undefined) {
-    selectedid.value = parseInt(route.params.id);
+    selectedId.value = parseInt(route.params.id);
     showEdit.value = true;
-    console.log(selectedid.value, showEdit.value);
+    console.log(selectedId.value, showEdit.value);
   }
 });
 
@@ -46,11 +51,12 @@ async function fetchStatusData(id) {
   }
 }
 
+// ! ================= Modal ======================
 const showToast = (toastData) => {
   toast.value = toastData;
   console.log(toastData);
   setTimeout(() => {
-    toast.value = { ...{ status: "" } };
+    toast.value = {...{status: ""}};
   }, 5000);
 };
 
@@ -58,13 +64,13 @@ const closeAddModal = (res) => {
   showAddModal.value = false;
   if (res === null) return 0;
   if ("id" in res) {
-    showToast({ status: "success", msg: "Add task successfuly" });
+    showToast({status: "success", msg: "Add task successfuly"});
     statusStore.addStoreStatus(res);
-  } else showToast({ status: "error", msg: "Add task Failed" });
+  } else showToast({status: "error", msg: "Add task Failed"});
 };
 
 const openEdit = (id) => {
-  selectedid.value = id;
+  selectedId.value = id;
   showEdit.value = true;
   router.push(`/status/${id}`);
 };
@@ -72,16 +78,15 @@ const openEdit = (id) => {
 const closeEdit = (res) => {
   showEdit.value = false;
   if (res === null) return 0;
-  if (res === 404) showToast({ status: "error", msg: "An error has occurred, the status does not exist" });
+  if (res === 404) showToast({status: "error", msg: "An error has occurred, the status does not exist"});
   if ("id" in res) {
-    showToast({ status: "success", msg: "Edit task successfuly" });
+    showToast({status: "success", msg: "Edit task successfuly"});
     statusStore.editStoreStatus(res)
-  }
-  else showToast({ status: "error", msg: "Edit task Failed" });
+  } else showToast({status: "error", msg: "Edit task Failed"});
 };
 
 const openDelete = (id, title) => {
-  selectedid.value = id;
+  selectedId.value = id;
   deleteTitle.value = title;
   showDelete.value = true;
 };
@@ -89,10 +94,14 @@ const openDelete = (id, title) => {
 const closeDelete = (res) => {
   showDelete.value = false;
   if (res === null) return 0;
-  if ("id" in res) {
+  // if (res === 404)
+  if (typeof (res) === "object") {
     statusStore.deleteStoreStatus(res)
-    showToast({ status: "success", msg: "Delete task successfuly" });
-  } else showToast({ status: "error", msg: "Delete task Failed" });
+    showToast({status: "success", msg: "Delete task successfuly"});
+  } else {
+    showToast({status: "error", msg: "Delete task Failed ,Please restart page"} , 6000)
+  }
+  ;
 };
 </script>
 
@@ -126,44 +135,45 @@ const closeDelete = (res) => {
     <div class="flex flex-col">
       <!-- Table -->
       <table
-        class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1">
+          class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1">
         <!-- Head -->
         <thead>
-          <tr>
-            <th>No</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Action</th>
-          </tr>
+        <tr>
+          <th>No</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Action</th>
+        </tr>
         </thead>
         <!-- Listing -->
         <tbody>
-          <tr v-if="status === null">
-            <td colspan="4">Waiting For Data</td>
-          </tr>
-          <tr v-if="status !== null" v-for="(status, index) in status" :key="status.id" class="itbkk-item hover">
-            <td>{{ index + 1 }}</td>
-            <td class="itbkk-status-name break-all">
-              {{ status.name }}
-            </td>
-            <td class="itbkk-status-description break-all" :style="{
+        <tr v-if="status === null">
+          <td colspan="4">Waiting For Data</td>
+        </tr>
+        <tr v-if="status !== null" v-for="(status, index) in status" :key="status.id" class="itbkk-item hover">
+          <td>{{ index + 1 }}</td>
+          <td class="itbkk-status-name break-all">
+            {{ status.name }}
+          </td>
+          <td class="itbkk-status-description break-all" :style="{
               fontStyle: status.description ? 'normal' : 'italic',
               color: status.description ? '' : 'gray',
             }">
-              {{ status.description === null || status.description == ""
-                ? "No description is provided"
-                : status.description
-              }}
-            </td>
-            <td v-if="status.name !== 'No Status'" class="itbkk-action-button">
-              <button class="itbkk-button-edit btn m-2" @click="openEdit(status.id)">
-                Edit
-              </button>
-              <button class="itbkk-button-delete btn m-2" @click="openDelete(status.id, status.name)">
-                Delete
-              </button>
-            </td>
-          </tr>
+            {{
+              status.description === null || status.description === ""
+                  ? "No description is provided"
+                  : status.description
+            }}
+          </td>
+          <td v-if="status.name !== 'No Status'" class="itbkk-action-button">
+            <button class="itbkk-button-edit btn m-2" @click="openEdit(status.id)">
+              Edit
+            </button>
+            <button class="itbkk-button-delete btn m-2" @click="openDelete(status.id, status.name)">
+              Delete
+            </button>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
@@ -172,28 +182,28 @@ const closeDelete = (res) => {
   <!-- Modal -->
   <!-- Add Status Modal-->
   <Modal :show-modal="showAddModal">
-    <AddStatusModal @closeModal="closeAddModal" />
+    <AddStatusModal @closeModal="closeAddModal"/>
   </Modal>
   <!-- Edit Modal -->
   <Modal :show-modal="showEdit">
-    <EditStatus :status-id="parseInt(selectedid)" @close-modal="closeEdit" />
+    <EditStatus :status-id="parseInt(selectedId)" @close-modal="closeEdit"/>
   </Modal>
   <!-- Delete Modal -->
   <Modal :show-modal="showDelete">
-    <DeleteStatus :delete-id="parseInt(selectedid)" :deleteTitle="deleteTitle" @close-modal="closeDelete" />
+    <DeleteStatus :delete-id="parseInt(selectedId)" :deleteTitle="deleteTitle" @close-modal="closeDelete"/>
   </Modal>
   <!-- Toast -->
   <div class="toast">
     <div role="alert" class="alert" :class="`alert-${toast.status}`" v-if="toast.status !== ''">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
-        v-if="toast.status === 'success'">
+           v-if="toast.status === 'success'">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
-        v-if="toast.status === 'error'">
+           v-if="toast.status === 'error'">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
       <span class="itbkk-message">{{ toast.msg }}</span>
     </div>

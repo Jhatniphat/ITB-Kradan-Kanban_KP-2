@@ -10,12 +10,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice(assignableTypes = TaskController.class)
 public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(ItemNotFoundException.class)
+    @ExceptionHandler({ItemNotFoundException.class, TaskIdNotFound.class})
     public ResponseEntity<ErrorResponse> handleItemNotFoundException(ItemNotFoundException ex, WebRequest request) {
         return errorResponse(ex.getMessage(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception ex, WebRequest request) {
         return errorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST, request);
     }

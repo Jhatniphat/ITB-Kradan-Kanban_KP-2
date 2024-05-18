@@ -1,5 +1,6 @@
 package com.example.kradankanban_backend.services;
 
+import com.example.kradankanban_backend.entities.LimitSettings;
 import com.example.kradankanban_backend.entities.StatusEntity;
 import com.example.kradankanban_backend.exceptions.BadRequestException;
 import com.example.kradankanban_backend.exceptions.ItemNotFoundException;
@@ -110,5 +111,10 @@ public class StatusService {
         }catch (Exception message){
             throw new ItemNotFoundException(message.toString());
         }
+    }
+    @Transactional
+    public void toggleIsEnable() {
+        Boolean currentIsEnable = repository.findIsEnable();
+        repository.updateIsEnable(!currentIsEnable);
     }
 }
