@@ -1,11 +1,17 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { getStatusById, editStatus } from "@/lib/fetchUtils";
 import router from "@/router";
-
+import { useStatusStore } from "@/stores/status";
+const statusStore = useStatusStore();
 const canSave = ref(false);
 const loading = ref(false);
-const statusDetail = ref(null);
+const statusDetail = ref({});
+const Errortext = ref({
+  name: "",
+  description: "",
+});
+
 const originalsDetail = ref(null);
 const error = ref(null);
 const emit = defineEmits(["closeModal"]);
@@ -16,19 +22,54 @@ const props = defineProps({
   },
 });
 
+const editStatusTitleLength = computed(() => {
+  return statusDetail.value?.name.trim().length;
+});
+const editStatusDescriptionLength = computed(() => {
+  return statusDetail.value?.description?.trim()?.length;
+});
+
 watch(() => props.statusId, fetchData, { immediate: true });
+
+// watch(
+//   statusDetail,
+//   (newVal) => {
+//     if (
+//       !loading.value &&
+//       JSON.stringify(newVal) !== JSON.stringify(originalsDetail.value)
+//     ) {
+//       canSave.value = true;
+//     } else {
+//       canSave.value = false;
+//     }
+//   },
+//   { deep: true }
+// );
 
 watch(
   statusDetail,
   (newVal) => {
-    if (
-      !loading.value &&
-      JSON.stringify(newVal) !== JSON.stringify(originalsDetail.value)
-    ) {
-      canSave.value = true;
-    } else {
-      canSave.value = false;
-    }
+    if (editStatusTitleLength.value > 50)
+      Errortext.value.name = "Status Name can't long more 50 character";
+    else if (editStatusTitleLength.value == 0)
+      Errortext.value.name = "Status Name can't be empty";
+    else if (
+      statusDetail.value.name.trim().toLowerCase() !==
+        originalsDetail.value.name.trim().toLowerCase() &&
+      statusStore.status.some(
+        (status) =>
+          status.name.trim().toLowerCase() ===
+          statusDetail.value.name.trim().toLowerCase()
+      )
+    )
+      Errortext.value.name = "Status Name already exists";
+    else Errortext.value.name = "";
+    if (editStatusDescriptionLength.value > 200)
+      Errortext.value.description =
+        "Status Description can't long more 200 character";
+    else Errortext.value.description = "";
+    canSave.value =
+      Errortext.value.name === "" && Errortext.value.description === "" && JSON.stringify(newVal) !== JSON.stringify(originalsDetail.value);
   },
   { deep: true }
 );
@@ -104,6 +145,28 @@ function sendCloseModal() {
         placeholder="Type here"
         class="itbkk-status-name input input-bordered w-full bg-white"
       />
+      <div class="label">
+        <!-- ? Error Text -->
+        <span v-if="Errortext.name !== ''" class="label-text-alt text-error">{{
+          Errortext.name
+        }}</span>
+        <!-- count input name -->
+        <span
+          v-if="editStatusTitleLength <= 50 && editStatusTitleLength > 0"
+          class="justify-end text-gray-400 label-text-alt"
+          >{{ editStatusTitleLength }} / 50</span
+        >
+        <span
+          v-if="editStatusTitleLength === 0 && Errortext.name !== ''"
+          class="flex justify-end text-red-400 label-text-alt"
+          >{{ editStatusTitleLength }} / 50</span
+        >
+        <span
+          v-if="editStatusTitleLength > 50"
+          class="flex justify-end text-red-400 label-text-alt"
+          >{{ editStatusTitleLength }} / 50</span
+        >
+      </div>
     </label>
 
     <!-- * description -->
@@ -132,6 +195,25 @@ function sendCloseModal() {
                 : statusDetail.description
             }}</textarea
           >
+          <div class="label">
+            <!-- ? Error Text -->
+            <span
+              v-if="Errortext.description !== ''"
+              class="label-text-alt text-error"
+            >
+              {{ Errortext.description }}</span
+            >
+            <span
+              v-if="editStatusDescriptionLength <= 200"
+              class="flex justify-end text-gray-400 label-text-alt"
+              >{{ editStatusDescriptionLength }} / 200</span
+            >
+            <span
+              v-if="editStatusDescriptionLength > 200"
+              class="flex justify-end text-red-400 label-text-alt"
+              >{{ editStatusDescriptionLength }} / 200</span
+            >
+          </div>
         </label>
         <div
           class="mt-2 text-sm text-black flex flex-col justify-between mb-5 lg:flex-row"

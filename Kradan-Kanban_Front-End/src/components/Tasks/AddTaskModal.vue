@@ -1,11 +1,11 @@
 <script setup>
-import {addTask} from "@/lib/fetchUtils";
-import {onMounted, ref, watch} from "vue";
-import {useStatusStore} from "@/stores/status.js";
+import { addTask } from "@/lib/fetchUtils";
+import { onMounted, ref, watch } from "vue";
+import { useStatusStore } from "@/stores/status.js";
 const emit = defineEmits(["closeModal"]);
 const statusStore = useStatusStore();
 
-const statusList = ref([])
+const statusList = ref([]);
 const canSave = ref(false);
 const taskData = ref({
   title: "",
@@ -46,8 +46,8 @@ onMounted(async () => {
   // }catch (err){
   //   console.log(err)
   // }
-  statusList.value = statusStore.getAllStatusWithLimit()
-})
+  statusList.value = statusStore.getAllStatusWithLimit();
+});
 
 const loading = ref(false);
 async function fetchData() {
@@ -74,7 +74,9 @@ function sendCloseModal() {
   <!-- <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg">
 
   </div> -->
-  <div class="itbkk-modal-task flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
+  <div
+    class="itbkk-modal-task flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full"
+  >
     <!-- * title -->
     <label class="form-control w-full">
       <div class="label">
@@ -92,6 +94,22 @@ function sendCloseModal() {
         <span v-if="Errortext.title !== ''" class="label-text-alt text-error">{{
           Errortext.title
         }}</span>
+        <!-- count input name -->
+        <span
+          v-if="taskData.title.length <= 100 && taskData.title.length > 0"
+          class="justify-end text-gray-400 label-text-alt"
+          >{{ taskData.title.length }} / 100</span
+        >
+        <span
+          v-if="taskData.title.length === 0 && Errortext.title !== ''"
+          class="flex justify-end text-red-400 label-text-alt"
+          >{{ taskData.title.length }} / 100</span
+        >
+        <span
+          v-if="taskData.title.length > 100"
+          class="flex justify-end text-red-400 label-text-alt"
+          >{{ taskData.title.length }} / 100</span
+        >
       </div>
     </label>
     <hr />
@@ -114,6 +132,16 @@ function sendCloseModal() {
             class="label-text-alt text-error"
           >
             {{ Errortext.description }}</span
+          >
+          <span
+            v-if="taskData.description.length <= 500"
+            class="flex justify-end text-gray-400 label-text-alt"
+            >{{ taskData.description.length }} / 500</span
+          >
+          <span
+            v-if="taskData.description.length > 500"
+            class="flex justify-end text-red-400 label-text-alt"
+            >{{ taskData.description.length }} / 500</span
           >
         </div>
       </label>
@@ -138,6 +166,16 @@ function sendCloseModal() {
             >
               {{ Errortext.assignees }}</span
             >
+            <span
+              v-if="taskData.assignees.length <= 30"
+              class="flex justify-end text-gray-400 label-text-alt"
+              >{{ taskData.assignees.length }} / 30</span
+            >
+            <span
+              v-if="taskData.assignees.length > 30"
+              class="flex justify-end text-red-400 label-text-alt"
+              >{{ taskData.assignees.length }} / 30</span
+            >
           </div>
         </label>
         <!-- * status -->
@@ -149,8 +187,15 @@ function sendCloseModal() {
             class="itbkk-status select select-bordered bg-white"
             v-model="taskData.status"
           >
-            <option v-for="status in statusList" :value="status.name" :disabled="status.isLimit">
-              {{ status.name }} <span class="text-error"> {{ status.isLimit ? '(max)':'' }} </span>
+            <option
+              v-for="status in statusList"
+              :value="status.name"
+              :disabled="status.isLimit"
+            >
+              {{ status.name }}
+              <span class="text-error">
+                {{ status.isLimit ? "(max)" : "" }}
+              </span>
             </option>
           </select>
         </label>
@@ -180,6 +225,4 @@ function sendCloseModal() {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
