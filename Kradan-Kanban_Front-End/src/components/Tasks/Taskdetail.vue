@@ -43,8 +43,8 @@ watch(() => props.taskId, fetchTask, { immediate: true });
 watch(
   taskDetail,
   (newVal) => {
-    if (editTaskTitleLength.value > 50)
-      Errortext.value.title = "Task name can't long more 50 character";
+    if (editTaskTitleLength.value > 100)
+      Errortext.value.title = "Task name can't long more 100 character";
     else if (editTaskTitleLength.value == 0)
       Errortext.value.title = "Task Name can't be empty";
     else Errortext.value.title = "";
@@ -147,19 +147,19 @@ function sendCloseModal() {
             >{{ Errortext.title }}</span
           >
           <span
-            v-if="editTaskTitleLength <= 50 && editTaskTitleLength > 0"
+            v-if="editTaskTitleLength <= 100 && editTaskTitleLength > 0"
             class="justify-end text-gray-400 label-text-alt"
-            >{{ editTaskTitleLength }} / 50</span
+            >{{ editTaskTitleLength }} / 100</span
           >
           <span
             v-if="editTaskTitleLength === 0 && Errortext.title !== ''"
             class="flex justify-end text-red-400 label-text-alt"
-            >{{ editTaskTitleLength }} / 50</span
+            >{{ editTaskTitleLength }} / 100</span
           >
           <span
-            v-if="editTaskTitleLength > 50"
+            v-if="editTaskTitleLength > 100"
             class="flex justify-end text-red-400 label-text-alt"
-            >{{ editTaskTitleLength }} / 50</span
+            >{{ editTaskTitleLength }} / 100</span
           >
         </div>
       </label>

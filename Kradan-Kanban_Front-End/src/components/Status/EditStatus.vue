@@ -31,21 +31,6 @@ const editStatusDescriptionLength = computed(() => {
 
 watch(() => props.statusId, fetchData, { immediate: true });
 
-// watch(
-//   statusDetail,
-//   (newVal) => {
-//     if (
-//       !loading.value &&
-//       JSON.stringify(newVal) !== JSON.stringify(originalsDetail.value)
-//     ) {
-//       canSave.value = true;
-//     } else {
-//       canSave.value = false;
-//     }
-//   },
-//   { deep: true }
-// );
-
 watch(
   statusDetail,
   (newVal) => {
