@@ -1,6 +1,6 @@
 <script setup>
-import { ref, watch } from "vue";
-import { getTaskById, editTask} from "@/lib/fetchUtils.js";
+import { ref, watch, computed } from "vue";
+import { getTaskById, editTask } from "@/lib/fetchUtils.js";
 import router from "@/router";
 import { useTaskStore } from "@/stores/task";
 import { useStatusStore } from "@/stores/status.js";
@@ -19,7 +19,7 @@ const editMode = ref(false);
 const statusList = ref([]);
 const canSave = ref(false);
 const loading = ref(false);
-const taskDetail = ref(null);
+const taskDetail = ref({});
 const originalTask = ref(null);
 const error = ref(null);
 const Errortext = ref({
@@ -28,19 +28,37 @@ const Errortext = ref({
   assignees: "",
 });
 
+const editTaskTitleLength = computed(() => {
+  return taskDetail.value?.title?.trim()?.length;
+});
+const editTaskDescriptionLength = computed(() => {
+  return taskDetail.value?.description?.trim()?.length;
+});
+const editTaskAssigneesLength = computed(() => {
+  return taskDetail.value?.assignees?.trim()?.length;
+});
+
 watch(() => props.taskId, fetchTask, { immediate: true });
 
 watch(
   taskDetail,
   (newVal) => {
-    if (
-      !loading.value &&
+    if (editTaskTitleLength.value > 100)
+      Errortext.value.title = "Task name can't long more 100 character";
+    else if (editTaskTitleLength.value == 0)
+      Errortext.value.title = "Task Name can't be empty";
+    else Errortext.value.title = "";
+    if (editTaskDescriptionLength.value > 500)
+      Errortext.value.description = "Description can't long more 500 character";
+    else Errortext.value.description = "";
+    if (editTaskAssigneesLength.value > 30)
+      Errortext.value.assignees = "Assignees can't long more than 30 character";
+    else Errortext.value.assignees = "";
+    canSave.value =
+      Errortext.value.title === "" &&
+      Errortext.value.description === "" &&
+      Errortext.value.assignees === "" &&
       JSON.stringify(newVal) !== JSON.stringify(originalTask.value)
-    ) {
-      canSave.value = true;
-    } else {
-      canSave.value = false;
-    }
   },
   { deep: true }
 );
@@ -136,6 +154,21 @@ function sendCloseModal() {
             class="label-text-alt text-error"
             >{{ Errortext.title }}</span
           >
+          <span
+            v-if="editTaskTitleLength <= 100 && editTaskTitleLength > 0"
+            class="justify-end text-gray-400 label-text-alt"
+            >{{ editTaskTitleLength }} / 100</span
+          >
+          <span
+            v-if="editTaskTitleLength === 0 && Errortext.title !== ''"
+            class="flex justify-end text-red-400 label-text-alt"
+            >{{ editTaskTitleLength }} / 100</span
+          >
+          <span
+            v-if="editTaskTitleLength > 100"
+            class="flex justify-end text-red-400 label-text-alt"
+            >{{ editTaskTitleLength }} / 100</span
+          >
         </div>
       </label>
     </div>
@@ -154,14 +187,6 @@ function sendCloseModal() {
           </h1>
         </div>
         <hr />
-        <div class="label">
-          <!-- ? Error Text -->
-          <span
-            v-if="Errortext.title !== ''"
-            class="label-text-alt text-error"
-            >{{ Errortext.title }}</span
-          >
-        </div>
       </label>
     </div>
 
@@ -196,6 +221,16 @@ function sendCloseModal() {
             >
               {{ Errortext.description }}</span
             >
+            <span
+              v-if="editTaskDescriptionLength <= 500"
+              class="flex justify-end text-gray-400 label-text-alt"
+              >{{ editTaskDescriptionLength }} / 500</span
+            >
+            <span
+              v-if="editTaskDescriptionLength > 500"
+              class="flex justify-end text-red-400 label-text-alt"
+              >{{ editTaskDescriptionLength }} / 500</span
+            >
           </div>
         </label>
 
@@ -229,6 +264,16 @@ function sendCloseModal() {
                 class="label-text-alt text-error"
               >
                 {{ Errortext.assignees }}</span
+              >
+              <span
+                v-if="editTaskAssigneesLength <= 30"
+                class="flex justify-end text-gray-400 label-text-alt"
+                >{{ editTaskAssigneesLength }} / 30</span
+              >
+              <span
+                v-if="editTaskAssigneesLength > 30"
+                class="flex justify-end text-red-400 label-text-alt"
+                >{{ editTaskAssigneesLength }} / 30</span
               >
             </div>
           </label>
