@@ -56,6 +56,12 @@ public class StatusController {
     public ResponseEntity<Object> transferStatus(@PathVariable int id, @PathVariable int newId) {
         return new ResponseEntity<>(service.transferStatus(id, newId) , HttpStatus.OK);
     }
+
+    @GetMapping("/maximum-task")
+    public ResponseEntity<Object> getAllLimitSettings() {
+        return new ResponseEntity<>(service.getLimitData() , HttpStatus.OK);
+    }
+
     @PatchMapping("/maximum-task")
     public ResponseEntity<Void> toggleMaximumTask() {
         service.toggleIsEnable();

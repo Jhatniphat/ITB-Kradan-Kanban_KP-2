@@ -1,8 +1,8 @@
 <script setup>
-import {computed, onBeforeMount, ref} from "vue";
+import {computed, onBeforeMount, onMounted, ref} from "vue";
 import {useStatusStore} from "@/stores/status.js";
 import {useTaskStore} from "@/stores/task.js";
-import {editTask, toggleLimitStatus} from "@/lib/fetchUtils.js";
+import {editTask, getLimitStatus, toggleLimitStatus} from "@/lib/fetchUtils.js";
 
 const taskStore = useTaskStore()
 const statusStore = useStatusStore()
@@ -13,9 +13,10 @@ const overLimitTasks = ref([])
 const canConfirmBtn = ref(true)
 const loading = ref(false)
 
-onBeforeMount(() => {
+onMounted(() => {
   limitStatusValue.value = {isEnable: statusStore.getLimitEnable(), limit: statusStore.getLimit()}
   oldLimitStatusValue = {...limitStatusValue.value}
+  console.table(limitStatusValue.value)
 })
 
 // function EditLimitModal(openOrClose) {

@@ -209,8 +209,20 @@ export async function toggleLimitStatus() {
             {
                 method: "PATCH",
             })
-        console.log(res)
+        // console.log(res)
+        console.log("GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
         return res.status
+    } catch (e) {
+        console.log(e.toString())
+    }
+}
+
+export async function getLimitStatus() {
+    let res, item
+    try {
+        res = await fetch(`${import.meta.env.VITE_API_ROOT}/statuses/maximum-task`, {method: "GET"})
+        if (res.status === 200)
+        return await res.json()
     } catch (e) {
         console.log(e.toString())
     }
