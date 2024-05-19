@@ -46,6 +46,10 @@ watch(
 );
 
 async function fetchTask(id) {
+  if (id === 0) {
+    loading.value = true;
+    return 0;
+  }
   error.value = taskDetail.value = statusList.value = null;
   loading.value = true;
   statusList.value = statusStore.getAllStatusWithLimit();
@@ -98,8 +102,12 @@ function sendCloseModal() {
 </script>
 
 <template>
+
+  <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full" v-if="loading === true">
+
+  </div>
   <!-- Title -->
-  <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full">
+  <div class="flex flex-col p-5 text-black bg-slate-50 rounded-lg w-full" v-if="loading === false">
     <div v-if="editMode">
       <label class="form-control w-full">
         <div class="label">

@@ -117,4 +117,8 @@ public class StatusService {
         Boolean currentIsEnable = repository.findIsEnable();
         repository.updateIsEnable(!currentIsEnable);
     }
+
+    public Object getLimitData(){
+        return repository.findIsEnable();
+    }
 }
