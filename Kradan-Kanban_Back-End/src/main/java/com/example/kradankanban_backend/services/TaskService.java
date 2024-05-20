@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class TaskService {
+
     @Autowired
     private TaskRepository repository;
     @Autowired
@@ -100,7 +102,12 @@ public class TaskService {
         }
     }
 
+    private static final List<String> ALLOWED_SORT_FIELDS = Arrays.asList("status.id", "status.name", "id", "title","assignees");
+
     public List<TaskEntity> findTasks(String sortBy, List<String> filterStatuses) {
+        if (sortBy != null && !ALLOWED_SORT_FIELDS.contains(sortBy)) {
+            throw new BadRequestException("Invalid sort field: " + sortBy);
+        }
         if (sortBy == null || sortBy.isEmpty()) {
             sortBy = "id"; // Default sort by id if sortBy is not provided
         }
