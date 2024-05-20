@@ -104,9 +104,11 @@ public class StatusService {
         }
         StatusEntity oldStatus = repository.findById(oldId).orElseThrow();
         String newgetName = repository.findById(newId).orElseThrow().getName();
+        validateStatusLimitToDeleteTransfer(newgetName);
         try {
             taskRepository.updateTaskStatus(oldStatus.getName() , newgetName);
             repository.delete(oldStatus);
+
             return oldStatus;
         }catch (Exception message){
             throw new ItemNotFoundException(message.toString());
@@ -120,5 +122,23 @@ public class StatusService {
 
     public Object getLimitData(){
         return repository.findIsEnable();
+    }
+
+    public void validateStatusLimitToDeleteTransfer(String statusName) {
+        if (repository.findIsEnable()) {
+            long count = taskRepository.countByStatus(statusName);
+            if (count >= repository.findLimit()) {
+                throw new BadRequestException("the destination status cannot be over the limit after transfer");
+            }
+        }
+    }
+
+    public void validateStatusLimitToAddEdit(String statusName) {
+        if (repository.findIsEnable()) {
+            long count = taskRepository.countByStatus(statusName);
+            if (count >= repository.findLimit()) {
+                throw new BadRequestException("the status has reached the limit");
+            }
+        }
     }
 }
