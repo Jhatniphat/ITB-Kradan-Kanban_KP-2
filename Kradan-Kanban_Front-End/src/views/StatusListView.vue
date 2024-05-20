@@ -33,7 +33,6 @@ onMounted(() => {
   if (route.params.id !== undefined) {
     selectedId.value = parseInt(route.params.id);
     showEdit.value = true;
-    console.log(selectedId.value, showEdit.value);
   }
 });
 
@@ -49,14 +48,12 @@ async function fetchStatusData(id) {
     error.value = err.toString();
   } finally {
     loading.value = false;
-    console.table(status.value);
   }
 }
 
 // ! ================= Modal ======================
 const showToast = (toastData) => {
   toast.value = toastData;
-  console.log(toastData);
   setTimeout(() => {
     toast.value = {...{status: ""}};
   }, 5000);

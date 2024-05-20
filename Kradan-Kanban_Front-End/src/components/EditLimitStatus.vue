@@ -1,29 +1,27 @@
 <script setup>
-import {computed, onBeforeMount, onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useStatusStore} from "@/stores/status.js";
-import {useTaskStore} from "@/stores/task.js";
-import {editTask, getLimitStatus, toggleLimitStatus} from "@/lib/fetchUtils.js";
 
-const taskStore = useTaskStore()
+import {toggleLimitStatus} from "@/lib/fetchUtils.js";
+
+
 const statusStore = useStatusStore()
 const limitStatusValue = ref({})
 let oldLimitStatusValue = {isEnable: true, limit: 10}
 const emit = defineEmits(["closeModal"])
-const overLimitTasks = ref([])
+
 const canConfirmBtn = ref(true)
 const loading = ref(false)
 
 onMounted(() => {
   limitStatusValue.value = {isEnable: statusStore.getLimitEnable(), limit: statusStore.getLimit()}
   oldLimitStatusValue = {...limitStatusValue.value}
-  console.table(limitStatusValue.value)
 })
 
 // function EditLimitModal(openOrClose) {
 //   if (openOrClose) {
 //     limitStatusValue.value = { isEnable: statusStore.getLimitEnable(), limit: statusStore.getLimit() }
 //     showEditLimit.value = true
-//     console.table(limitStatusValue.value)
 //   } else {
 //     statusStore.setLimitEnable(limitStatusValue.value.isEnable)
 //     statusStore.setLimit(limitStatusValue.value.limit)
@@ -80,8 +78,7 @@ async function confirmEdit() {
   if (limitStatusValue.value.isEnable !== statusStore.getLimitEnable()) {
     try {
       let res = await toggleLimitStatus()
-      console.log(res)
-      if (res === 200 || res  === 204) {
+      if (res === 200 || res === 204) {
         statusStore.setLimitEnable(limitStatusValue.value.isEnable)
       }
     } catch (e) {
@@ -96,31 +93,25 @@ async function confirmEdit() {
     overStatus.forEach((status) =>
         overStatusObj.push({name: status, task: statusStore.countStatus(status)})
     )
-    console.table(overStatusObj)
     emit("closeModal", overStatusObj)
   } else emit("closeModal", null)
 }
 
-function canConfirm(tasks, oldTasks) {
-  let canOverStatus = statusStore.getCanOverStatus()
-  let limit = statusStore.getLimit()
-  canOverStatus.forEach(status => {
-        if (tasks.filter(task => task.newStatus === status.name).length > limit) {
-          console.log(status.name)
-          canConfirmBtn.value = false;
-          return 0;
-        } else canConfirmBtn.value = true
-      }
-  )
-}
+// function canConfirm(tasks, oldTasks) {
+//   let canOverStatus = statusStore.getCanOverStatus()
+//   let limit = statusStore.getLimit()
+//   canOverStatus.forEach(status => {
+//         if (tasks.filter(task => task.newStatus === status.name).length > limit) {
+//           canConfirmBtn.value = false;
+//           return 0;
+//         } else canConfirmBtn.value = true
+//       }
+//   )
+// }
 
 // watch(() => overLimitTasks.value, canConfirm, {deep: true})
-// watch(() => overLimitTasks.value, () => {
-//   console.log('new value', overLimitTasks.value);
-// }, { deep: true });
-
 const limitStatusValueError = computed(() => {
-      return limitStatusValue.value.limit > 30 ? `Limit Can't Be Over 30!!` : ''
+      return (limitStatusValue.value.limit > 30 || limitStatusValue.value.limit < 0) ? `Limit Be only between 0 and 30!!` : ''
     }
 )
 
@@ -143,8 +134,8 @@ function closeEdit() {
       </label>
     </div>
     <div class="form-control">
-      <label class="label">Limit {{ limitStatusValueError }}</label>
-      <input type="number" class="input" v-model="limitStatusValue.limit">
+      <label class="label text-error">Limit {{ limitStatusValueError }}</label>
+      <input type="number" class="input text-base" v-model="limitStatusValue.limit">
     </div>
     <!--    <div class="flex flex-col gap-2" v-if="overLimitTasks.length > 0">-->
     <!--      <h2>Oh ,We have Status that over limit : {{ statusStore.getOverStatus().join(" , ") }}</h2>-->

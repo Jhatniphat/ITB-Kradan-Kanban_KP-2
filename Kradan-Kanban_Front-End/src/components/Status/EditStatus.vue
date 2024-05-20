@@ -36,7 +36,7 @@ watch(
   (newVal) => {
     if (editStatusTitleLength.value > 50)
       Errortext.value.name = "Status Name can't long more 50 character";
-    else if (editStatusTitleLength.value == 0)
+    else if (editStatusTitleLength.value === 0)
       Errortext.value.name = "Status Name can't be empty";
     else if (
       statusDetail.value.name.trim().toLowerCase() !==
@@ -65,18 +65,15 @@ async function fetchData(id) {
   try {
     const originalstatusDetails = await getStatusById(id);
     if (originalstatusDetails === 404) {
-      console.log("GOOOOOOOO");
       router.push("/status");
       emit("closeModal", 404);
     }
     originalsDetail.value = { ...originalstatusDetails };
     statusDetail.value = { ...originalstatusDetails };
-    console.log(statusDetail.value);
   } catch (err) {
     error.value = err.toString();
   } finally {
     loading.value = false;
-    console.table(statusDetail.value);
   }
 }
 
@@ -89,7 +86,6 @@ async function saveTask() {
     delete statusDetail.value.updatedOn;
     res = await editStatus(props.statusId, statusDetail.value);
     statusDetail.value = res;
-    console.log(res);
   } catch (error) {
     console.log(error);
   } finally {
