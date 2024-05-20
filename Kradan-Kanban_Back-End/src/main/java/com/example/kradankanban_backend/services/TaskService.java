@@ -25,6 +25,8 @@ public class TaskService {
     private StatusRepository statusRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private StatusService statusService;
 
     public List<TaskEntity> findAll() {
         return repository.findAll();
@@ -57,6 +59,7 @@ public class TaskService {
         if (!statusRepository.existsByName(task.getStatus()) ){
             throw new ItemNotFoundException("Task status not exist !!!");
         }
+        statusService.validateStatusLimitToAddEdit(task.getStatus());
         try {
             return repository.save(task);
         } catch (Exception e) {
@@ -98,6 +101,7 @@ public class TaskService {
 //                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task status not exist !!!");
                 throw new ItemNotFoundException("Task status not exist !!!");
             }
+            statusService.validateStatusLimitToAddEdit(task.getStatus());
             return repository.save(newTask);
         }
     }

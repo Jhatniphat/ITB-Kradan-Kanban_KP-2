@@ -31,4 +31,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     void updateTaskStatus(@Param("oldStatus") String oldStatus,@Param("newStatus") String newStatus);
 
     boolean existsByStatus(String status);
+
+    long countByStatus(String status);
 }
