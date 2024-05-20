@@ -3,6 +3,10 @@ package com.example.kradankanban_backend.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,9 +25,13 @@ public class StatusEntity {
     @Column(name = "id")
     private int id;
 
+    @NotNull
+    @NotBlank
+    @Max(30)
     @Column(name = "statusName")
     private String name;
 
+    @Max(200)
     @Column(name = "statusDescription")
     private String description;
 
@@ -47,7 +55,7 @@ public class StatusEntity {
     }
 
     public void setDescription(String description) {
-        if (description == null || description.trim().isEmpty()) {
+        if (description == null || description.isBlank()) {
             this.description = null;
         } else this.description = description.trim();
     }

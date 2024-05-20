@@ -1,9 +1,11 @@
 package com.example.kradankanban_backend.controllers;
 
 import com.example.kradankanban_backend.dtos.DetailTaskDTO;
+import com.example.kradankanban_backend.dtos.NewTaskDTO;
 import com.example.kradankanban_backend.dtos.SimpleTaskDTO;
 import com.example.kradankanban_backend.entities.TaskEntity;
 import com.example.kradankanban_backend.services.TaskService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,14 +39,18 @@ public class TaskController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> addTask(@RequestBody TaskEntity task) {
+    public ResponseEntity<Object> addTask(@Valid @RequestBody TaskEntity task) {
         TaskEntity createdTask = service.addTask(task);
         DetailTaskDTO createdTaskDTO = modelMapper.map(createdTask, DetailTaskDTO.class);
         return new ResponseEntity<>(createdTaskDTO, HttpStatus.CREATED);
     }
+//    @PostMapping("")
+//    public NewTaskDTO addTask(@RequestBody NewTaskDTO task) {
+//        return service.addTask(task);
+//    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> editTask(@PathVariable int id, @RequestBody TaskEntity task) {
+    public ResponseEntity<Object> editTask(@PathVariable int id,@Valid @RequestBody TaskEntity task) {
         TaskEntity updatedTask = service.editTask(id, task);
         DetailTaskDTO updatedTaskDTO = modelMapper.map(updatedTask, DetailTaskDTO.class);
         return new ResponseEntity<>(updatedTaskDTO, HttpStatus.OK);

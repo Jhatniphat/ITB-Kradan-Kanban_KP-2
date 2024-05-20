@@ -35,31 +35,32 @@ public class TaskService {
 
     @Transactional
     public TaskEntity addTask(TaskEntity task) {
+//        System.out.println(task);
         String newTaskStatus = task.getStatus();
         if(isNumeric(newTaskStatus)){
             newTaskStatus = statusRepository.findById(Integer.valueOf(newTaskStatus)).orElseThrow(() -> new ItemNotFoundException("Status Id : " + task.getStatus() + "Not Found!!")).getName();
             task.setStatus(newTaskStatus);
         }
-        if (task.getTitle() == null || task.getTitle().isEmpty()) {
-            throw new BadRequestException("Task title is null !!!");
-        }
-        if (task.getTitle().length() > 100) {
-            throw new BadRequestException("Task title length should be less than 100 !!!");
-        }
-        if (task.getDescription() != null && task.getDescription().length() > 500) {
-            throw new BadRequestException("Task description length should be less than 500 !!!");
-        }
-        if (task.getAssignees() != null && task.getAssignees().length() > 30) {
-            throw new BadRequestException("Task assignees length should be less than 30 !!!");
-        }
-        if (!statusRepository.existsByName(task.getStatus()) ){
-            throw new ItemNotFoundException("Task status not exist !!!");
-        }
-        try {
+//        if (task.getTitle() == null || task.getTitle().isEmpty()) {
+//            throw new BadRequestException("Task title is null !!!");
+//        }
+//        if (task.getTitle().length() > 100) {
+//            throw new BadRequestException("Task title length should be less than 100 !!!");
+//        }
+//        if (task.getDescription() != null && task.getDescription().length() > 500) {
+//            throw new BadRequestException("Task description length should be less than 500 !!!");
+//        }
+//        if (task.getAssignees() != null && task.getAssignees().length() > 30) {
+//            throw new BadRequestException("Task assignees length should be less than 30 !!!");
+//        }
+//        if (!statusRepository.existsByName(task.getStatus()) ){
+//            throw new ItemNotFoundException("Task status not exist !!!");
+//        }
+//        try {
             return repository.save(task);
-        } catch (Exception e) {
-            throw new ItemNotFoundException("Database Exception");
-        }
+//        } catch (Exception e) {
+//            throw new ItemNotFoundException("Database Exception");
+//        }
     }
 
     @Transactional
