@@ -27,7 +27,7 @@ watch(statusData.value, () => {
         statusData.value.name.trim().toLowerCase()
     )
   )
-    Errortext.value.name = "Status Name already exists";
+    Errortext.value.name = "Status name must be uniques, please choose another name.";
   else Errortext.value.name = "";
   if (statusData.value.description.trim().length > 200)
     Errortext.value.description =
