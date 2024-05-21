@@ -22,15 +22,19 @@ public class TaskEntity {
 
     @NotNull
     @NotBlank
-    @Size(min = 1, max = 100, message = "size must be between 0 and 100")
+//    @Min(1)
+//    @Max(100)
+    @Size(min = 0 ,max = 100, message = "size must be between 0 and 100")
     @Column(name = "title")
     private String title;
 
-    @Size(max = 500, message = "{validation.name.size.too_long}")
+//    @Max(500)
+    @Size(max = 500, message = "size must be between 0 and 500")
     @Column(name = "description")
     private String description;
 
-    @Size(max = 30, message = "{validation.name.size.too_long}")
+//    @Max(30)
+    @Size(max = 30, message = "size must be between 0 and 30")
     @Column(name = "assignees")
     private String assignees;
 

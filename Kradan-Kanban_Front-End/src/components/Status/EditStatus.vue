@@ -47,7 +47,7 @@ watch(
           statusDetail.value.name.trim().toLowerCase()
       )
     )
-      Errortext.value.name = "Status Name already exists";
+      Errortext.value.name = "Status name must be uniques, please choose another name.";
     else Errortext.value.name = "";
     if (editStatusDescriptionLength.value > 200)
       Errortext.value.description =

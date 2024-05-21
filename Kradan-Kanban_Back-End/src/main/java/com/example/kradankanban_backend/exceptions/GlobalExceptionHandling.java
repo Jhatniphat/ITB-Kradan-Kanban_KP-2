@@ -30,14 +30,20 @@ public class GlobalExceptionHandling {
                     param.getResolvableErrors().get(0).getDefaultMessage() + " ("+
                     param.getArgument().toString()+ ")");
         }
-        return ResponseEntity.unprocessableEntity().body(errorResponse);
+        return ResponseEntity.badRequest().body(errorResponse);
 //        return buildErrorResponse(null, exception, exception.getMethod().getName(), HttpStatus.valueOf(exception.getStatusCode().value()), request);
     }
 
     @ExceptionHandler(ItemNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleItemNotFoundException(ItemNotFoundException exception, WebRequest request) {
-        return buildErrorResponse(exception, HttpStatus.NOT_FOUND, request);
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException exception, WebRequest request) {
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
@@ -70,7 +76,7 @@ public class GlobalExceptionHandling {
             errorResponse.addValidationError(fieldError.getField(), fieldError.getDefaultMessage());
         }
         System.out.println("2");
-        return ResponseEntity.unprocessableEntity().body(errorResponse);
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

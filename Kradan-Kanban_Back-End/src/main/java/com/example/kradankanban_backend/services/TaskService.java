@@ -41,7 +41,7 @@ public class TaskService {
     public TaskEntity addTask(TaskEntity task) {
         String newTaskStatus = task.getStatus();
         if(isNumeric(newTaskStatus)){
-            newTaskStatus = statusRepository.findById(Integer.valueOf(newTaskStatus)).orElseThrow(() -> new ItemNotFoundException("Status Id : " + task.getStatus() + "Not Found!!")).getName();
+            newTaskStatus = statusRepository.findById(Integer.valueOf(newTaskStatus)).orElseThrow(() -> new ItemNotFoundException(task.getStatus() + "does not exist'")).getName();
             task.setStatus(newTaskStatus);
         }
         //        if (task.getTitle() == null || task.getTitle().isEmpty()) {
@@ -79,7 +79,7 @@ public class TaskService {
     public TaskEntity editTask(int id, TaskEntity newTask) {
         String newTaskStatus = newTask.getStatus();
         if(isNumeric(newTaskStatus)){
-            newTaskStatus = statusRepository.findById(Integer.valueOf(newTaskStatus)).orElseThrow().getName();
+            newTaskStatus = statusRepository.findById(Integer.valueOf(newTaskStatus)).orElseThrow( () -> new ItemNotFoundException("status : " + newTask.getStatus() + "does not exist")).getName();
         }
 //        try {
 //            double d = Double.parseDouble(newTaskStatus);
