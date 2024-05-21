@@ -41,9 +41,9 @@ public class StatusService {
 //            throw new BadRequestException("Status Description length should be less than 200 !!!");
 //        }
 //        // ? เช็คว่ามี Name นั้นหรือยัง
-//        if (repository.existsByName(status.getName())) {
-//            throw new BadRequestException("Status Name already exists !!!");
-//        }
+        if (repository.existsByName(status.getName())) {
+            throw new BadRequestException("Name must be unique");
+        }
         try {
             return repository.save(status);
         } catch (Exception e) {
@@ -54,9 +54,15 @@ public class StatusService {
     // * editStatus
     @Transactional
     public StatusEntity editStatus(int id, StatusEntity status) {
-        if (id == 1){
-            throw new BadRequestException("'No Status' cannot be edited !!!");
+        if (status.getName().equals("No Status")){
+            throw new BadRequestException("The status name 'No Status' will not changed");
         }
+        if (repository.existsByName(status.getName())) {
+            throw new BadRequestException("Name must be unique");
+        }
+//        if (status.getName().equals("Done")) {
+//            throw new BadRequestException("The status name 'Done' will not changed");
+//        }
 //        if (status.getName().trim().isEmpty() || status.getName() == null) {
 //            throw new BadRequestException("Status Name is null !!!");
 //        }
@@ -70,7 +76,7 @@ public class StatusService {
             status.setId(id);
             return repository.save(status);
         } catch (Exception e) {
-            throw new ItemNotFoundException("Database Exception");
+            throw new BadRequestException("Database Exception");
         }
     }
 
@@ -78,15 +84,15 @@ public class StatusService {
     public StatusEntity deleteStatus(int id) {
         StatusEntity status = repository.findById(id).orElseThrow( () -> new ItemNotFoundException("No status found with id: " + id) );
         if (taskRepository.existsByStatus(status.getName())) {
-            throw new BadRequestException("Have Task On This Status");
+            throw new BadRequestException(status.getName());
         }
         if (status.getName().equals("No Status")) {
-            throw new BadRequestException("Cannot delete 'No Status'!!!");
+            throw new BadRequestException("c");
         }
         try {
             repository.delete(status);
             return status;
-        }catch (Exception e){
+        } catch (Exception e){
             throw new ItemNotFoundException(e.toString());
         }
     }
@@ -94,13 +100,13 @@ public class StatusService {
     // * transferStatus
     public StatusEntity transferStatus (int oldId, int newId){
         if (oldId == newId) {
-            throw new BadRequestException("Old Status Id is equal to new Status Id !!!");
+            throw new BadRequestException("destination status for task transfer must be different from current status");
         }
         if (!repository.existsById(oldId)) {
             throw new ItemNotFoundException("No status found with id: " + oldId);
         }
         if (!repository.existsById(newId)) {
-            throw new ItemNotFoundException("No status found with id: " + newId);
+            throw new ItemNotFoundException("the specified status for task transfer does not exist");
         }
         StatusEntity oldStatus = repository.findById(oldId).orElseThrow();
         String newgetName = repository.findById(newId).orElseThrow().getName();
