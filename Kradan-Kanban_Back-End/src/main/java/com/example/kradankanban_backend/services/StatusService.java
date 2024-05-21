@@ -54,8 +54,9 @@ public class StatusService {
     // * editStatus
     @Transactional
     public StatusEntity editStatus(int id, StatusEntity status) {
-        if (id == 1){
-            throw new BadRequestException("'No Status' cannot be edited !!!");
+        StatusEntity oldStatus = repository.findById(id).orElseThrow( () -> new ItemNotFoundException("No status found with id: " + id) );
+        if (oldStatus.getName().equals("No Status") || oldStatus.getName().equals("Done")){
+            throw new BadRequestException( "'" + oldStatus.getName() +"'"+ " cannot be edited !!!");
         }
 //        if (status.getName().trim().isEmpty() || status.getName() == null) {
 //            throw new BadRequestException("Status Name is null !!!");
@@ -77,6 +78,9 @@ public class StatusService {
     // * deleteStatus
     public StatusEntity deleteStatus(int id) {
         StatusEntity status = repository.findById(id).orElseThrow( () -> new ItemNotFoundException("No status found with id: " + id) );
+        if (status.getName().equals("No Status") || status.getName().equals("Done")){
+            throw new BadRequestException( "'" + status.getName() +"'"+ " cannot be delete !!!");
+        }
         if (taskRepository.existsByStatus(status.getName())) {
             throw new BadRequestException("Have Task On This Status");
         }

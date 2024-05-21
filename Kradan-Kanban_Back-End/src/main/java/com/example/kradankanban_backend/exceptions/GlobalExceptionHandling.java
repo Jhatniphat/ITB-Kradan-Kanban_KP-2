@@ -40,6 +40,12 @@ public class GlobalExceptionHandling {
         return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException exception, WebRequest request) {
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, request);
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException exception, WebRequest request) {
         return buildErrorResponse(null, exception, exception.getMessage(), HttpStatus.valueOf(exception.getStatusCode().value()), request);
