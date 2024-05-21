@@ -27,12 +27,11 @@ public class StatusEntity {
 
     @NotNull
     @NotBlank
-//    @Max(30)
-    @Size(max = 50, message = "size must be between 0 and 50")
+    @Size(min = 0 ,max = 50, message = "size must be between 0 and 50")
     @Column(name = "statusName")
     private String name;
 
-    @Size(max = 200, message = "size must be between 0 and 200")
+    @Size(min = 0 ,max = 200, message = "size must be between 0 and 200")
     @Column(name = "statusDescription")
     private String description;
 
