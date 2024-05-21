@@ -7,6 +7,7 @@ import DeleteStatus from "@/components/Status/DeleteStatus.vue";
 import Modal from "@/components/Modal.vue";
 import router from "@/router";
 import {useStatusStore} from "@/stores/status.js";
+import EditLimitStatus from "@/components/EditLimitStatus.vue";
 
 // ! ================= Variable ======================
 // ? ----------------- Store and Route ---------------
@@ -18,20 +19,20 @@ const toast = ref({status: "", msg: ""});
 const showAddModal = ref(false);
 const showEdit = ref(false);
 const showDelete = ref(false);
-
+const showEditLimit = ref(false)
+const showErrorModal = ref(false)
 // ? ----------------- Common -------------------------
 const selectedId = ref(0);
 const deleteTitle = ref("");
 const error = ref(null);
 const status = ref(null);
 const loading = ref(false);
-
+const overStatuses = ref([])
 onMounted(() => {
   fetchStatusData();
   if (route.params.id !== undefined) {
     selectedId.value = parseInt(route.params.id);
     showEdit.value = true;
-    console.log(selectedId.value, showEdit.value);
   }
 });
 
@@ -47,14 +48,12 @@ async function fetchStatusData(id) {
     error.value = err.toString();
   } finally {
     loading.value = false;
-    console.table(status.value);
   }
 }
 
 // ! ================= Modal ======================
 const showToast = (toastData) => {
   toast.value = toastData;
-  console.log(toastData);
   setTimeout(() => {
     toast.value = {...{status: ""}};
   }, 5000);
@@ -99,10 +98,19 @@ const closeDelete = (res) => {
     statusStore.deleteStoreStatus(res)
     showToast({status: "success", msg: "Delete task successfuly"});
   } else {
-    showToast({status: "error", msg: "Delete task Failed ,Please restart page"} , 6000)
+    showToast({status: "error", msg: "Delete task Failed ,Please restart page"}, 6000)
   }
-  ;
 };
+
+function closeEditLimit(overStatus) {
+  showEditLimit.value = false
+  if (overStatus === null || overStatus === undefined) return 0;
+  if (typeof (overStatus) === "object") {
+    // showToast({ status : 'error' , msg : `These statuses that have reached the task limit.  No additional tasks can be added to these statuses. : ${overStatus.join(" , ")}`} , 10000)
+    showErrorModal.value = true
+    overStatuses.value = overStatus
+  }
+}
 </script>
 
 <template>
@@ -133,6 +141,18 @@ const closeDelete = (res) => {
   <!-- content -->
   <div class="opacity">
     <div class="flex flex-col">
+
+      <!-- show edit limit modal -->
+      <div class="w-3/4 mx-auto mt-10 relative">
+        <div class="float-right">
+          <button
+              class="itbkk-button-add btn btn-square btn-outline w-16"
+              @click="showEditLimit = true"
+          >
+            Limit Status
+          </button>
+        </div>
+      </div>
       <!-- Table -->
       <table
           class="table table-lg table-pin-rows table-pin-cols w-3/4 font-semibold mx-auto my-5 text-center text-base rounded-lg border-2 border-slate-500 border-separate border-spacing-1">
@@ -165,7 +185,7 @@ const closeDelete = (res) => {
                   : status.description
             }}
           </td>
-          <td v-if="status.name !== 'No Status'" class="itbkk-action-button">
+          <td v-if="status.name !== 'No Status' && status.name !== 'Done'" class="itbkk-action-button">
             <button class="itbkk-button-edit btn m-2" @click="openEdit(status.id)">
               Edit
             </button>
@@ -192,6 +212,33 @@ const closeDelete = (res) => {
   <Modal :show-modal="showDelete">
     <DeleteStatus :delete-id="parseInt(selectedId)" :deleteTitle="deleteTitle" @close-modal="closeDelete"/>
   </Modal>
+  <!-- edit limit modal-->
+  <Modal :show-modal="showEditLimit">
+    <EditLimitStatus @close-modal="closeEditLimit"/>
+  </Modal>
+
+  <Modal :show-modal="showErrorModal">
+    <div class="itbkk-modal-task flex flex-col gap-3 p-5 text-black bg-slate-50 rounded-lg w-full m-auto">
+      <h2>Have Task Over Limit!!!</h2>
+      <hr>
+      <p>These statuses that have reached the task limit. No additional tasks can be added to these statuses.</p>
+      <table class="table">
+        <thead>
+        <tr>
+          <th>status name</th>
+          <th>remaining tasks</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="status in overStatuses">
+          <td>{{ status.name }}</td>
+          <td>{{ status.task }}</td>
+        </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-outline btn-primary w-fit self-end" @click="showErrorModal = false">OKAY</button>
+    </div>
+  </Modal>
   <!-- Toast -->
   <div class="toast">
     <div role="alert" class="alert" :class="`alert-${toast.status}`" v-if="toast.status !== ''">
@@ -208,6 +255,7 @@ const closeDelete = (res) => {
       <span class="itbkk-message">{{ toast.msg }}</span>
     </div>
   </div>
+
 </template>
 
 <style scoped></style>

@@ -19,4 +19,7 @@ public interface StatusRepository extends JpaRepository<StatusEntity, Integer> {
     @Transactional
     @Query("UPDATE LimitSettings ls SET ls.isEnable = ?1")
     void updateIsEnable(Boolean isEnable);
+
+    @Query("SELECT ls.limit FROM LimitSettings ls ")
+    int findLimit();
 }

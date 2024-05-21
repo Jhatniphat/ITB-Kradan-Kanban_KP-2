@@ -18,7 +18,7 @@ const Errortext = ref({
 watch(statusData.value, () => {
   if (statusData.value.name.trim().length > 50)
     Errortext.value.name = "Status Name can't long more 50 character";
-  else if (statusData.value.name.trim().length == 0)
+  else if (statusData.value.name.trim().length === 0)
     Errortext.value.name = "Status Name can't be empty";
   else if (
     statusStore.status.some(

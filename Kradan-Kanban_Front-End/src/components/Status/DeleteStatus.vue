@@ -25,25 +25,23 @@ const props = defineProps({
 const transfer = ref(false);
 const loading = ref(false);
 const statusList = ref(null);
-const error = ref(null);
 const newId = ref(null);
 const errorMsg = ref('')
 
 watch(() => newId.value, checkCantransfer)
+
 function checkCantransfer() {
   if (!transfer.value) return 0;
   errorMsg.value = useStatusStore().canTransfer(props.deleteId, newId.value) ? '' : `Cannot transfer to ${useStatusStore().findById(newId.value).name} status since it will exceed the limit.  Please choose another status to transfer to.`
-  console.log(errorMsg.value)
 }
 
 onMounted(async () => {
   try {
     statusList.value = await getAllStatus();
-    console.table(statusList.value);
   } catch (error) {
   }
   statusList.value.splice(
-      statusList.value.findIndex((status) => status.id == props.deleteId),
+      statusList.value.findIndex((status) => status.id === props.deleteId),
       1
   );
 });
@@ -53,7 +51,6 @@ const deleteThisStatus = async () => {
   let res;
 
   const inUse = await isStatusInUse(props.deleteId);
-  console.log(await inUse);
   if (inUse) {
     // If status is in use, switch to transferring status
     transfer.value = true;
@@ -64,7 +61,6 @@ const deleteThisStatus = async () => {
     try {
       // Check if the status is already in use
       const inUse = await isStatusInUse(props.deleteId);
-      console.log(await inUse);
       if (inUse) {
         // If status is in use, switch to transferring status
         transfer.value = true;
@@ -134,7 +130,7 @@ const transferTheStatus = async (newId) => {
         </button>
       </div>
     </div>
-    <!-- Tranfers Modal -->
+    <!-- Transfers Modal -->
     <div v-if="transfer">
       <h1 class="m-2 pb-4 text-2xl font-bold">Transfer a Satus</h1>
       <hr/>

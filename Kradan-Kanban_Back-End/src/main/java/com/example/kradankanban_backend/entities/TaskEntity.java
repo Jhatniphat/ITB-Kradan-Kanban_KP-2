@@ -2,16 +2,17 @@ package com.example.kradankanban_backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 
 @Getter
 @Setter
 @Entity
-@Table(name = "task", schema = "intergrate-kp-2", catalog = "")
+@Table(name = "task", schema = "intergrate-kp-2")
 public class TaskEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,12 +20,17 @@ public class TaskEntity {
     @Column(name = "id")
     private int id;
 
+    @NotNull
+    @NotBlank
+    @Size(min = 1, max = 100, message = "size must be between 0 and 100")
     @Column(name = "title")
     private String title;
 
+    @Size(max = 500, message = "{validation.name.size.too_long}")
     @Column(name = "description")
     private String description;
 
+    @Size(max = 30, message = "{validation.name.size.too_long}")
     @Column(name = "assignees")
     private String assignees;
 
@@ -49,12 +55,12 @@ public class TaskEntity {
 //    private StatusEntity statusEntity;
 
     public void setTitle(String title) {
-        if(title != null || !title.isEmpty())
+        if(title != null)
             this.title = title.trim();
     }
 
     public void setDescription(String description) {
-        if ( description == null || description.trim().isEmpty()) {
+        if ( description == null || description.isBlank()) {
             this.description = null;
         } else this.description = description.trim();
     }
@@ -64,7 +70,7 @@ public class TaskEntity {
 //            assignees = assignees.trim();
 //        }
 //        this.assignees = assignees;
-        if (assignees == null || assignees.trim().isEmpty()) {
+        if (assignees == null || assignees.isBlank()) {
             this.assignees = null;
         }else this.assignees = assignees.trim();
     }

@@ -4,6 +4,7 @@ import com.example.kradankanban_backend.dtos.SimpleStatusDTO;
 import com.example.kradankanban_backend.entities.LimitSettings;
 import com.example.kradankanban_backend.entities.StatusEntity;
 import com.example.kradankanban_backend.services.StatusService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,14 +37,14 @@ public class StatusController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> addStatus(@RequestBody StatusEntity status) {
+    public ResponseEntity<Object> addStatus(@Valid @RequestBody StatusEntity status) {
         StatusEntity createdStatus = service.addStatus(status);
         SimpleStatusDTO simpleStatusDTO = modelMapper.map(createdStatus, SimpleStatusDTO.class);
         return new ResponseEntity<> (simpleStatusDTO , HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateStatus(@PathVariable int id, @RequestBody StatusEntity status) {
+    public ResponseEntity<Object> updateStatus(@PathVariable int id, @Valid @RequestBody StatusEntity status) {
         return new ResponseEntity<>(service.editStatus(id, status) , HttpStatus.OK);
     }
 

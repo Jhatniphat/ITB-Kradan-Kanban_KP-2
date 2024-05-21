@@ -31,19 +31,19 @@ public class StatusService {
     // * addStatus
     @Transactional
     public StatusEntity addStatus(StatusEntity status) {
-        if (status.getName().trim().isEmpty() || status.getName() == null) {
-            throw new BadRequestException( "Status Name is null !!!");
-        }
-        if (status.getName().trim().length() > 50) {
-            throw new BadRequestException("Status Name length should be less than 20 !!!");
-        }
-        if (status.getDescription() != null && status.getDescription().trim().length() > 200) {
-            throw new BadRequestException("Status Description length should be less than 200 !!!");
-        }
-        // ? เช็คว่ามี Name นั้นหรือยัง
-        if (repository.existsByName(status.getName())) {
-            throw new BadRequestException("Status Name already exists !!!");
-        }
+//        if (status.getName().trim().isEmpty() || status.getName() == null) {
+//            throw new BadRequestException( "Status Name is null !!!");
+//        }
+//        if (status.getName().trim().length() > 50) {
+//            throw new BadRequestException("Status Name length should be less than 20 !!!");
+//        }
+//        if (status.getDescription() != null && status.getDescription().trim().length() > 200) {
+//            throw new BadRequestException("Status Description length should be less than 200 !!!");
+//        }
+//        // ? เช็คว่ามี Name นั้นหรือยัง
+//        if (repository.existsByName(status.getName())) {
+//            throw new BadRequestException("Status Name already exists !!!");
+//        }
         try {
             return repository.save(status);
         } catch (Exception e) {
@@ -57,15 +57,15 @@ public class StatusService {
         if (id == 1){
             throw new BadRequestException("'No Status' cannot be edited !!!");
         }
-        if (status.getName().trim().isEmpty() || status.getName() == null) {
-            throw new BadRequestException("Status Name is null !!!");
-        }
-        if (status.getName().trim().length() > 50) {
-            throw new BadRequestException("Status Name length should be less than 20 !!!");
-        }
-        if (status.getDescription() != null && status.getDescription().trim().length() > 200) {
-            throw new BadRequestException("Status Description length should be less than 200 !!!");
-        }
+//        if (status.getName().trim().isEmpty() || status.getName() == null) {
+//            throw new BadRequestException("Status Name is null !!!");
+//        }
+//        if (status.getName().trim().length() > 50) {
+//            throw new BadRequestException("Status Name length should be less than 20 !!!");
+//        }
+//        if (status.getDescription() != null && status.getDescription().trim().length() > 200) {
+//            throw new BadRequestException("Status Description length should be less than 200 !!!");
+//        }
         try {
             status.setId(id);
             return repository.save(status);
@@ -104,9 +104,11 @@ public class StatusService {
         }
         StatusEntity oldStatus = repository.findById(oldId).orElseThrow();
         String newgetName = repository.findById(newId).orElseThrow().getName();
+        validateStatusLimitToDeleteTransfer(newgetName);
         try {
             taskRepository.updateTaskStatus(oldStatus.getName() , newgetName);
             repository.delete(oldStatus);
+
             return oldStatus;
         }catch (Exception message){
             throw new ItemNotFoundException(message.toString());
@@ -120,5 +122,23 @@ public class StatusService {
 
     public Object getLimitData(){
         return repository.findIsEnable();
+    }
+
+    public void validateStatusLimitToDeleteTransfer(String statusName) {
+        if (repository.findIsEnable()) {
+            long count = taskRepository.countByStatus(statusName);
+            if (count >= repository.findLimit()) {
+                throw new BadRequestException("the destination status cannot be over the limit after transfer");
+            }
+        }
+    }
+
+    public void validateStatusLimitToAddEdit(String statusName) {
+        if (repository.findIsEnable()) {
+            long count = taskRepository.countByStatus(statusName);
+            if (count >= repository.findLimit()) {
+                throw new BadRequestException("the status has reached the limit");
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
     @Transactional
-    @Query("SELECT t FROM TaskEntity t LEFT JOIN StatusEntity s ON t.status = s.name WHERE (:filterStatuses IS NULL OR s.name IN :filterStatuses) ORDER BY " +
+    @Query("SELECT t FROM TaskEntity t LEFT JOIN StatusEntity s ON t.status = s.name WHERE (:filterStatuses IS NULL OR s.id IN :filterStatuses) ORDER BY " +
             "CASE WHEN :sortBy = 'status.name' THEN s.name " +
             "WHEN :sortBy = 'status.id' THEN s.id " +
             "WHEN :sortBy = 'id' THEN t.id " +
@@ -31,4 +31,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     void updateTaskStatus(@Param("oldStatus") String oldStatus,@Param("newStatus") String newStatus);
 
     boolean existsByStatus(String status);
+
+    long countByStatus(String status);
 }

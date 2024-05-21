@@ -13,16 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class TaskService {
+
     @Autowired
     private TaskRepository repository;
     @Autowired
     private StatusRepository statusRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private StatusService statusService;
 
     public List<TaskEntity> findAll() {
         return repository.findAll();
@@ -40,21 +44,22 @@ public class TaskService {
             newTaskStatus = statusRepository.findById(Integer.valueOf(newTaskStatus)).orElseThrow(() -> new ItemNotFoundException("Status Id : " + task.getStatus() + "Not Found!!")).getName();
             task.setStatus(newTaskStatus);
         }
-        if (task.getTitle() == null || task.getTitle().isEmpty()) {
-            throw new BadRequestException("Task title is null !!!");
-        }
-        if (task.getTitle().length() > 100) {
-            throw new BadRequestException("Task title length should be less than 100 !!!");
-        }
-        if (task.getDescription() != null && task.getDescription().length() > 500) {
-            throw new BadRequestException("Task description length should be less than 500 !!!");
-        }
-        if (task.getAssignees() != null && task.getAssignees().length() > 30) {
-            throw new BadRequestException("Task assignees length should be less than 30 !!!");
-        }
-        if (!statusRepository.existsByName(task.getStatus()) ){
-            throw new ItemNotFoundException("Task status not exist !!!");
-        }
+        //        if (task.getTitle() == null || task.getTitle().isEmpty()) {
+//            throw new BadRequestException("Task title is null !!!");
+//        }
+//        if (task.getTitle().length() > 100) {
+//            throw new BadRequestException("Task title length should be less than 100 !!!");
+//        }
+//        if (task.getDescription() != null && task.getDescription().length() > 500) {
+//            throw new BadRequestException("Task description length should be less than 500 !!!");
+//        }
+//        if (task.getAssignees() != null && task.getAssignees().length() > 30) {
+//            throw new BadRequestException("Task assignees length should be less than 30 !!!");
+//        }
+//        if (!statusRepository.existsByName(task.getStatus()) ){
+//            throw new ItemNotFoundException("Task status not exist !!!");
+//        }
+        statusService.validateStatusLimitToAddEdit(task.getStatus());
         try {
             return repository.save(task);
         } catch (Exception e) {
@@ -96,11 +101,17 @@ public class TaskService {
 //                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Task status not exist !!!");
                 throw new ItemNotFoundException("Task status not exist !!!");
             }
+            statusService.validateStatusLimitToAddEdit(task.getStatus());
             return repository.save(newTask);
         }
     }
 
+    private static final List<String> ALLOWED_SORT_FIELDS = Arrays.asList("status.id", "status.name", "id", "title","assignees");
+
     public List<TaskEntity> findTasks(String sortBy, List<String> filterStatuses) {
+        if (sortBy != null && !ALLOWED_SORT_FIELDS.contains(sortBy)) {
+            throw new BadRequestException("Invalid sort field: " + sortBy);
+        }
         if (sortBy == null || sortBy.isEmpty()) {
             sortBy = "id"; // Default sort by id if sortBy is not provided
         }

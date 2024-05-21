@@ -43,7 +43,6 @@ const openEditMode = (id) => {
 
 const closeAddModal = (res) => {
   showAddModal.value = false;
-  console.log("");
   if (res === null) return 0;
   if ("id" in res) {
     showToast({status: "success", msg: "Add task successfully"});
@@ -55,7 +54,6 @@ const closeAddModal = (res) => {
 const closeEditModal = (res) => {
   showDetailModal.value = false;
   if (res === null) return 0;
-  console.log(res);
   if (res === 404)
     showToast({
       status: "error",
@@ -82,7 +80,6 @@ function closeEditLimit(overStatus) {
 // ! ================= Toast ======================
 const showToast = (toastData, timeOut = 3000) => {
   toast.value = toastData;
-  console.log(toastData);
   setTimeout(() => {
     toast.value = {...{status: ""}};
   }, timeOut);
@@ -113,13 +110,11 @@ const openDeleteModal = (taskTitle, id) => {
 };
 
 
-// watch( limitStatusValue.value , console.table(limitStatusValue.value) )
 // ? open = true , close = false
 // function EditLimitModal(openOrClose) {
 //   if (openOrClose) {
 //     limitStatusValue.value = { isEnable: statusStore.getLimitEnable(), limit: statusStore.getLimit() }
 //     showEditLimit.value = true
-//     console.table(limitStatusValue.value)
 //   } else {
 //     statusStore.setLimitEnable(limitStatusValue.value.isEnable)
 //     statusStore.setLimit(limitStatusValue.value.limit)
@@ -172,7 +167,6 @@ watch(() => [filterBy.value, sortBy.value], filterData, {immediate: true, deep: 
 // });
 
 async function filterData([filter, sort]) {
-  console.table(filter)
   let allTasks = [];
   allTasks = taskStore.tasks;
   if (filter.length > 0) {

@@ -45,7 +45,7 @@ watch(
   (newVal) => {
     if (editTaskTitleLength.value > 100)
       Errortext.value.title = "Task name can't long more 100 character";
-    else if (editTaskTitleLength.value == 0)
+    else if (editTaskTitleLength.value === 0)
       Errortext.value.title = "Task Name can't be empty";
     else Errortext.value.title = "";
     if (editTaskDescriptionLength.value > 500)
@@ -73,7 +73,6 @@ async function fetchTask(id) {
   statusList.value = statusStore.getAllStatusWithLimit();
   try {
     const originalTaskDetails = await getTaskById(id);
-    console.log(originalTaskDetails);
     if (originalTaskDetails === 404) {
       router.push("/task");
       emit("closeModal", 404);
@@ -81,15 +80,13 @@ async function fetchTask(id) {
     originalTask.value = { ...originalTaskDetails };
     taskDetail.value = { ...originalTaskDetails };
 
-    if (taskDetail.value == 404) {
+    if (taskDetail.value === 404) {
       router.push("/task");
     }
   } catch (err) {
     error.value = err.toString();
   } finally {
     loading.value = false;
-    console.log(taskDetail.value);
-    console.log(statusList.value.id);
   }
 }
 
@@ -102,7 +99,6 @@ async function saveTask() {
     delete taskDetail.value.updatedOn;
     res = await editTask(props.taskId, taskDetail.value);
     taskDetail.value = res;
-    console.log(res);
     taskStore.editStoreTask(res);
   } catch (error) {
     console.log(error);
