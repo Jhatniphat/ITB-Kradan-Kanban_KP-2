@@ -252,13 +252,13 @@ onBeforeMount(async () => {
   <!-- dropdowns status -->
   <div class="w-3/4 mx-auto mt-10 relative">
     <details class="dropdown">
-      <summary class="m-1 btn no-animation">Filter Status</summary>
+      <summary class="m-1 btn no-animation itbkk-status-filter">Filter Status</summary>
       <!-- FilterStatus -->
-      <ul class="itbkk-status-filter absolute dropdown-menu z-[50] rounded-box">
+      <ul class="absolute dropdown-menu z-[1000] rounded-box">
         <li
             v-for="status in statusStore.status"
             :key="status"
-            class="menu p-2 shadow bg-base-100 w-52"
+            class="menu p-2 shadow bg-base-100 w-52 itbkk-status-choice"
             tabindex="0"
         >
           <div>
@@ -269,7 +269,7 @@ onBeforeMount(async () => {
                 :value="status.name"
                 v-model="filterBy"
             />
-            <label :for="status.name">{{ status.name }}</label>
+            <label :for="status.id">{{ status.name }}</label>
           </div>
         </li>
       </ul>
