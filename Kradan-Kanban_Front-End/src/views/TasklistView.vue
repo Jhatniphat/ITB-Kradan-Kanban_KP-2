@@ -92,10 +92,10 @@ const deleteThisTask = async () => {
   let res;
   try {
     res = await deleteTask(selectedId.value);
-    if ("id" in res) {
+    if (typeof(res) === "object") {
       taskStore.deleteStoreTask(res);
-      showToast({status: "success", msg: "Delete task successfuly"});
-    } else showToast({status: "error", msg: "Delete task Failed"});
+      showToast({status: "success", msg: "Delete task successfully"});
+    } else showToast({status: "error", msg: "Delete task Failed , Please Refresh Page"});
   } catch (error) {
     console.log(error);
   } finally {
