@@ -58,7 +58,7 @@ public class StatusService {
         if (oldStatus.getName().equals("No Status") || oldStatus.getName().equals("Done")){
             throw new BadRequestException( "'" + oldStatus.getName() +"'"+ " cannot be edited !!!");
         }
-        if (repository.existsByName(status.getName())) {
+        if (!oldStatus.getName().equals(status.getName()) && repository.existsByName(status.getName())) {
             throw new BadRequestException("Name must be unique");
         }
 //        if (status.getName().equals("Done")) {

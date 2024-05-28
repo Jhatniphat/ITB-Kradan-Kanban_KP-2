@@ -62,7 +62,7 @@ const showToast = (toastData) => {
 const closeAddModal = (res) => {
   showAddModal.value = false;
   if (res === null) return 0;
-  if ("id" in res) {
+  if (typeof(res) === "object") {
     showToast({status: "success", msg: "Add task successfuly"});
     statusStore.addStoreStatus(res);
   } else showToast({status: "error", msg: "Add task Failed"});
@@ -77,11 +77,11 @@ const openEdit = (id) => {
 const closeEdit = (res) => {
   showEdit.value = false;
   if (res === null) return 0;
-  if (res === 404) showToast({status: "error", msg: "An error has occurred, the status does not exist"});
-  if ("id" in res) {
+  // if (res === 404) showToast({status: "error", msg: "An error has occurred, the status does not exist"});
+  if (typeof(res) === "object") {
     showToast({status: "success", msg: "Edit task successfuly"});
     statusStore.editStoreStatus(res)
-  } else showToast({status: "error", msg: "Edit task Failed"});
+  } else showToast({status: "error", msg: "An error has occurred, the status does not exist"});
 };
 
 const openDelete = (id, title) => {

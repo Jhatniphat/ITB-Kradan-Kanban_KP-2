@@ -61,7 +61,7 @@ export const useStatusStore = defineStore('status', {
         getAllStatusWithLimit() {
             let limitStatus = []
             this.status.forEach(s => {
-                if (s.name === 'No Status') limitStatus.push({name: s.name, isLimit: false})
+                if (s.name === 'No Status' || s.name === 'Done') limitStatus.push({name: s.name, isLimit: false})
                 else limitStatus.push({
                     name: s.name,
                     isLimit: this.limitEnable ? this.countStatus(s.name) >= this.limit : false
@@ -77,12 +77,8 @@ export const useStatusStore = defineStore('status', {
             })
             return overStatus
         },
-        getCanOverStatus() {
-            return this.status.filter(s => s.name !== 'No Status' && s.name !== 'Done')
-        },
         canTransfer(oldId, newId = 1) {
             const newStatus = this.findById(newId)
-            console.table(newStatus)
             if (newStatus.name === 'No Status' || newStatus.name === 'Done') return true
             const oldStatus = this.findById(oldId)
             return (this.countStatus(newStatus.name) + this.countStatus(oldStatus.name)) <= this.getLimit()

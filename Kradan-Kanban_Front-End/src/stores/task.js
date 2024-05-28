@@ -45,16 +45,6 @@ export const useTaskStore = defineStore("tasks", {
         }
       })
     },
-    transferStatusByTaskId(taskId , oldStatus , newStatus) {
-      this.tasks.forEach((task) => {
-        if (task.status === oldStatus) {
-          task.status = newStatus;
-        }
-      })
-    },
-    getTasksByStatus(status){
-      return this.tasks.filter(task => task.status === status)
-    }
   },
 
   // return { count, doubleCount, increment }
