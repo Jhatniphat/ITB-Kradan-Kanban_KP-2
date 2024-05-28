@@ -139,7 +139,7 @@ export async function addStatus(newStatus) {
     }
 }
 
-export async function editStatus(id, Task) {
+export async function editStatus(id, Status) {
     let res;
     try {
         res = await fetch(`${import.meta.env.VITE_API_ROOT}/statuses/${id}`, {
@@ -147,7 +147,7 @@ export async function editStatus(id, Task) {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(Task),
+            body: JSON.stringify(Status),
         });
 
         if (res.ok) {
@@ -209,8 +209,6 @@ export async function toggleLimitStatus() {
             {
                 method: "PATCH",
             })
-        // console.log(res)
-        console.log("GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
         return res.status
     } catch (e) {
         console.log(e.toString())

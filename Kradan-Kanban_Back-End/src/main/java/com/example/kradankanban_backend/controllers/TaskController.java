@@ -1,7 +1,6 @@
 package com.example.kradankanban_backend.controllers;
 
 import com.example.kradankanban_backend.dtos.DetailTaskDTO;
-import com.example.kradankanban_backend.dtos.NewTaskDTO;
 import com.example.kradankanban_backend.dtos.SimpleTaskDTO;
 import com.example.kradankanban_backend.entities.TaskEntity;
 import com.example.kradankanban_backend.services.TaskService;

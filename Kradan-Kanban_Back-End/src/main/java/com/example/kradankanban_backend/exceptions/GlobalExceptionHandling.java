@@ -75,7 +75,6 @@ public class GlobalExceptionHandling {
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             errorResponse.addValidationError(fieldError.getField(), fieldError.getDefaultMessage());
         }
-        System.out.println("2");
         return ResponseEntity.badRequest().body(errorResponse);
     }
 

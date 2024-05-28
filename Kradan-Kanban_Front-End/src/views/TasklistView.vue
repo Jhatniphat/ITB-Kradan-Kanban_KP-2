@@ -44,7 +44,7 @@ const openEditMode = (id) => {
 const closeAddModal = (res) => {
   showAddModal.value = false;
   if (res === null) return 0;
-  if ("id" in res) {
+  if (typeof(res) === "object") {
     showToast({status: "success", msg: "Add task successfully"});
     taskStore.addStoreTask(res);
     // const
@@ -54,16 +54,11 @@ const closeAddModal = (res) => {
 const closeEditModal = (res) => {
   showDetailModal.value = false;
   if (res === null) return 0;
-  if (res === 404)
-    showToast({
-      status: "error",
-      msg: "An error has occurred, the status does not exist",
-    });
-  if ("id" in res) {
+  if (typeof(res) === "object") {
     showToast({status: "success", msg: "Edit task successfully"});
     taskStore.editStoreTask(res);
   } else {
-    showToast({status: "error", msg: "Edit task Failed"});
+    showToast({status: "error", msg: "The error occurred, the status does not exist"});
   }
 };
 

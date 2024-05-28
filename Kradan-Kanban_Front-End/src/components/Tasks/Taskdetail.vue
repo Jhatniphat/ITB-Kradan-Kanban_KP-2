@@ -66,6 +66,8 @@ watch(
 async function fetchTask(id) {
   if (id === 0) {
     loading.value = true;
+    // emit("closeModal", 404);
+    // router.push("/task");
     return 0;
   }
   error.value = taskDetail.value = statusList.value = null;
@@ -73,9 +75,10 @@ async function fetchTask(id) {
   statusList.value = statusStore.getAllStatusWithLimit();
   try {
     const originalTaskDetails = await getTaskById(id);
-    if (originalTaskDetails === 404) {
-      router.push("/task");
+    console.table(await originalTaskDetails)
+    if (originalTaskDetails === 404 || originalTaskDetails === 400 || originalTaskDetails === 500) {
       emit("closeModal", 404);
+      router.push("/task");
     }
     originalTask.value = { ...originalTaskDetails };
     taskDetail.value = { ...originalTaskDetails };

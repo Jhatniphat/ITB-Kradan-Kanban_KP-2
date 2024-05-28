@@ -23,7 +23,7 @@ const props = defineProps({
 });
 
 const editStatusTitleLength = computed(() => {
-  return statusDetail.value?.name.trim().length;
+  return statusDetail.value?.name?.trim().length;
 });
 const editStatusDescriptionLength = computed(() => {
   return statusDetail.value?.description?.trim()?.length;
@@ -39,12 +39,12 @@ watch(
     else if (editStatusTitleLength.value === 0)
       Errortext.value.name = "Status Name can't be empty";
     else if (
-      statusDetail.value.name.trim().toLowerCase() !==
-        originalsDetail.value.name.trim().toLowerCase() &&
+      statusDetail.value.name?.trim().toLowerCase() !==
+        originalsDetail.value.name?.trim().toLowerCase() &&
       statusStore.status.some(
         (status) =>
-          status.name.trim().toLowerCase() ===
-          statusDetail.value.name.trim().toLowerCase()
+          status.name?.trim().toLowerCase() ===
+          statusDetail.value.name?.trim().toLowerCase()
       )
     )
       Errortext.value.name = "Status name must be uniques, please choose another name.";
@@ -64,9 +64,9 @@ async function fetchData(id) {
   loading.value = true;
   try {
     const originalstatusDetails = await getStatusById(id);
-    if (originalstatusDetails === 404) {
-      router.push("/status");
+    if (originalstatusDetails === 404 || originalstatusDetails === 400 || originalstatusDetails === 500) {
       emit("closeModal", 404);
+      router.push("/status");
     }
     originalsDetail.value = { ...originalstatusDetails };
     statusDetail.value = { ...originalstatusDetails };
@@ -77,13 +77,14 @@ async function fetchData(id) {
   }
 }
 
-async function saveTask() {
+async function saveStatus() {
   loading.value = true;
   let res;
   try {
     delete statusDetail.value.id;
     delete statusDetail.value.createdOn;
     delete statusDetail.value.updatedOn;
+    console.table(statusDetail.value)
     res = await editStatus(props.statusId, statusDetail.value);
     statusDetail.value = res;
   } catch (error) {
@@ -238,7 +239,7 @@ function sendCloseModal() {
         <button
           class="itbkk-button-confirm btn btn-outline btn-success basis-1/6"
           :disabled="!canSave"
-          @click="saveTask"
+          @click="saveStatus"
         >
           {{ loading ? "" : "Save" }}
           <span
