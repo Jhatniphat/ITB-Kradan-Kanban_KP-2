@@ -42,6 +42,7 @@ const router = createRouter({
       path: "/status/:id/edit",
       component: StatusListView,
     },
+    { path: '/:pathMatch(.*)*', redirect: { name : "tasklist"}},
   ],
 });
 

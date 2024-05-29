@@ -64,9 +64,9 @@ const closeEditModal = (res) => {
 
 function closeEditLimit(overStatus) {
   showEditLimit.value = false
+  showToast({ status : 'success' , msg : `The Kanban now limit ${statusStore.getLimit()} tasks in each status` } )
   if (overStatus === null || overStatus === undefined) return 0;
   if (typeof (overStatus) === "object") {
-    // showToast({ status : 'error' , msg : `These statuses that have reached the task limit.  No additional tasks can be added to these statuses. : ${overStatus.join(" , ")}`} , 10000)
     showErrorModal.value = true
     overStatuses.value = overStatus
   }
